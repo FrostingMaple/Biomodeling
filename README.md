@@ -16,8 +16,8 @@ AI **生物系统数学建模 Agent**：能够从生物文献文本中
 
 ### 1.1 无 API 演示（推荐先跑这个）
 
-不依赖任何大模型接口，自动复现 `data/test_model.txt` 里的
-Lotka-Volterra 模型，做数值模拟并生成报告：
+不依赖任何大模型接口，自动用**内置的 Lotka-Volterra 模型**跑通"复现 → 模拟 →
+报告"完整流程，快速验证数值引擎是否工作：
 
 ```bash
 .venv\Scripts\python.exe main.py --demo
@@ -41,7 +41,7 @@ Lotka-Volterra 模型，做数值模拟并生成报告：
 $env:USTC_LLM_API_KEY='sk-xxxx'
 $env:BIOMODEL_MODEL='deepseek-v4-flash-ascend'   # 可选，默认就是这个
 
-.venv\Scripts\python.exe main.py --data data\self_derived_chemostat.txt
+.venv\Scripts\python.exe main.py --data data\test.pdf
 ```
 
 不给 `--data` 则进入对话模式，直接描述你想要复现/构建的模型或给文件路径。
@@ -141,13 +141,14 @@ $env:USTC_LLM_API_KEY='sk-xxx'
 
 ## 3. 如何实现「复现文献模型」
 
-以 `data/fisher_kpp_pde.txt`（Fisher-KPP 反应扩散方程）为例，agent 的流程：
+当文献给出完整方程（如 Fisher-KPP 反应扩散 `du/dt = D·uxx + r·u(1-u)`）时，
+agent 的流程：
 
-1. `read_text` 读取文献 → 识别出这是 PDE（`du/dt = D·uxx + r·u(1-u)`）。
-2. `save_model_ir(tag="reproduce")` 保存 IR：变量 `u`、参数 `D=0.2, r=1.0`、
-   空间域 `[0,40]`、初值高斯峰、Neumann 边值。
+1. `read_text` 读取文献 → 识别出这是 PDE 还是 ODE，抽出各变量、参数、方程。
+2. `save_model_ir(tag="reproduce")` 保存 IR：变量 `u`、参数 `D, r`、空间域、
+   初值、边值。
 3. `simulate_model(tag="reproduce")` → `solve_ivp` 求解 → 得到传播波。
-4. 报告中对比：传播波前速度 ≈ `2√(D·r) ≈ 0.894`，与理论一致 → **复现成功**。
+4. 报告中对比理论指标（如波速 ≈ `2√(D·r)`）→ **复现成功**。
 
 `sympy` 会把 IR 里的文本方程解析为数值函数，因此 agent 输出什么样的方程文本
 `simulate.py` 都能安全求值，只要符号与 `variables` 一致。
@@ -156,22 +157,19 @@ $env:USTC_LLM_API_KEY='sk-xxx'
 
 ## 4. 如何实现「自发构建模型」
 
-以 `data/self_derived_chemostat.txt`（恒化器两种菌竞争，**只描述机制，没有方程**）
-为例：
+当文献**只描述机制、没有给出方程**时（例如 CRISPR–Cas9 论文描述"RNA 引导的
+双链 DNA 切割"这类生化机制，`data/test.pdf` 即是这类），agent 的流程：
 
-1. `read_text` 提取机制：两种菌 + 单一限制营养物 `S`；Monod 饱和生长；稀释速率 `D`。
-2. 显式写出假设并据此推导方程：
+1. `read_text` 提取机制：识别生物实体与相互作用（底物、酶、产物、速率过程）。
+2. 显式写出假设并据此推导方程（例如酶促切割可假设 Michaelis–Menten 动力学）：
 
    ```
-   dA/dt = μA(S)·A - D·A        dS/dt = D·(S_in - S) - ... ·consumption
-   dB/dt = μB(S)·B - D·B
-   μi(S) = μmax_i · S / (Ki + S)     (Monod)
+   dE/dt = ...        dC/dt = k_on·E·S - (k_off + k_cat)·C
+   dS/dt = -k_on·E·S + k_off·C        dP/dt = k_cat·C
    ```
 
-3. `save_model_ir(tag="self_derived")`，`assumptions` 记录：Monod 生长、完全混合、
-   恒定稀释、无死亡（忽略维持代谢）……
-4. `simulate_model` 用合理参数验证：不同 `μ/K` 组合下 → 共存稳态 或 单一菌占优，
-   对照文献“哪种参数域共存”的结论。
+3. `save_model_ir(tag="self_derived")`，把每一步抽象用 `assumptions` 记录。
+4. `simulate_model` 用合理参数做数值验证，判断定性行为是否符合文献描述。
 5. `save_report` 写完整派生报告。
 
 > 自发构建的关键守则（已在 `prompts.py` 强制）：**每一项抽象都要落到
@@ -207,11 +205,8 @@ biomodel_agent/
 ├── pdf_utils.py     # PDF → 文本解析（pymupdf，两栏排版）          ▲ 新增
 ├── tools.py         # agent 工具面 + function-calling schema
 ├── pyproject.toml   # 依赖与元数据
-├── data/            # 文献样本
-│   ├── test_model.txt       # Lotka-Volterra（复现用，带方程）
-│   ├── fisher_kpp_pde.txt   # Fisher-KPP（复现 PDE）
-│   ├── self_derived_chemostat.txt  # 恒化器竞争（自发构建用，只有机制）
-│   └── test_two_column.pdf  # 两栏 PDF 示例（验证 PDF 解析链路）
+├── data/            # 你放入的待建模文献（.pdf / .txt）
+│   └── test.pdf     # 示例：CRISPR–Cas9 论文（自发构建用：只有机制、无方程）
 └── output/          # agent 产出：IR、模拟 JSON/PNG、reports/（已 gitignore）
 ```
 
@@ -224,18 +219,15 @@ biomodel_agent/
 uv pip install --python .venv/Scripts/python.exe \
     "numpy==2.2.6" "scipy==1.15.2" "matplotlib==3.9.4" "sympy" "openai" pymupdf
 
-# 2) 无 API 演示
+# 2) 无 API 演示（内置 Lotka-Volterra，验证引擎）
 .venv\Scripts\python.exe main.py --demo
 
-# 3) 用 LLM 处理一篇文献（复现 PDE，.txt）
+# 3) 用 LLM 处理你的文献（支持 .txt / .pdf，自动解析）
 $env:USTC_LLM_API_KEY='sk-xxx'
-.venv\Scripts\python.exe main.py --data data\fisher_kpp_pde.txt
+.venv\Scripts\python.exe main.py --data data\test.pdf
 
-# 4) 用 LLM 从机制文本自发构建模型（.txt）
-.venv\Scripts\python.exe main.py --data data\self_derived_chemostat.txt
-
-# 5) 直接处理 PDF 文献（两栏排版也能解析）
-.venv\Scripts\python.exe main.py --data "data\test_two_column.pdf"
+# 4) 换成任意你自己的文献
+.venv\Scripts\python.exe main.py --data "data\你的文献.pdf"
 ```
 
 ---

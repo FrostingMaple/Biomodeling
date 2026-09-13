@@ -10,7 +10,6 @@ If pymupdf is not installed this module degrades gracefully: callers can check
 HAS_PYMPDF and fall back to a message.
 """
 
-import sys
 from pathlib import Path
 
 try:

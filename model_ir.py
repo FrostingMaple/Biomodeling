@@ -198,5 +198,3 @@ MODEL_DOC_SCHEMA = {
     ],
 }
 
-# Backwards-compatible alias with the minimal original fields.
-MODEL_IR_SCHEMA = MODEL_DOC_SCHEMA

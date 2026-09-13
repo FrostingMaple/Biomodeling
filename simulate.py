@@ -18,7 +18,6 @@ turned into safe, validated numeric functions rather than exec'd code.
 """
 
 import json
-import math
 import os
 from pathlib import Path
 
@@ -66,6 +65,52 @@ def _safe_token(index):
     return f"__bmo_var{index}__"
 
 
+def _build_token_map(variables, param_names):
+    """Build a single {user_symbol -> safe_token} mapping.
+
+    Every variable gets its own token; parameter names that would collide with
+    sympy internals (or shadow a variable / the spatial coordinate `x`) also
+    get out-of-range tokens. `x` and the D1__/D2__ derivative markers are never
+    remapped. Returns a dict usable both for rewriting equation strings and for
+    substituting parameter numeric values.
+    """
+    var_token = {v: _safe_token(i) for i, v in enumerate(variables)}
+    par_token = {}
+    for i, pname in enumerate(param_names):
+        if pname in _RESERVED or pname == "x" or pname in var_token:
+            par_token[pname] = _safe_token(1000 + i)
+    token_for = dict(var_token)
+    token_for.update(par_token)
+    return token_for
+
+
+def _token_substituter(token_for):
+    """Return a function that rewrites user symbols in a string to tokens.
+
+    Longest names are replaced first so a prefix (e.g. `S`) does not steal a
+    match that belongs to a longer symbol (e.g. `S_in`); names followed by `_`
+    are left alone (part of an even longer identifier).
+    """
+    ordered = sorted(token_for.items(), key=lambda kv: -len(kv[0]))
+
+    def substituter(expr_str):
+        for name, tok in ordered:
+            expr_str = _re.sub(rf"\b{_re.escape(name)}\b(?!_)", tok, expr_str)
+        return expr_str
+
+    return substituter
+
+
+def _substitute_resolved(sym, resolved, token_for):
+    """Substitute concrete parameter values into a sympy expression."""
+    import sympy as sp
+
+    for pname, pval in resolved.items():
+        tok = token_for.get(pname, pname)
+        sym = sym.subs(sp.Symbol(tok), sp.Float(pval))
+    return sym
+
+
 # ---------------------------------------------------------------------------
 # ODE model
 # ---------------------------------------------------------------------------
@@ -79,7 +124,6 @@ def _simulate_ode(model, resolved):
 
     variables = [v["name"] for v in model["variables"]]
     param_names = [p["name"] for p in model["parameters"]]
-    all_names = set(variables) | set(param_names)
     t0 = model["domain"].get("t_start", 0.0)
     t1 = model["domain"]["t_end"]
 
@@ -89,29 +133,15 @@ def _simulate_ode(model, resolved):
         raise ValueError(f"Equations missing for variables: {missing}")
 
     # Build RHS sympy expressions per state variable, with sane symbol tokens.
-    # Every variable -> its own token; reserved parameter names also -> tokens.
-    var_token = {v: _safe_token(i) for i, v in enumerate(variables)}
-    par_token = {}
-    for i, pname in enumerate(param_names):
-        if pname in _RESERVED or pname == "x" or pname in var_token:
-            par_token[pname] = _safe_token(1000 + i)
-    token_for = dict(var_token)
-    token_for.update(par_token)
-
-    def to_safe_token(expr_str):
-        for name, tok in sorted(token_for.items(), key=lambda kv: -len(kv[0])):
-            expr_str = _re.sub(rf"\b{_re.escape(name)}\b(?!_)", tok, expr_str)
-        return expr_str
+    token_for = _build_token_map(variables, param_names)
+    to_safe_token = _token_substituter(token_for)
 
     rhs_sym = {}
     for var in variables:
         expr_str = _replace_tex_derivatives(eq_by_var[var], var)
         expr_str = to_safe_token(expr_str)
         sym = sp.sympify(expr_str)
-        # parameters are concrete numbers -> substitute their tokens directly
-        for pname, pval in resolved.items():
-            tok = token_for.get(pname, pname)
-            sym = sym.subs(sp.Symbol(tok), sp.Float(pval))
+        sym = _substitute_resolved(sym, resolved, token_for)
         rhs_sym[var] = sp.N(sym)
 
     # lambdify each rhs over the variable tokens
@@ -127,7 +157,7 @@ def _simulate_ode(model, resolved):
             func = sp.lambdify(frees, sym, modules=["numpy"])
             rhs_funcs[var] = func
 
-    tok_to_var = {var_token[v]: v for v in variables}
+    tok_to_var = {token_for[v]: v for v in variables}
 
     def rhs(t, y):
         state = {variables[i]: float(y[i]) for i in range(len(variables))}
@@ -176,14 +206,12 @@ def _replace_tex_derivatives(expr_str, var):
     difference stencil. First-order spatial derivatives are also supported
     (D1__<var>).
     """
-    import re
-
     # d2U/dx2  and  U_xx  ->  D2__U
-    expr_str = re.sub(r"d2([A-Za-z_]\w*)/dx2", r"D2__\1", expr_str)
-    expr_str = re.sub(r"([A-Za-z_]\w*)_xx\b", r"D2__\1", expr_str)
+    expr_str = _re.sub(r"d2([A-Za-z_]\w*)/dx2", r"D2__\1", expr_str)
+    expr_str = _re.sub(r"([A-Za-z_]\w*)_xx\b", r"D2__\1", expr_str)
     # dU/dx  and  U_x  ->  D1__U
-    expr_str = re.sub(r"d([A-Za-z_]\w*)/dx", r"D1__\1", expr_str)
-    expr_str = re.sub(r"([A-Za-z_]\w*)_x\b", r"D1__\1", expr_str)
+    expr_str = _re.sub(r"d([A-Za-z_]\w*)/dx", r"D1__\1", expr_str)
+    expr_str = _re.sub(r"([A-Za-z_]\w*)_x\b", r"D1__\1", expr_str)
     return expr_str
 
 
@@ -196,7 +224,6 @@ def _simulate_pde(model, resolved):
 
     Returns (t, dict_of_arrays) where each array has shape (len(t), n).
     """
-    import re
     import sympy as sp
 
     variables = [v["name"] for v in model["variables"]]
@@ -215,23 +242,12 @@ def _simulate_pde(model, resolved):
     if missing:
         raise ValueError(f"Equations missing for variables: {missing}")
 
-    # Symbol token map: every variable -> its own safe token; reserved
-    # parameter names also -> tokens. 'x' and the D1__/D2__ markers are the
-    # PDE primitives and are never remapped.
-    var_token = {v: _safe_token(i) for i, v in enumerate(variables)}
-    par_token = {}
-    for i, pname in enumerate(param_names):
-        if pname in _RESERVED or pname == "x" or pname in var_token:
-            par_token[pname] = _safe_token(2000 + i)
-    token_for = dict(var_token)
-    token_for.update(par_token)
+    # Symbol token map via shared helpers; `x` and D1__/D2__ stay untouched.
+    token_for = _build_token_map(variables, param_names)
+    to_safe_token = _token_substituter(token_for)
+    var_token = {v: token_for[v] for v in variables}
 
-    def to_safe_token(expr_str):
-        for name, tok in sorted(token_for.items(), key=lambda kv: -len(kv[0])):
-            expr_str = _re.sub(rf"\b{_re.escape(name)}\b(?!_)", tok, expr_str)
-        return expr_str
-
-    # Each var -> (diffusion_coeff_token_func, reaction_func)
+    # Each var -> (diffusion tokens, reaction sym_expr)
     parsed = {}
     for var in variables:
         expr_str = eq_by_var[var]
@@ -239,10 +255,7 @@ def _simulate_pde(model, resolved):
         tokens = _re.findall(r"D2__(\w+)", expr_str)
         expr_str = to_safe_token(expr_str)
         sym_expr = sp.sympify(expr_str)
-        # Substitute known parameter values into the expression once, up front.
-        for pname, pval in resolved.items():
-            tok = token_for.get(pname, pname)
-            sym_expr = sym_expr.subs(sp.Symbol(tok), sp.Float(pval))
+        sym_expr = _substitute_resolved(sym_expr, resolved, token_for)
         parsed[var] = {
             "diff2": tokens,          # original user variable names under d2/dx2
             "sym_expr": sym_expr,
@@ -255,7 +268,6 @@ def _simulate_pde(model, resolved):
         bc_by[key] = bc
 
     var_to_idx = {var: i for i, var in enumerate(variables)}
-    tok_to_var = {var_token[v]: v for v in variables}
 
     def state_to_arrays(y):
         return {var_token[v]: y[i * n:(i + 1) * n]
@@ -317,9 +329,7 @@ def _simulate_pde(model, resolved):
         if ic.get("expr"):
             ic_str = to_safe_token(ic["expr"])
             ic_expr = sp.sympify(ic_str)
-            for pname, pval in resolved.items():
-                tok = token_for.get(pname, pname)
-                ic_expr = ic_expr.subs(sp.Symbol(tok), sp.Float(pval))
+            ic_expr = _substitute_resolved(ic_expr, resolved, token_for)
             func = sp.lambdify("x", sp.N(ic_expr), modules=["numpy"])
             y0[idx * n:(idx + 1) * n] = np.asarray(func(grid), dtype=float)
         else:
@@ -359,9 +369,8 @@ def _resolve_parameters(model):
 
 def _model_slug(model):
     """Safe filesystem identifier derived from the model name."""
-    import re
     name = model.get("model_name") or "model"
-    slug = re.sub(r"[^A-Za-z0-9]+", "_", name).strip("_").lower()
+    slug = _re.sub(r"[^A-Za-z0-9]+", "_", name).strip("_").lower()
     return slug or "model"
 
 

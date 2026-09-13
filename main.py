@@ -4,9 +4,9 @@ main.py — CLI entry point for biomodel-agent.
 Two modes:
 
   python main.py --demo
-      Run the full "reproduce -> simulate -> report" pipeline automatically on
-      data/test_model.txt, WITHOUT any LLM API call. Great for a quick demo and
-      for verifying the numerical engine works.
+      Run the full "reproduce -> simulate -> report" pipeline automatically on a
+      built-in Lotka-Volterra model, WITHOUT any LLM API call. Great for a quick
+      demo and for verifying the numerical engine works.
 
   python main.py [--data path_to_literature.txt]
       Interactive mode: connect to the configured LLM (DeepSeek via USTC
@@ -60,7 +60,7 @@ DEMO_IR = {
     "boundary_conditions": [],
     "origin": {
         "mode": "reproduce",
-        "source_text": "data/test_model.txt (classic Lotka-Volterra)",
+        "source_text": "built-in demo (classic Lotka-Volterra)",
         "confidence": "high",
         "assumptions": [
             "猎物在没有捕食者时按指数增长",
@@ -80,13 +80,10 @@ def run_demo():
 
     from tools import save_model_ir, simulate_model, save_report
 
-    # 1. show the literature
-    lit = Path("data/test_model.txt")
-    print("\n[1/4] 读取文献:", lit)
-    if lit.exists():
-        print("----- 文献内容 -----")
-        print(lit.read_text(encoding="utf-8").strip())
-        print("---------------------")
+    # 1. demo model (built-in; no external data file needed)
+    print("\n[1/4] 演示模型: 内置 Lotka-Volterra 捕食-被捕食模型")
+    print("     dX/dt = aX - bXY,   dY/dt = cXY - dY   (a=1.0,b=0.1,c=0.075,d=1.5)")
+    print("     初值 X(0)=10, Y(0)=5")
 
     # 2. save the extracted IR
     print("\n[2/4] 保存提取的 Model IR ...")
