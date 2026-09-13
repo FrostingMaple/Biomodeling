@@ -1,0 +1,114 @@
+{
+  "model_name": "Cas9-mediated dual-RNA-guided dsDNA cleavage kinetics (Michaelis-Menten)",
+  "model_type": "ODE",
+  "description": "描述 Cas9 内切酶在 tracrRNA:crRNA 双 RNA 引导下对靶 dsDNA 进行位点特异性切割的酶促动力学。变量 E=活性 Cas9-双RNA复合物，S=完整靶 dsDNA 底物，C=酶-底物复合物(ES)，P=切割后的 DNA 产物。机制：E 与 S 可逆结合形成 C(包含 R-loop 形成/解旋)，C 经一步催化(kcat)裂解双链释放产物并回收 E(多周转)。来源于 Jinek et al. 2012 (Science 337:816) 描述的生化机制。",
+  "variables": [
+    {
+      "name": "E",
+      "description": "活性 Cas9-tracrRNA:crRNA 双RNA引导内切酶复合物浓度",
+      "unit": "uM"
+    },
+    {
+      "name": "S",
+      "description": "含匹配 protospacer 与 PAM 的完整靶 dsDNA 底物浓度",
+      "unit": "uM"
+    },
+    {
+      "name": "C",
+      "description": "Cas9-双RNA-底物DNA三元切割复合物(含R-loop)浓度",
+      "unit": "uM"
+    },
+    {
+      "name": "P",
+      "description": "被切割(双链断裂)后失去功能的 DNA 产物浓度",
+      "unit": "uM"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "k1",
+      "description": "Cas9-双RNA复合物与靶 DNA 的结合/杂交速率常数(含PAM识别与R-loop成核)",
+      "value_known": false,
+      "value": 1.0,
+      "unit": "uM^-1 min^-1"
+    },
+    {
+      "name": "kminus1",
+      "description": "酶-底物复合物解离(可逆)速率常数",
+      "value_known": false,
+      "value": 0.5,
+      "unit": "min^-1"
+    },
+    {
+      "name": "kcat",
+      "description": "切割催化速率常数(单周转速率，文献给出0.3-1 min^-1)，此处取区间中值附近的估计值",
+      "value_known": true,
+      "value": 0.7,
+      "unit": "min^-1"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "E",
+      "expression": "-k1*E*S + kminus1*C + kcat*C"
+    },
+    {
+      "variable": "S",
+      "expression": "-k1*E*S + kminus1*C"
+    },
+    {
+      "variable": "C",
+      "expression": "k1*E*S - kminus1*C - kcat*C"
+    },
+    {
+      "variable": "P",
+      "expression": "kcat*C"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 20
+  },
+  "initial_conditions": [
+    {
+      "variable": "E",
+      "value_known": true,
+      "value": 1.0
+    },
+    {
+      "variable": "S",
+      "value_known": true,
+      "value": 5.0
+    },
+    {
+      "variable": "C",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "P",
+      "value_known": true,
+      "value": 0.0
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "self_derived",
+    "source_text": "Jinek M, et al. A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity. Science 337:816-821 (2012).",
+    "confidence": "medium",
+    "assumptions": [
+      "采用经典 Michaelis-Menten 酶动力学描述 Cas9 介导的 DNA 切割，假设体系均一、无空间异质性(ODE)",
+      "假设每个切割事件为单步不可逆催化(kcat)，忽略非互补链的内切后 3'-5' 外切修剪的中间步骤(将其并入产物形成)",
+      "假设底物 DNA 含正确匹配的 protospacer 与功能性 PAM(NGG)且 Mg2+ 充足，故所有底物都可通过 R-loop 进入可切割复合物 C",
+      "假设酶为多周转(multiple-turnover)，即切割后 Cas9 复合物酶释放可继续切割其他底物(matches 文献 5 倍底物过量仍多周转)",
+      "k1、kminus1 无文献直接数值，采用合理估计值并需标定；kcat 由文献单周转速率 0.3-1 min^-1 估计",
+      "浓度采用归一化任意单位(微摩尔)；初值取底物 5 倍酶过量以复现文献多周转实验条件"
+    ]
+  },
+  "missing_information": [
+    "k1(结合速率常数)无文献数值，需实验标定",
+    "kminus1(解离速率常数)无文献数值，需实验标定",
+    "绝对酶/底物浓度单位未给出，采用归一化值",
+    "非互补链分步内切+外切修剪的细节在模型中合并为单步 kcat"
+  ]
+}
