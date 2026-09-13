@@ -1,0 +1,18 @@
+[project]
+name = "biomodel-agent"
+version = "0.1.0"
+description = "AI agent that automatically reproduces and spontaneously builds hypothesis-driven biological models (ODE/PDE) from literature."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=3.8.0",
+    "numpy>=2.2.6",
+    "scipy>=1.15.2",
+    "matplotlib<3.10",
+    "sympy>=1.14.0",
+    "pymupdf>=1.24",
+]
+
+[project.scripts]
+biomodel-agent = "main:main"
+
