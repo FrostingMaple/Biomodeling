@@ -65,6 +65,24 @@ def _safe_token(index):
     return f"__bmo_var{index}__"
 
 
+def _collides_with_sympy(name):
+    """Robustly detect whether `name` shadows a sympy builtin (a Symbol is a
+    plain user symbol; anything else -- a FunctionClass, singleton, reserved
+    constant like pi/e/I, etc. -- would shadow a builtin).
+
+    Hand-maintained reserved lists miss entries (e.g. `beta` -> SymPy's beta
+    *function*, `zeta`, `erf`, `gamma`, ...). Instead we ask sympy what the
+    name resolves to: if it is NOT a Symbol, the user's parameter/variable
+    would collide with a builtin and must be remapped to a safe token.
+    """
+    try:
+        import sympy as sp
+        return not isinstance(sp.sympify(name), sp.Symbol)
+    except Exception:
+        # If sympy cannot symbolify it at all, treat it as unsafe to use raw.
+        return True
+
+
 def _build_token_map(variables, param_names):
     """Build a single {user_symbol -> safe_token} mapping.
 
@@ -77,7 +95,12 @@ def _build_token_map(variables, param_names):
     var_token = {v: _safe_token(i) for i, v in enumerate(variables)}
     par_token = {}
     for i, pname in enumerate(param_names):
-        if pname in _RESERVED or pname == "x" or pname in var_token:
+        if (
+            pname in _RESERVED
+            or pname == "x"          # spatial coordinate (PDE), keep as-is
+            or pname in var_token     # shadows a state variable
+            or _collides_with_sympy(pname)  # e.g. beta/pi/exp/zeta ...
+        ):
             par_token[pname] = _safe_token(1000 + i)
     token_for = dict(var_token)
     token_for.update(par_token)

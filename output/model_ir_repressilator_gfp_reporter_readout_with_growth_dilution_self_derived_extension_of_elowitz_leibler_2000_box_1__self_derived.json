@@ -1,0 +1,221 @@
+{
+  "assumptions": [
+    "Hypothesis 1: the GFP reporter is a fourth transcriptional unit whose transcription is driven by the same Hill-type repression function as the repressilator genes, but repressed by TetR (the reporter promoter is PLtetO1, Fig. 1a), with the same promoter strength alpha_g = alpha and the same relative leakiness alpha_g0/alpha_g = 1e-3.",
+    "Hypothesis 2: cell growth and division are represented as a first-order dilution term mu*p acting on all protein species (mu = ln2/doubling time, doubling time 60 min taken from the 50-70 min division times reported in the paper); the paper's continuous model omits this term.",
+    "Hypothesis 3: the half-lives quoted in the paper (10 min for tagged repressors, 90 min for GFP-aav) are pure degradation rates, so degradation and growth dilution add up; this slightly overestimates total protein loss (the quoted half-lives may already include dilution in vivo).",
+    "Hypothesis 4: the same rescaled units as Box 1 are retained (protein in units of K_M = 40 monomers per cell, mRNA divided by translation efficiency, but time kept in minutes so that the period can be compared directly with the measured 160 +/- 40 min).",
+    "Hypothesis 5: transcription-only leakiness, Hill-type repression with n = 2, no repressor dimerization, no mRNA dilution term (mRNA lifetime is far shorter than the doubling time), and no GFP maturation step (the finite oxidation rate of GFP is acknowledged as a limitation, not modelled).",
+    "Hypothesis 6: total per-cell fluorescence is proportional to p_gfp, i.e. the reporter signal is a linear read-out of the GFP protein level."
+  ],
+  "boundary_conditions": [],
+  "description": "Hypothesis-driven extension of the published repressilator model (Elowitz & Leibler 2000, Box 1). The core six ODEs are kept, and two mechanisms that the paper describes biologically but never formalises are added: (i) dilution of all protein species by cell growth and division, and (ii) the GFP reporter module (PLtetO1-driven gfp-aav) that provides the experimentally observed fluorescence read-out. Time is expressed in minutes so that the simulated period can be compared directly with the measured 160 +/- 40 min oscillation period. Model question: do sustained oscillations survive growth dilution, and does the slow GFP reporter track the TetR dynamics faithfully?",
+  "domain": {
+    "t_end": 600,
+    "t_start": 0
+  },
+  "equations": [
+    {
+      "expression": "gamma_m*(-m_lacI + alpha/(1 + p_cI**n) + alpha0)",
+      "variable": "m_lacI"
+    },
+    {
+      "expression": "gamma_m*(-m_tetR + alpha/(1 + p_lacI**n) + alpha0)",
+      "variable": "m_tetR"
+    },
+    {
+      "expression": "gamma_m*(-m_cI + alpha/(1 + p_tetR**n) + alpha0)",
+      "variable": "m_cI"
+    },
+    {
+      "expression": "gamma_m*beta*(m_lacI - p_lacI) - mu*p_lacI",
+      "variable": "p_lacI"
+    },
+    {
+      "expression": "gamma_m*beta*(m_tetR - p_tetR) - mu*p_tetR",
+      "variable": "p_tetR"
+    },
+    {
+      "expression": "gamma_m*beta*(m_cI - p_cI) - mu*p_cI",
+      "variable": "p_cI"
+    },
+    {
+      "expression": "gamma_m*(-m_gfp + alpha_g/(1 + p_tetR**n) + alpha_g0)",
+      "variable": "m_gfp"
+    },
+    {
+      "expression": "gamma_m*beta_g*(m_gfp - p_gfp) - mu*p_gfp",
+      "variable": "p_gfp"
+    }
+  ],
+  "initial_conditions": [
+    {
+      "value": 1.0,
+      "value_known": true,
+      "variable": "m_lacI"
+    },
+    {
+      "value": 0.3,
+      "value_known": true,
+      "variable": "m_tetR"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "m_cI"
+    },
+    {
+      "value": 0.2,
+      "value_known": true,
+      "variable": "p_lacI"
+    },
+    {
+      "value": 0.05,
+      "value_known": true,
+      "variable": "p_tetR"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "p_cI"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "m_gfp"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "p_gfp"
+    }
+  ],
+  "missing_information": [
+    "Measured reporter-plasmid promoter strength and copy number: the reporter plasmid is a higher-copy ColE1 plasmid, so alpha_g may differ from alpha; we assume equality.",
+    "Absolute calibration between GFP fluorescence (arbitrary units) and GFP molecules per cell is not given, so p_gfp is only a relative read-out.",
+    "The rate of GFP chromophore oxidation/maturation is not quantified in the paper.",
+    "The division time of MC4100 in the microscopy conditions (50-70 min) is given only as a range.",
+    "Initial conditions of the experiments and the exact form of the growth-dilution term (exponential vs linear growth) are not specified."
+  ],
+  "model_name": "Repressilator + GFP reporter readout with growth dilution (self-derived extension of Elowitz & Leibler 2000 Box 1)",
+  "model_type": "ODE",
+  "origin": {
+    "assumptions": [
+      "Hypothesis 1: the GFP reporter is a fourth transcriptional unit whose transcription is driven by the same Hill-type repression function as the repressilator genes, but repressed by TetR (the reporter promoter is PLtetO1, Fig. 1a), with the same promoter strength alpha_g = alpha and the same relative leakiness alpha_g0/alpha_g = 1e-3.",
+      "Hypothesis 2: cell growth and division are represented as a first-order dilution term mu*p acting on all protein species (mu = ln2/doubling time, doubling time 60 min taken from the 50-70 min division times reported in the paper); the paper's continuous model omits this term.",
+      "Hypothesis 3: the half-lives quoted in the paper (10 min for tagged repressors, 90 min for GFP-aav) are treated as pure degradation rates, so degradation and growth dilution add up.",
+      "Hypothesis 4: the same rescaled concentration units as Box 1 are retained (protein in units of K_M = 40 monomers per cell, mRNA divided by translation efficiency), but time is kept in minutes so that period can be compared directly with the measured 160 +/- 40 min.",
+      "Hypothesis 5: only the core repressilator parameters are taken from the paper; the GFP module parameters (alpha_g, alpha_g0) and the dilution rate mu are our own assumptions.",
+      "Hypothesis 6: per-cell fluorescence is proportional to p_gfp."
+    ],
+    "confidence": "medium",
+    "mode": "self_derived",
+    "source_text": "self-derived from Elowitz M.B. & Leibler S., Nature 403, 335-338 (2000) (mechanistic description of the PLtetO1-gfp-aav reporter and of ssrA-tagged, destabilised repressors; growth-dilution mechanism not modelled in the paper)"
+  },
+  "parameters": [
+    {
+      "description": "mRNA decay rate = ln2/(2 min half-life); used to convert the dimensionless Box 1 model to minutes (time unit of the paper = 1/gamma_m = 2.9 min)",
+      "name": "gamma_m",
+      "unit": "1/min",
+      "value": 0.3466,
+      "value_known": true
+    },
+    {
+      "description": "ratio of repressor protein decay rate to mRNA decay rate (protein half-life 10 min, mRNA half-life 2 min) - from Box 1",
+      "name": "beta",
+      "unit": "dimensionless",
+      "value": 0.2,
+      "value_known": true
+    },
+    {
+      "description": "maximal unrepressed transcription rate, rescaled (0.5 transcripts/s converted with 20 proteins/transcript and K_M = 40) - from Box 1",
+      "name": "alpha",
+      "unit": "dimensionless (K_M per mRNA lifetime)",
+      "value": 30.0,
+      "value_known": true
+    },
+    {
+      "description": "promoter leakiness, rescaled (5e-4 transcripts/s) - from Box 1",
+      "name": "alpha0",
+      "unit": "dimensionless",
+      "value": 0.03,
+      "value_known": true
+    },
+    {
+      "description": "Hill coefficient of repression - from Box 1",
+      "name": "n",
+      "unit": "dimensionless",
+      "value": 2.0,
+      "value_known": true
+    },
+    {
+      "description": "assumed GFP transcription strength of the PLtetO1-driven reporter (set equal to the repressilator promoter strength)",
+      "name": "alpha_g",
+      "unit": "dimensionless (K_M per mRNA lifetime)",
+      "value": 30.0,
+      "value_known": false
+    },
+    {
+      "description": "assumed leakiness of the GFP reporter promoter (same 1e-3 ratio as the repressilator promoters)",
+      "name": "alpha_g0",
+      "unit": "dimensionless",
+      "value": 0.03,
+      "value_known": false
+    },
+    {
+      "description": "GFP-aav protein/mRNA decay-rate ratio = (ln2/90 min)/(ln2/2 min) = 2/90, from the measured 90 min GFP-aav half-life reported in the paper",
+      "name": "beta_g",
+      "unit": "dimensionless",
+      "value": 0.0222,
+      "value_known": true
+    },
+    {
+      "description": "growth/dilution rate = ln2/60 min (60 min doubling time, within the 50-70 min division times reported in the paper); not present in the paper's model",
+      "name": "mu",
+      "unit": "1/min",
+      "value": 0.01155,
+      "value_known": false
+    }
+  ],
+  "variables": [
+    {
+      "description": "lacI mRNA level (rescaled by translation efficiency)",
+      "name": "m_lacI",
+      "unit": "dimensionless"
+    },
+    {
+      "description": "tetR mRNA level",
+      "name": "m_tetR",
+      "unit": "dimensionless"
+    },
+    {
+      "description": "cI mRNA level",
+      "name": "m_cI",
+      "unit": "dimensionless"
+    },
+    {
+      "description": "LacI repressor protein concentration",
+      "name": "p_lacI",
+      "unit": "K_M (40 monomers per cell)"
+    },
+    {
+      "description": "TetR repressor protein concentration",
+      "name": "p_tetR",
+      "unit": "K_M (40 monomers per cell)"
+    },
+    {
+      "description": "CI repressor protein concentration",
+      "name": "p_cI",
+      "unit": "K_M (40 monomers per cell)"
+    },
+    {
+      "description": "gfp mRNA level driven by the TetR-repressible promoter PLtetO1",
+      "name": "m_gfp",
+      "unit": "dimensionless"
+    },
+    {
+      "description": "GFP-aav protein level (proportional to the measured per-cell fluorescence)",
+      "name": "p_gfp",
+      "unit": "K_M (relative read-out of fluorescence)"
+    }
+  ]
+}

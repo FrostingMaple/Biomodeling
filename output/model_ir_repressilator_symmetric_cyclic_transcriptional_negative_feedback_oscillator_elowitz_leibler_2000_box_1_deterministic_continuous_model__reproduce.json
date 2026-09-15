@@ -1,0 +1,142 @@
+{
+  "model_name": "Repressilator: symmetric cyclic transcriptional negative-feedback oscillator (Elowitz & Leibler 2000, Box 1, deterministic continuous model)",
+  "model_type": "ODE",
+  "description": "A synthetic network in E. coli in which three transcriptional repressors (LacI, TetR and lambda CI) repress one another in a cycle: LacI represses tetR, TetR represses cI, and CI represses lacI. Box 1 of the paper gives six coupled first-order ODEs for the three mRNA concentrations (m_i) and the three protein concentrations (p_i). Each mRNA is transcribed from a promoter repressed by the previous repressor via a Hill function with coefficient n and leakiness alpha0, and is degraded with rate 1 (time is rescaled in units of the mRNA lifetime). Each protein is translated from its mRNA (rate beta, which is also the protein-to-mRNA decay ratio) and decays with rate beta. The model predicts either convergence to a stable steady state or sustained limit-cycle oscillations depending on (alpha, beta, n, alpha0).",
+  "variables": [
+    {
+      "name": "m_lacI",
+      "description": "Concentration of lacI mRNA, rescaled by the translation efficiency (average proteins produced per mRNA)",
+      "unit": "rescaled (translation-efficiency units)"
+    },
+    {
+      "name": "m_tetR",
+      "description": "Concentration of tetR mRNA, rescaled by the translation efficiency",
+      "unit": "rescaled (translation-efficiency units)"
+    },
+    {
+      "name": "m_cI",
+      "description": "Concentration of lambda cI mRNA, rescaled by the translation efficiency",
+      "unit": "rescaled (translation-efficiency units)"
+    },
+    {
+      "name": "p_lacI",
+      "description": "LacI protein concentration, in units of K_M",
+      "unit": "K_M (=40 monomers per cell)"
+    },
+    {
+      "name": "p_tetR",
+      "description": "TetR protein concentration, in units of K_M",
+      "unit": "K_M (=-40 monomers per cell)"
+    },
+    {
+      "name": "p_cI",
+      "description": "lambda CI protein concentration, in units of K_M",
+      "unit": "K_M"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "alpha",
+      "description": "Effective maximum transcription+translation rate (promoter strength times translation efficiency, dimensionlessly rescaled). Derived from the paper's stated dimensional values: max promoter strength 0.5 transcripts/s, translation rate 0.167 proteins per mRNA per s (=20 proteins per transcript / 120 s), K_M=40 monomers/cell, mRNA half-life 2 min, protein half-life 10 min -> alpha = k_r*k_t/(beta*K_M*lambda_m^2) = 0.5*0.1667/(0.2*40*(ln2/120)^2) = 313.",
+      "value_known": true,
+      "value": 313,
+      "unit": "dimensionless (rescaled)"
+    },
+    {
+      "name": "alpha0",
+      "description": "Leakiness of the promoter: residual protein production in the presence of saturating repressor. Paper gives repressed promoter strength 5e-4 transcripts/s vs 0.5 fully induced, i.e. alpha0/alpha = 1e-3.",
+      "value_known": true,
+      "value": 0.313,
+      "unit": "dimensionless (rescaled)"
+    },
+    {
+      "name": "beta",
+      "description": "Ratio of protein decay rate to mRNA decay rate (Box 1: 'b denotes the ratio of the protein decay rate to the mRNA decay rate'). From protein half-life 10 min and mRNA half-life 2 min: beta = (ln2/10)/(ln2/2) = 0.2.",
+      "value_known": true,
+      "value": 0.2,
+      "unit": "dimensionless"
+    },
+    {
+      "name": "n",
+      "description": "Hill coefficient describing cooperativity of transcriptional repression (Box 1: 'Hill coefficient, n = 2').",
+      "value_known": true,
+      "value": 2,
+      "unit": "dimensionless"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "m_lacI",
+      "expression": "-m_lacI + alpha/(1 + p_cI**n) + alpha0"
+    },
+    {
+      "variable": "m_tetR",
+      "expression": "-m_tetR + alpha/(1 + p_lacI**n) + alpha0"
+    },
+    {
+      "variable": "m_cI",
+      "expression": "-m_cI + alpha/(1 + p_tetR**n) + alpha0"
+    },
+    {
+      "variable": "p_lacI",
+      "expression": "-beta*(p_lacI - m_lacI)"
+    },
+    {
+      "variable": "p_tetR",
+      "expression": "-beta*(p_tetR - m_tetR)"
+    },
+    {
+      "variable": "p_cI",
+      "expression": "-beta*(p_cI - m_cI)"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 200
+  },
+  "initial_conditions": [
+    {
+      "variable": "m_lacI",
+      "value_known": false
+    },
+    {
+      "variable": "m_tetR",
+      "value_known": false
+    },
+    {
+      "variable": "m_cI",
+      "value_known": false
+    },
+    {
+      "variable": "p_lacI",
+      "value_known": false
+    },
+    {
+      "variable": "p_tetR",
+      "value_known": false
+    },
+    {
+      "variable": "p_cI",
+      "value_known": false
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "reproduce",
+    "source_text": "Elowitz, M. B. & Leibler, S. 'A synthetic oscillatory network of transcriptional regulators', Nature 403, 335-338 (2000), Box 1 (deterministic continuous approximation).",
+    "confidence": "high",
+    "assumptions": [
+      "Symmetric repressilator: the three repressor modules are treated as identical except for DNA-binding specificity, so a single set of parameters applies to all six ODEs.",
+      "Deterministic, continuous approximation: molecular species are treated as continuous concentrations, neglecting the discrete and stochastic nature of reactions (the paper also gives a stochastic version).",
+      "Transcription rate depends on the repressor concentration through a Hill function with coefficient n; the promoter has a constant leak alpha0.",
+      "Time is rescaled in units of the mRNA lifetime; protein concentrations are in units of K_M; mRNA concentrations are rescaled by translation efficiency.",
+      "Protein translation rate equals beta times mRNA level, and protein decay rate also equals beta (in these units)."
+    ]
+  },
+  "missing_information": [
+    "Explicit initial conditions (m_i and p_i at t=0) used for the numerical integration in Fig. 1c are not reported in the paper, so the ODE system as written has no fully specified initial state.",
+    "The dimensionless value of alpha used for Fig. 1c is not printed directly; it had to be derived from the stated dimensional rates (0.5 transcripts/s, 0.167 proteins mRNA^-1 s^-1, K_M=40, mRNA half-life 2 min, protein half-life 10 min), which introduces some uncertainty.",
+    "The precise functional form of the transcription term for the generalized/non-symmetric case, and the exact rescaled units of the plotted axes in Fig. 1b, are hard to read from the OCR text.",
+    "No explicit time units/axes for the model output in Fig. 1c beyond 'Time (min)' up to ~600 min."
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "model_name": "Repressilator + low-pass fluorescent reporter + growth dilution + central-dogma delay (extended)",
+  "model_type": "ODE",
+  "description": "在 Elowitz & Leibler (2000) Box 1 确定性 repressilator 核心（三个阻遏物以 Hill 型相互阻遏，mRNA/蛋白一级降解）之上，补齐文献模型明确省略的四类机制：(1) 生长稀释；(2) mRNA→蛋白之间的一阶延迟（代表转录延伸+翻译+折叠）；(3) 受 TetR 阻遏的 GFP 荧光报告蛋白（带 GFP-aav 的缓慢降解）；(4) 把可观测量（荧光）与不可观测量（阻遏物浓度）区分开。模型共 10 个状态变量：3 个 mRNA、3 个延迟中间变量、3 个阻遏蛋白、1 个 GFP。本模型用于检验“补齐这些真实机制后，是否能缩小模型周期(~27 个时间单位)与实验观测周期(~160 min)之间的差距”，而非强行拟合实验值。",
+  "variables": [
+    {
+      "name": "m_L",
+      "description": "lacI mRNA（延迟前的转录产物）",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_T",
+      "description": "tetR mRNA",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_C",
+      "description": "cI mRNA",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "u_L",
+      "description": "lacI mRNA 的延迟（滞后）版本，代表转录后加工/翻译起始前的有效滞后",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "u_T",
+      "description": "tetR mRNA 的延迟版本",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "u_C",
+      "description": "cI mRNA 的延迟版本",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "p_L",
+      "description": "LacI 阻遏蛋白（以 K_M 为单位）",
+      "unit": "K_M"
+    },
+    {
+      "name": "p_T",
+      "description": "TetR 阻遏蛋白",
+      "unit": "K_M"
+    },
+    {
+      "name": "p_C",
+      "description": "CI 阻遏蛋白",
+      "unit": "K_M"
+    },
+    {
+      "name": "G",
+      "description": "GFP-aav 荧光报告蛋白（由 PLtetO1 表达、受 TetR 阻遏），荧光强度正比于 G",
+      "unit": "arbitrary fluorescence units"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "alpha",
+      "value_known": true,
+      "value": 30,
+      "unit": "dimensionless",
+      "description": "去阻遏最大转录-翻译强度（沿用文献换算值）"
+    },
+    {
+      "name": "alpha0",
+      "value_known": true,
+      "value": 0.03,
+      "unit": "dimensionless",
+      "description": "启动子泄漏（=1e-3*alpha，沿用文献）"
+    },
+    {
+      "name": "beta",
+      "value_known": true,
+      "value": 0.2,
+      "unit": "dimensionless",
+      "description": "蛋白降解速率/mRNA 降解速率（文献：半衰期 10 min / 2 min）"
+    },
+    {
+      "name": "n",
+      "value_known": true,
+      "value": 2,
+      "unit": "dimensionless",
+      "description": "Hill 系数（文献）"
+    },
+    {
+      "name": "mu",
+      "value_known": false,
+      "value": 0.033,
+      "unit": "dimensionless (1/时间单位)",
+      "description": "生长稀释速率。由文献 doubling time 50-70 min 估算：mu_real=ln2/60min=0.0116 min^-1，乘以 mRNA 平均寿命 2.885 min 得 0.033。文献未将其作为模型参数给出，属本模型新增。"
+    },
+    {
+      "name": "kappa",
+      "value_known": false,
+      "value": 1.443,
+      "unit": "dimensionless (1/时间单位)",
+      "description": "mRNA→蛋白的一阶延迟速率（时间常数 1/kappa）。取有效滞后 ~2 min（转录延伸+翻译+折叠的量级）→ 2/2.885=0.693 时间单位 → kappa=1.443。文献未给出，属本模型新增。"
+    },
+    {
+      "name": "gamma_G",
+      "value_known": false,
+      "value": 0.0222,
+      "unit": "dimensionless (1/时间单位)",
+      "description": "GFP-aav 降解速率。由文献 Methods 给出的 GFP-aav 寿命 ~90 min 估算：gamma_real=ln2/90min=0.0077 min^-1，乘 2.885 = 0.0222（时间常数约 45 个时间单位≈130 min）。"
+    },
+    {
+      "name": "alpha_G",
+      "value_known": false,
+      "value": 30,
+      "unit": "dimensionless",
+      "description": "GFP 的最大表达强度。文献未给出，暂取与阻遏物同量级（=30）作为工作假设；该值不影响振荡周期，只影响荧光振幅。"
+    },
+    {
+      "name": "alpha_G0",
+      "value_known": false,
+      "value": 0.03,
+      "unit": "dimensionless",
+      "description": "GFP 启动子泄漏，取与阻遏物相同（=0.03）作为工作假设。"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "m_L",
+      "expression": "-m_L - mu*m_L + alpha/(1+p_C**n) + alpha0"
+    },
+    {
+      "variable": "m_T",
+      "expression": "-m_T - mu*m_T + alpha/(1+p_L**n) + alpha0"
+    },
+    {
+      "variable": "m_C",
+      "expression": "-m_C - mu*m_C + alpha/(1+p_T**n) + alpha0"
+    },
+    {
+      "variable": "u_L",
+      "expression": "kappa*(m_L - u_L)"
+    },
+    {
+      "variable": "u_T",
+      "expression": "kappa*(m_T - u_T)"
+    },
+    {
+      "variable": "u_C",
+      "expression": "kappa*(m_C - u_C)"
+    },
+    {
+      "variable": "p_L",
+      "expression": "beta*(u_L - p_L) - mu*p_L"
+    },
+    {
+      "variable": "p_T",
+      "expression": "beta*(u_T - p_T) - mu*p_T"
+    },
+    {
+      "variable": "p_C",
+      "expression": "beta*(u_C - p_C) - mu*p_C"
+    },
+    {
+      "variable": "G",
+      "expression": "-gamma_G*G - mu*G + alpha_G/(1+p_T**n) + alpha_G0"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 300
+  },
+  "initial_conditions": [
+    {
+      "variable": "m_L",
+      "value_known": true,
+      "value": 1.0
+    },
+    {
+      "variable": "m_T",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "m_C",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "u_L",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "u_T",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "u_C",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "p_L",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "p_T",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "p_C",
+      "value_known": true,
+      "value": 0.0
+    },
+    {
+      "variable": "G",
+      "value_known": true,
+      "value": 0.0
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "self_derived",
+    "source_text": "扩展自 Elowitz & Leibler, Nature 403:335-338 (2000) Box 1；新增机制依据同一文献的 Methods/Fig.2-3 中报告的培养与测量条件",
+    "confidence": "medium",
+    "assumptions": [
+      "保留文献核心：对称三节点环状负反馈、Hill 型协同阻遏（n=2）、mRNA 与蛋白一级降解、时间以 mRNA 平均寿命为单位。",
+      "新增生长稀释项（-mu*x）：文献模型中完全省略了细胞生长/分裂导致的浓度稀释；在指数生长的大肠杆菌中（倍增时间 50-70 min）稀释率不可忽略，故对每个物种统一加入 mu。",
+      "新增 mRNA→蛋白的一阶延迟（变量 u_i）：文献模型把转录与翻译压缩为瞬时项；真实细胞中转录延伸、翻译与蛋白折叠引入了数分钟的有效滞后，本模型用一阶惰性环节近似（无法用 DDE 时用此近似）。",
+      "新增 GFP 报告蛋白 G：文献实验测量的是荧光（见图 2/3），而非阻遏物浓度；G 由 PLtetO1 表达、受 TetR 阻遏，并带有 GFP-aav 的慢降解，使得模型输出可直接与荧光时间序列对照。",
+      "仍为确定性模型：不含分子离散性与随机涨落，故无法复现文献中细胞间周期/振幅的显著差异（40% 细胞振荡、周期 160±40 min、子代相关性）。",
+      "不含细胞分裂/隔膜事件与稳定期调控，故无法复现跨代状态传递与稳定期停振。",
+      "新增参数 mu、kappa、gamma_G 由文献给出的倍增时间与 GFP 寿命估算，alpha_G、alpha_G0 无文献依据、为工作假设；均已在 value_known 与 missing_information 中标注。",
+      "本模型的目的是「诊断差距」而非「拟合实验值」，因此未对任何参数做反演调优。"
+    ]
+  },
+  "missing_information": [
+    "GFP 报告蛋白的最大表达强度 alpha_G 与其泄漏 alpha_G0 文献未给出（已取与阻遏物同量级作为工作假设）。",
+    "GFP 的成熟（氧化折叠）速率常数未给出；本模型未区分未成熟/成熟 GFP。",
+    "mRNA→蛋白的有效延迟未直接测量，kappa 为由“数分钟”量级假设得到。",
+    "生长稀释率未作为模型参数给出，mu 由倍增时间 50-70 min 估算（培养条件依赖）。",
+    "真实 in vivo 的有效参数（尤其阻遏蛋白实际半衰期与有效启动子强度）存在较大不确定度；文献参数为设计用的量级估计。",
+    "随机模拟（Gillespie）与细胞分裂事件所需参数未提供，本模型未包含。"
+  ]
+}

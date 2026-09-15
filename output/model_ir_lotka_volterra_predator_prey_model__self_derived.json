@@ -1,0 +1,94 @@
+{
+  "model_name": "Lotka-Volterra predator-prey model",
+  "model_type": "ODE",
+  "description": "A minimal two-species predator-prey model. The prey population X grows exponentially in the absence of predators at rate alpha and is removed by predator-prey encounters at rate beta (mass-action / random-encounter term beta*X*Y). The predator population Y decays exponentially in the absence of prey at rate gamma and grows by converting consumed prey into new predators at rate delta (term delta*X*Y). The model exhibits the classic neutral centre of closed orbits with a conserved quantity, producing sustained oscillations whose amplitude depends on initial conditions.",
+  "variables": [
+    {
+      "name": "X",
+      "description": "Prey population density (e.g. number of prey, in arbitrary/relative units)",
+      "unit": "individuals"
+    },
+    {
+      "name": "Y",
+      "description": "Predator population density (e.g. number of predators, in arbitrary/relative units)",
+      "unit": "individuals"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "alpha",
+      "description": "Intrinsic per-capita growth rate of the prey in the absence of predators",
+      "value_known": true,
+      "value": 1.1,
+      "unit": "1/time"
+    },
+    {
+      "name": "beta",
+      "description": "Predation (attack) rate coefficient for prey removal via predator-prey encounters",
+      "value_known": true,
+      "value": 0.4,
+      "unit": "1/(individuals*time)"
+    },
+    {
+      "name": "delta",
+      "description": "Predator reproduction efficiency: conversion of consumed prey into new predators",
+      "value_known": true,
+      "value": 0.1,
+      "unit": "1/(individuals*time)"
+    },
+    {
+      "name": "gamma",
+      "description": "Per-capita death rate of the predator in the absence of prey",
+      "value_known": true,
+      "value": 0.4,
+      "unit": "1/time"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "X",
+      "expression": "alpha*X - beta*X*Y"
+    },
+    {
+      "variable": "Y",
+      "expression": "delta*X*Y - gamma*Y"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 60
+  },
+  "initial_conditions": [
+    {
+      "variable": "X",
+      "value_known": true,
+      "value": 10
+    },
+    {
+      "variable": "Y",
+      "value_known": true,
+      "value": 5
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "self_derived",
+    "source_text": "self-derived (no source literature; standard Lotka-Volterra formulation)",
+    "confidence": "high",
+    "assumptions": [
+      "Closed, well-mixed (homogeneous) population with no spatial structure or age structure.",
+      "Prey have unlimited food and grow exponentially (Malthusian) when predators are absent; no prey carrying capacity.",
+      "Predation is modelled as a mass-action (random-encounter / bilinear) term proportional to the product X*Y.",
+      "Predators have no alternative food source and die at a constant per-capita rate gamma.",
+      "A fixed fraction of consumed prey biomass is converted into new predators (constant conversion efficiency delta); no predator saturation (type I functional response).",
+      "All rates (alpha, beta, delta, gamma) are constant in time and independent of population density.",
+      "Populations are large enough that demographic stochasticity is negligible (deterministic ODE).",
+      "Parameters are chosen to be biologically reasonable: predator conversion efficiency delta < prey removal coefficient beta, and the two populations oscillate on comparable timescales."
+    ]
+  },
+  "missing_information": [
+    "No empirical data are provided because this is a self-derived model; alpha, beta, delta, gamma are illustrative values, not fitted to a specific system.",
+    "The units of population density (individuals vs. biomass) are arbitrary/relative.",
+    "No carrying capacity, predator satiation, or time delays are included; these would be needed to match real ecological time series more closely."
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "model_name": "Repressilator: symmetric six-variable transcriptional oscillator (Elowitz & Leibler 2000, Box 1)",
+  "model_type": "ODE",
+  "description": "Deterministic continuous 'repressilator' model of a synthetic cyclic negative-feedback loop in E. coli. Six coupled ODEs describe the 3 repressor mRNAs (m_lacI, m_tetR, m_cI) and their 3 proteins (p_lacI, p_tetR, p_cI). Transcription of each mRNA is repressed by the protein of the previous gene in the cycle (LacI represses tetR; TetR represses cI; CI represses lacI) through a Hill function 1/(1+p_j^n) plus a leak term a0; translation is represented by the linear coupling b*(m_i) and both species decay linearly. Time is rescaled to the mRNA lifetime, protein concentrations in units of K_M (repressors needed for half-maximal repression) and mRNA in units of translation efficiency.",
+  "variables": [
+    {
+      "name": "m_lacI",
+      "description": "lacI mRNA concentration (rescaled by translation efficiency)",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_tetR",
+      "description": "tetR mRNA concentration (rescaled by translation efficiency)",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_cI",
+      "description": "cI mRNA concentration (rescaled by translation efficiency)",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "p_lacI",
+      "description": "LacI repressor protein concentration (units of K_M)",
+      "unit": "dimensionless_KM"
+    },
+    {
+      "name": "p_tetR",
+      "description": "TetR repressor protein concentration (units of K_M)",
+      "unit": "dimensionless_KM"
+    },
+    {
+      "name": "p_cI",
+      "description": "CI repressor protein concentration (units of K_M)",
+      "unit": "dimensionless_KM"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "a",
+      "value_known": true,
+      "value": 62.44,
+      "unit": "dimensionless (proteins per cell per K_M)",
+      "description": "Effective maximal transcription rate (promoter strength x translation efficiency / (mRNA decay rate^2 x K_M)). Derived from the paper's values: induced promoter strength 0.5 transcripts/s, translation 20 proteins/transcript (=0.1667 s^-1), mRNA half-life 2 min, K_M=40. Equals 'alpha', the maximum proteins per cell (x K_M)."
+    },
+    {
+      "name": "a0",
+      "value_known": true,
+      "value": 0.06244,
+      "unit": "dimensionless",
+      "description": "Leakiness: residual transcription with saturating repressor. Derived from the paper's repressed promoter strength 5e-4 transcripts/s; note a0/a = 1e-3, exactly the ratio used for curve C in Fig. 1b."
+    },
+    {
+      "name": "b",
+      "value_known": true,
+      "value": 0.2,
+      "unit": "dimensionless",
+      "description": "Ratio of protein decay rate to mRNA decay rate, from protein half-life 10 min and mRNA half-life 2 min (120/600 = 0.2). In the paper's stability diagram this is the parameter beta."
+    },
+    {
+      "name": "n",
+      "value_known": true,
+      "value": 2.0,
+      "unit": "dimensionless",
+      "description": "Hill coefficient of cooperativity of repression (paper: n = 2)"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "m_lacI",
+      "expression": "-m_lacI + a/(1 + p_cI**n) + a0"
+    },
+    {
+      "variable": "m_tetR",
+      "expression": "-m_tetR + a/(1 + p_lacI**n) + a0"
+    },
+    {
+      "variable": "m_cI",
+      "expression": "-m_cI + a/(1 + p_tetR**n) + a0"
+    },
+    {
+      "variable": "p_lacI",
+      "expression": "-b*(p_lacI - m_lacI)"
+    },
+    {
+      "variable": "p_tetR",
+      "expression": "-b*(p_tetR - m_tetR)"
+    },
+    {
+      "variable": "p_cI",
+      "expression": "-b*(p_cI - m_cI)"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 400,
+    "spatial": []
+  },
+  "initial_conditions": [
+    {
+      "variable": "m_lacI",
+      "value_known": false,
+      "value": 1.0
+    },
+    {
+      "variable": "m_tetR",
+      "value_known": false,
+      "value": 0.0
+    },
+    {
+      "variable": "m_cI",
+      "value_known": false,
+      "value": 0.0
+    },
+    {
+      "variable": "p_lacI",
+      "value_known": false,
+      "value": 1.0
+    },
+    {
+      "variable": "p_tetR",
+      "value_known": false,
+      "value": 0.0
+    },
+    {
+      "variable": "p_cI",
+      "value_known": false,
+      "value": 0.0
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "reproduce",
+    "source_text": "Elowitz, M. B. & Leibler, S. 'A synthetic oscillatory network of transcriptional regulators', Nature 403, 335-338 (2000). Box 1 'Network design', deterministic continuous approximation.",
+    "confidence": "high",
+    "assumptions": [
+      "Symmetric case: all three repressors are treated as identical except for their DNA-binding specificity (same a, a0, b, n).",
+      "Well-mixed, continuous, deterministic approximation; molecular discreteness and stochasticity (treated separately by the paper's stochastic simulation) are neglected.",
+      "Transcription depends on the repressor through a Hill function 1/(1+p^n); promoter leakiness a0 adds a constant basal transcription.",
+      "Translation and protein decay are lumped into the linear term -b(p_i - m_i).",
+      "Time rescaled in units of the mRNA lifetime; protein concentrations in units of K_M; mRNA rescaled by translation efficiency. 1 time unit = 2 min."
+    ]
+  },
+  "missing_information": [
+    "The paper does not state the explicit initial conditions used for the numerical integration in Fig. 1c; the non-symmetric values used here are an arbitrary (but documented) choice needed to start the simulation off the symmetric manifold. Because the solution converges to a limit cycle, the long-time behaviour is independent of these values.",
+    "The exact numeric solution values (period/amplitude) behind Fig. 1c are not tabulated in the text; only the qualitative result 'sustained limit-cycle oscillations' is reported.",
+    "The axis label of Fig. 1b reads 'Protein lifetime/mRNA lifetime, beta', which is ambiguous; the equation dpi/dt = -b(pi - mi) implies b is the ratio of DECAY RATES (0.2 from the stated half-lives). This ambiguity is flagged here."
+  ]
+}

@@ -9,12 +9,22 @@ Two modes:
       demo and for verifying the numerical engine works.
 
   python main.py [--data path_to_literature.txt]
-      Interactive mode: connect to the configured LLM (DeepSeek via USTC
-      endpoint) and let the agent read the literature, extract/reproduce or
-      spontaneously derive the model, simulate it and write a report.
+      Interactive mode: connect to the configured LLM (DeepSeek) and let the
+      agent read the literature, extract/reproduce or spontaneously derive
+      the model, simulate it and write a report. The conversation is
+      persistent: it is auto-saved after every round to output/sessions/, so
+      you can exit (type `exit`) and later resume it with --resume.
+
+  python main.py --resume SESSION_ID
+      Resume a previously-saved conversation and keep talking. The full agent
+      message history (including tool calls) is reloaded, so the agent
+      remembers the models it built before. Does NOT re-process --data.
+
+  python main.py --list-sessions
+      List all saved conversations you can resume.
 
 Required env var for interactive mode:
-  USTC_LLM_API_KEY
+  DEEPSEEK_API_KEY    (also optionally BIOMODEL_MODEL for the model name)
 """
 
 import argparse
@@ -146,13 +156,71 @@ a=1.0, b=0.1, c=0.075, d=1.5，初值 X(0)=10, Y(0)=5。
 
 
 # ---------------------------------------------------------------------------
-# Interactive (LLM) mode
+# Interactive (LLM) mode + session persistence
 # ---------------------------------------------------------------------------
 
-def run_interactive(data_path=None):
-    api_key = os.getenv("USTC_LLM_API_KEY")
+def _sessions_dir():
+    d = Path("output") / "sessions"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _session_path(session_id):
+    return _sessions_dir() / f"{session_id}.json"
+
+
+def _new_session_id():
+    from datetime import datetime
+    return "sess_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+def _save_session(session):
+    """Persist a session (id, model, data_path, created_at, messages) to disk."""
+    path = _session_path(session["session_id"])
+    tmp = path.with_suffix(".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(session, f, ensure_ascii=False, indent=2)
+    tmp.replace(path)  # atomic-ish write: never leave a half-written session
+
+
+def _load_session(session_id):
+    path = _session_path(session_id)
+    if not path.exists():
+        return None, f"找不到会话 '{session_id}'。\n可用 `python main.py --list-sessions` 查看已保存的会话。"
+    try:
+        with open(path, encoding="utf-8") as f:
+            session = json.load(f)
+        return session, None
+    except Exception as exc:
+        return None, f"读取会话 '{session_id}' 失败：{exc}"
+
+
+def _list_sessions():
+    """Print a human-readable listing of all saved sessions."""
+    sess_dir = _sessions_dir()
+    files = sorted(sess_dir.glob("sess_*.json"), key=lambda p: p.name, reverse=True)
+    if not files:
+        print("（还没有保存任何会话。）")
+        return
+    print("已保存的会话（最新的在前）:") if False else None
+    print(f"{'会话 ID':<24} {'创建时间':<22} {'消息数':<8} 说明")
+    print("-" * 80)
+    for p in files:
+        try:
+            with open(p, encoding="utf-8") as f:
+                s = json.load(f)
+            n = len(s.get("messages", []))
+            title = s.get("note", "")
+            print(f"{s.get('session_id'):<24} {s.get('created_at',''):<22} {n:<8} {title}")
+        except Exception:
+            print(f"{p.stem:<24} （无法解析）")
+    print("\n使用 `python main.py --resume <会话ID>` 恢复某个会话继续对话。")
+
+
+def run_interactive(data_path=None, resume_id=None):
+    api_key = os.getenv("DEEPSEEK_API_KEY")
     if not api_key:
-        print("缺少环境变量 USTC_LLM_API_KEY，无法连接 LLM。")
+        print("缺少环境变量 DEEPSEEK_API_KEY，无法连接 LLM。")
         print("提示：可用 `python main.py --demo` 运行无 API 演示。")
         return 1
 
@@ -161,38 +229,111 @@ def run_interactive(data_path=None):
     from tools import TOOLS, FUNCTIONS
     from prompts import SYSTEM_PROMPT
 
+    MODEL = os.getenv("BIOMODEL_MODEL", "deepseek-flash")
+
+    # ---- Resume an existing session, or start a fresh one ----
+    session_id = None
+    note = data_path or ""
+    if resume_id:
+        session, err = _load_session(resume_id)
+        if err:
+            print(err)
+            return 1
+        messages = session.get("messages") or []
+        if not any(m.get("role") == "system" for m in messages):
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
+        MODEL = session.get("model", MODEL)
+        session_id = session["session_id"]
+        note = session.get("note", "")
+        print(f"已恢复会话 '{session_id}'（{session.get('created_at', '')}），"
+              f"共 {len(messages)} 条历史消息。")
+    else:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        session_id = _new_session_id()
+        # 若传入了文献路径，先作为第一轮任务交给 agent，跑完再进入持续对话。
+        # 新建会话的"未完成第一轮"也持久化，保证中断不丢。
+        if data_path:
+            messages.append({
+                "role": "user",
+                "content": (
+                    f"请读取并处理这篇文献：{data_path}。"
+                    "（支持 .pdf 文件，会自动解析为文本）"
+                    "如果文献给出了完整数学模型，请按‘复现’模式提取并用 simulate_model "
+                    "复现并写报告；如果文献只描述了机制而没有完整方程，请按‘自发构建’"
+                    "模式提出假设驱动的 ODE/PDE 模型，模拟并写报告。"
+                ),
+            })
+
     client = OpenAI(
         api_key=api_key,
-        base_url="https://api.llm.ustc.edu.cn/v1",
+        base_url="https://api.deepseek.com/v1",
     )
-    MODEL = os.getenv("BIOMODEL_MODEL", "deepseek-v4-flash-ascend")
 
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    # 关键：把"当前会话"传给内部循环使用，以便每轮结束后落盘保存。
+    session = {
+        "session_id": session_id,
+        "created_at": _created_at_of(session_id),
+        "model": MODEL,
+        "note": note,
+        "data_path": data_path,
+        "messages": messages,
+    }
 
-    if data_path:
-        user_input = (
-            f"请读取并处理这篇文献：{data_path}。"
-            "（支持 .pdf 文件，会自动解析为文本）"
-            "如果文献给出了完整数学模型，请按‘复现’模式提取并用 simulate_model "
-            "复现并写报告；如果文献只描述了机制而没有完整方程，请按‘自发构建’模式"
-            "提出假设驱动的 ODE/PDE 模型，模拟并写报告。"
-        )
+    def persist():
+        # keep messages in sync inside the session dict
+        session["messages"] = messages
+        session["model"] = MODEL
+        _save_session(session)
+
+    # First turn: process the data file (only for a fresh session with --data).
+    if not resume_id and data_path:
         print(f"文献路径: {data_path}")
-    else:
-        user_input = input("You: ")
+        print(f"[会话 {session_id}] 正在处理文献，请稍候……")
+        run_agent(
+            client=client,
+            model=MODEL,
+            messages=messages,
+            tools=TOOLS,
+            functions=FUNCTIONS,
+            verbose=False,
+        )
+        persist()
 
-    messages.append({"role": "user", "content": user_input})
+    # Persistent chat loop: continue talking until the user types exit.
+    print("\n（持续对话中：可继续提问或要求修改模型；输入 exit 退出。"
+          f"会话 ID: {session_id}，退出后可 `--resume {session_id}` 继续）")
+    while True:
+        user_input = input("You: ").strip()
+        if not user_input:
+            continue
+        if user_input.lower() in ("exit", "quit", "退出"):
+            persist()  # save before leaving
+            print("已保存会话，输入 `python main.py --resume "
+                  f"{session_id}` 可继续。再见！")
+            break
 
-    answer = run_agent(
-        client=client,
-        model=MODEL,
-        messages=messages,
-        tools=TOOLS,
-        functions=FUNCTIONS,
-    )
-    print("\nAgent:")
-    print(answer)
+        messages.append({"role": "user", "content": user_input})
+        answer = run_agent(
+            client=client,
+            model=MODEL,
+            messages=messages,
+            tools=TOOLS,
+            functions=FUNCTIONS,
+            verbose=False,
+        )
+        print("\nAgent:")
+        print(answer)
+        persist()  # persist after each round so nothing is lost on crash/exit
+
     return 0
+
+
+def _created_at_of(session_id):
+    """Recover a display timestamp from the session id (sess_YYYYMMDD_HHMMSS)."""
+    stamp = session_id.removeprefix("sess_")
+    if len(stamp) == 15 and stamp[:8].isdigit():  # YYYYMMDD_HHMMSS
+        return stamp[:8] + "_" + stamp[9:]
+    return ""
 
 
 def main():
@@ -201,11 +342,18 @@ def main():
                         help="运行无 API 的完整复现演示")
     parser.add_argument("--data", type=str, default=None,
                         help="文献文件路径，支持 .txt 与 .pdf（交互模式）")
+    parser.add_argument("--resume", type=str, default=None, metavar="SESSION_ID",
+                        help="恢复之前保存的会话并继续对话（不重新处理 --data 文献）")
+    parser.add_argument("--list-sessions", action="store_true",
+                        help="列出所有已保存的可恢复会话")
     args = parser.parse_args()
 
     if args.demo:
         sys.exit(run_demo())
-    sys.exit(run_interactive(args.data))
+    if args.list_sessions:
+        _list_sessions()
+        sys.exit(0)
+    sys.exit(run_interactive(args.data, resume_id=args.resume))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,151 @@
+{
+  "boundary_conditions": [],
+  "description": "E. coli 中人工合成的三节点环状转录抑制网络（repressilator）：LacI 抑制 tetR 转录，TetR 抑制 cI 转录，CI 抑制 lacI 转录。每个节点由转录（受上一个节点蛋白以 Hill 型方式阻遏）、翻译和降解（mRNA 与蛋白一级降解）三步构成，共 6 个连续状态变量。文献 Box 1 给出的是对称化、无量纲化的确定性连续模型：时间以 mRNA 寿命为单位，蛋白浓度以 K_M（半最大阻遏所需阻遏物数）为单位，mRNA 浓度以翻译效率（每个 mRNA 平均产生的蛋白数）为单位。该模型预测两类动力学：收敛到稳定定态，或定态失稳后产生持续极限环振荡。",
+  "domain": {
+    "t_end": 150,
+    "t_start": 0
+  },
+  "equations": [
+    {
+      "expression": "-m_lacI + alpha/(1 + p_cI**n) + alpha0",
+      "variable": "m_lacI"
+    },
+    {
+      "expression": "-m_tetR + alpha/(1 + p_lacI**n) + alpha0",
+      "variable": "m_tetR"
+    },
+    {
+      "expression": "-m_cI + alpha/(1 + p_tetR**n) + alpha0",
+      "variable": "m_cI"
+    },
+    {
+      "expression": "-beta*(p_lacI - m_lacI)",
+      "variable": "p_lacI"
+    },
+    {
+      "expression": "-beta*(p_tetR - m_tetR)",
+      "variable": "p_tetR"
+    },
+    {
+      "expression": "-beta*(p_cI - m_cI)",
+      "variable": "p_cI"
+    }
+  ],
+  "initial_conditions": [
+    {
+      "value": 1.0,
+      "value_known": true,
+      "variable": "m_lacI"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "m_tetR"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "m_cI"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "p_lacI"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "p_tetR"
+    },
+    {
+      "value": 0.0,
+      "value_known": true,
+      "variable": "p_cI"
+    }
+  ],
+  "missing_information": [
+    "初始条件（m_i、p_i 的初值）文献未给出；本 IR 采用非对称初值 m_lacI=1、其余为 0，属本 Agent 为启动数值积分而人为设定的取值，非文献数据（因此初值的 value_known 虽置为 true 以便模拟，但来源并非原文）。",
+    "原文图 1c 确定性数值解所用的确切无量纲 alpha 值未直接印刷给出，本文按 Box 1 的 dimensional 参数换算得 alpha=30；若采用不同重标度约定，alpha 数值会不同（原文图 1b 的 alpha 轴量级可达 10^3）。",
+    "时间单位未以物理时间给出：模型时间以 mRNA 寿命（约 2 min）为单位，转换为分钟需乘以 2。",
+    "随机（Gillespie）版本模型的反应速率已在 Box 1 列出，但未给出完整随机模拟的实现细节与初值，本 IR 未包含随机模型。",
+    "GFP-aav 报告蛋白的成熟速率常数与降解速率未给出数值，故模型中无 GFP 变量，模拟输出只能与阻遏物浓度而非荧光强度直接比较。"
+  ],
+  "model_name": "Repressilator: symmetric three-gene cyclic negative-feedback oscillator (Elowitz & Leibler 2000, Box 1)",
+  "model_type": "ODE",
+  "origin": {
+    "assumptions": [
+      "文献明确给出模型的生物学假设：三个阻遏物除 DNA 结合特异性外完全相同（对称网络），故三者共用同一组参数 alpha、alpha0、beta、n。",
+      "转录阻遏用 Hill 函数 1/(1+p^n) 描述（协同阻遏，n = 2；原文另用双操作子位点模型验证了协同性）。",
+      "mRNA 与蛋白均按一级动力学降解；mRNA 降解速率归一化为 1（时间以 mRNA 寿命为单位）。",
+      "模型为确定性连续近似，忽略分子离散性与随机涨落（原文另建随机模型做对比，本 IR 为确定性版本）。",
+      "模型未包含细胞分裂导致的稀释、细胞生长/静止期效应，也未包含 GFP 报告蛋白的成熟与降解动力学。",
+      "参数 alpha、alpha0 由原文给出的 dimensional 参数（启动子强度 0.5 / 5e-4 transcripts/s、翻译效率 20 proteins/transcript、mRNA 半衰期 2 min、K_M = 40 monomers/cell）换算得到，换算方式见各参数 description。",
+      "初值原文未给出，本 IR 中为便于数值积分而人为设定（非文献数据）。"
+    ],
+    "confidence": "high",
+    "mode": "reproduce",
+    "source_text": "Elowitz M.B. & Leibler S., 'A synthetic oscillatory network of transcriptional regulators', Nature 403:335-338 (2000), Box 1 (deterministic, continuous approximation)"
+  },
+  "parameters": [
+    {
+      "description": "每个拷贝的启动子在去阻遏（完全诱导）状态下每单位时间产生的蛋白量（无泄漏部分最大转录-翻译强度）。换算依据原文：0.5 transcripts/s × 20 proteins/transcript × 120 s (mRNA 寿命 2 min) = 1200 proteins/cell，除以 K_M = 40 monomers/cell 得 30。",
+      "name": "alpha",
+      "unit": "dimensionless (K_M units per mRNA lifetime)",
+      "value": 30,
+      "value_known": true
+    },
+    {
+      "description": "启动子泄漏（完全阻遏时残余转录强度）。换算依据原文：5e-4 transcripts/s × 20 × 120 s = 1.2 proteins/cell，除以 K_M = 40 得 0.03；alpha0/alpha = 1e-3，对应原文图 1b 曲线 C。",
+      "name": "alpha0",
+      "unit": "dimensionless (K_M units per mRNA lifetime)",
+      "value": 0.03,
+      "value_known": true
+    },
+    {
+      "description": "蛋白降解速率与 mRNA 降解速率之比。原文 Box 1：蛋白半衰期 10 min、mRNA 半衰期 2 min，故 beta = (ln2/10)/(ln2/2) = 0.2。",
+      "name": "beta",
+      "unit": "dimensionless (蛋白降解速率/mRNA 降解速率)",
+      "value": 0.2,
+      "value_known": true
+    },
+    {
+      "description": "Hill 系数，描述阻遏作用的协同性（原文 Box 1 数值解取 n = 2）。",
+      "name": "n",
+      "unit": "dimensionless",
+      "value": 2,
+      "value_known": true
+    }
+  ],
+  "variables": [
+    {
+      "description": "lacI 的 mRNA 浓度（已按翻译效率重标度）",
+      "name": "m_lacI",
+      "unit": "dimensionless (protein-equivalents per cell / K_M)"
+    },
+    {
+      "description": "tetR 的 mRNA 浓度（已按翻译效率重标度）",
+      "name": "m_tetR",
+      "unit": "dimensionless (protein-equivalents per cell / K_M)"
+    },
+    {
+      "description": "cI 的 mRNA 浓度（已按翻译效率重标度）",
+      "name": "m_cI",
+      "unit": "dimensionless (protein-equivalents per cell / K_M)"
+    },
+    {
+      "description": "LacI 阻遏蛋白浓度（以 K_M 为单位），抑制 tetR 的转录",
+      "name": "p_lacI",
+      "unit": "K_M (monomers per cell)"
+    },
+    {
+      "description": "TetR 阻遏蛋白浓度（以 K_M 为单位），抑制 cI 的转录",
+      "name": "p_tetR",
+      "unit": "K_M (monomers per cell)"
+    },
+    {
+      "description": "CI 阻遏蛋白浓度（以 K_M 为单位），抑制 lacI 的转录",
+      "name": "p_cI",
+      "unit": "K_M (monomers per cell)"
+    }
+  ]
+}

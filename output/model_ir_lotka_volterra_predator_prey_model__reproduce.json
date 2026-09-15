@@ -1,0 +1,87 @@
+{
+  "model_name": "Lotka-Volterra predator-prey model",
+  "model_type": "ODE",
+  "description": "经典竞争-捕食模型：被捕食者 X 以 Logistic 之外的简单自然增长，与捕食者 Y 的交互项 -bXY；捕食者依赖捕食 -cXY 增长并以速率 d 死亡。",
+  "variables": [
+    {
+      "name": "X",
+      "description": "被捕食者（猎物）种群",
+      "unit": "unknown"
+    },
+    {
+      "name": "Y",
+      "description": "捕食者种群",
+      "unit": "unknown"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "a",
+      "description": "猎物自然增长率",
+      "value_known": true,
+      "value": 1.0,
+      "unit": "unknown"
+    },
+    {
+      "name": "b",
+      "description": "捕食导致猎物减少的速率",
+      "value_known": true,
+      "value": 0.1,
+      "unit": "unknown"
+    },
+    {
+      "name": "c",
+      "description": "捕食转化效率",
+      "value_known": true,
+      "value": 0.075,
+      "unit": "unknown"
+    },
+    {
+      "name": "d",
+      "description": "捕食者死亡速率",
+      "value_known": true,
+      "value": 1.5,
+      "unit": "unknown"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "X",
+      "expression": "a*X - b*X*Y"
+    },
+    {
+      "variable": "Y",
+      "expression": "c*X*Y - d*Y"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 40
+  },
+  "initial_conditions": [
+    {
+      "variable": "X",
+      "value_known": true,
+      "value": 10
+    },
+    {
+      "variable": "Y",
+      "value_known": true,
+      "value": 5
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "reproduce",
+    "source_text": "built-in demo (classic Lotka-Volterra)",
+    "confidence": "high",
+    "assumptions": [
+      "猎物在没有捕食者时按指数增长",
+      "捕食者只能依靠捕食猎物增长，离开猎物时指数死亡",
+      "相互作用项为质量作用形式的 -bXY / +cXY"
+    ]
+  },
+  "missing_information": [
+    "变量与参数的单位未在原文给出"
+  ]
+}

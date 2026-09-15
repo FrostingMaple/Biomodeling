@@ -37,9 +37,11 @@ def _coerce_model(model):
     return model
 
 
-# Maximum characters returned by read_text for a single file, to prevent huge
-# numeric results files from flooding the model context.
-MAX_READ_CHARS = 20000
+# Result files under output/ (big numeric simulation JSON) are capped so the
+# agent does not flood its context by re-reading them; literature text and PDFs
+# are read in FULL so no pages are dropped.
+RESULT_MAX_CHARS = 20000
+
 
 def read_text(file_path: str):
     """Read a literature file and return its content as plain text.
@@ -48,29 +50,31 @@ def read_text(file_path: str):
       - .pdf  -> parsed via pdf_utils (PyMuPDF), layout-aware two-column handling
       - other extensions (.txt, .md, .tex, ...) -> read as UTF-8 text.
 
-    Overly large files (e.g. simulation results JSON) are truncated: only the
-    first `MAX_READ_CHARS` characters are returned, plus a marker telling the
-    agent the file is large and summaries are available via simulate_model.
+    Literature text is returned in full (never truncated), so every page of a
+    paper reaches the agent. Only numeric result files under `output/` (e.g.
+    simulation_*.json) are capped to avoid flooding the model context.
     """
     p = Path(file_path)
     if not p.exists():
         return f"ERROR: file not found: {file_path}"
 
+    is_result_file = "output" in p.parts and p.suffix.lower() == ".json"
+
     if p.suffix.lower() == ".pdf":
         from pdf_utils import extract_pdf_text
-        content = extract_pdf_text(p, max_chars=MAX_READ_CHARS)
-        return content
+        return extract_pdf_text(p)
 
     try:
         content = p.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         content = p.read_text(encoding="utf-8", errors="replace")
 
-    if len(content) > MAX_READ_CHARS:
-        head = content[:MAX_READ_CHARS]
+    # Only cap large numeric result files, never the literature itself.
+    if is_result_file and len(content) > RESULT_MAX_CHARS:
+        head = content[:RESULT_MAX_CHARS]
         return (
-            f"[large file {len(content)} chars; only first {MAX_READ_CHARS} "
-            f"shown]\n\n" + head
+            f"[large result file {len(content)} chars; only first "
+            f"{RESULT_MAX_CHARS} shown]\n\n" + head
         )
     return content
 

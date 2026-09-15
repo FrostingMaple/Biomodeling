@@ -1,0 +1,142 @@
+{
+  "model_name": "Repressilator: symmetric six-variable model of a cyclic transcriptional repressor network (Elowitz & Leibler 2000, Box 1)",
+  "model_type": "ODE",
+  "description": "Six coupled first-order ODEs describing a synthetic cyclic negative-feedback network in Escherichia coli. Three repressor proteins (LacI, TetR, CI) each repress transcription of the next gene in the cycle (LacI inhibits tetR, TetR inhibits cI, CI inhibits lacI), forming an odd-numbered negative feedback loop whose steady state can become unstable and produce limit-cycle oscillations. Transcription of each mRNA is described by a Hill-type repression function with maximal rate alpha, promoter leakiness alpha0 and Hill coefficient n; translation is implicitly included through the rescaled mRNA variable; each protein decays at rate beta relative to its mRNA. Rescaling as in Box 1: protein concentrations in units of K_M (=40 monomers per cell), mRNA concentrations divided by the translation efficiency (20 proteins per transcript), time in units of the mRNA lifetime.",
+  "variables": [
+    {
+      "name": "m_lacI",
+      "description": "lacI mRNA level (rescaled by translation efficiency); transcription repressed by CI protein",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_tetR",
+      "description": "tetR mRNA level (rescaled by translation efficiency); transcription repressed by LacI protein",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "m_cI",
+      "description": "cI mRNA level (rescaled by translation efficiency); transcription repressed by TetR protein",
+      "unit": "dimensionless"
+    },
+    {
+      "name": "p_lacI",
+      "description": "LacI repressor protein concentration (units of K_M); represses tetR",
+      "unit": "K_M (40 monomers per cell)"
+    },
+    {
+      "name": "p_tetR",
+      "description": "TetR repressor protein concentration (units of K_M); represses cI",
+      "unit": "K_M (40 monomers per cell)"
+    },
+    {
+      "name": "p_cI",
+      "description": "CI repressor protein concentration (units of K_M); represses lacI",
+      "unit": "K_M (40 monomers per cell)"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "alpha",
+      "description": "maximal (fully unrepressed) rate of transcription, rescaled by mRNA lifetime and translation efficiency: 0.5 transcripts/s x 120 s (mRNA lifetime) x 20 proteins/transcript / 40 monomers per K_M = 30",
+      "value_known": true,
+      "value": 30.0,
+      "unit": "dimensionless (units of K_M per mRNA lifetime)"
+    },
+    {
+      "name": "alpha0",
+      "description": "promoter leakiness (rate of transcription when fully repressed): 5e-4 transcripts/s x 120 s x 20 / 40 = 0.03; note alpha0/alpha = 1e-3, the ratio used for curve C of Fig. 1b",
+      "value_known": true,
+      "value": 0.03,
+      "unit": "dimensionless (units of K_M per mRNA lifetime)"
+    },
+    {
+      "name": "beta",
+      "description": "ratio of protein decay rate to mRNA decay rate = (ln2/10 min)/(ln2/2 min) = 0.2 (protein half-life 10 min, mRNA half-life 2 min)",
+      "value_known": true,
+      "value": 0.2,
+      "unit": "dimensionless"
+    },
+    {
+      "name": "n",
+      "description": "Hill coefficient (cooperativity) of transcriptional repression",
+      "value_known": true,
+      "value": 2.0,
+      "unit": "dimensionless"
+    }
+  ],
+  "equations": [
+    {
+      "variable": "m_lacI",
+      "expression": "-m_lacI + alpha/(1 + p_cI**n) + alpha0"
+    },
+    {
+      "variable": "m_tetR",
+      "expression": "-m_tetR + alpha/(1 + p_lacI**n) + alpha0"
+    },
+    {
+      "variable": "m_cI",
+      "expression": "-m_cI + alpha/(1 + p_tetR**n) + alpha0"
+    },
+    {
+      "variable": "p_lacI",
+      "expression": "-beta*(p_lacI - m_lacI)"
+    },
+    {
+      "variable": "p_tetR",
+      "expression": "-beta*(p_tetR - m_tetR)"
+    },
+    {
+      "variable": "p_cI",
+      "expression": "-beta*(p_cI - m_cI)"
+    }
+  ],
+  "domain": {
+    "t_start": 0,
+    "t_end": 200
+  },
+  "initial_conditions": [
+    {
+      "variable": "m_lacI",
+      "value_known": false
+    },
+    {
+      "variable": "m_tetR",
+      "value_known": false
+    },
+    {
+      "variable": "m_cI",
+      "value_known": false
+    },
+    {
+      "variable": "p_lacI",
+      "value_known": false
+    },
+    {
+      "variable": "p_tetR",
+      "value_known": false
+    },
+    {
+      "variable": "p_cI",
+      "value_known": false
+    }
+  ],
+  "boundary_conditions": [],
+  "origin": {
+    "mode": "reproduce",
+    "source_text": "Elowitz M.B. & Leibler S., 'A synthetic oscillatory network of transcriptional regulators', Nature 403, 335-338 (2000), Box 1 (deterministic continuous approximation); Box 1 parameter values.",
+    "confidence": "high",
+    "assumptions": [
+      "Variables are the dimensionless rescaled variables of Box 1: time in units of the mRNA lifetime, protein in units of K_M = 40 monomers per cell, mRNA divided by translation efficiency (20 proteins per transcript).",
+      "Symmetric case assumed, as stated by the authors: all three repressors are identical except for their DNA-binding specificity.",
+      "Dimensional Box 1 values (promoter strength 5e-4 to 0.5 transcripts per s; translation efficiency 20 proteins per transcript; protein half-life 10 min; mRNA half-life 2 min; K_M = 40 monomers per cell; n = 2) were converted to the rescaled parameters alpha = 30, alpha0 = 0.03, beta = 0.2, n = 2. This conversion is our own arithmetic step, not printed explicitly in the paper.",
+      "Repression is described by a Hill function of the repressor monomer concentration; repressor dimerization, non-Hill repression curves and stochasticity are neglected (the paper reports that more detailed calculations give similar stability results).",
+      "No cell growth/dilution term: the model describes continuous growth conditions, as in Box 1."
+    ]
+  },
+  "missing_information": [
+    "The numerical initial conditions used to integrate the model shown in Fig. 1c are not stated in Box 1.",
+    "The exactly printed dimensionless values of alpha and alpha0 used for Fig. 1c are not given; the paper gives only dimensional promoter strengths (0.5 and 5e-4 transcripts/s), so alpha = 30 and alpha0 = 0.03 are our conversion.",
+    "Absolute repressor protein/mRNA concentrations per cell are not reported.",
+    "The axis ranges and exact shape of the stability diagram (Fig. 1b) cannot be quantitatively recovered from the text alone."
+  ]
+}
