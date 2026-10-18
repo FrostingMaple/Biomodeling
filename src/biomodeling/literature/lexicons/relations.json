@@ -1,0 +1,977 @@
+{
+  "schema_version": "1.0",
+  "lexicon_type": "relations",
+  "generated_at": "2026-09-29",
+  "description": "Common biological mathematical modelling relations and relation types, compiled from retrieved pathway, model and literature sources.",
+  "sources": [
+    {
+      "source_id": "europepmc",
+      "name": "Europe PMC REST API",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/michaelis_menten.json",
+        "raw/europepmc/hill_equation.json",
+        "raw/europepmc/hodgkin_huxley.json",
+        "raw/europepmc/sir_model.json",
+        "raw/europepmc/lotka_volterra.json",
+        "raw/europepmc/repressilator.json",
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    },
+    {
+      "source_id": "biomodels",
+      "name": "BioModels curated model repository",
+      "url": "https://www.ebi.ac.uk/biomodels/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "sbml_statistics.json",
+        "LOCAL_ARCHIVE_MANIFEST.csv"
+      ]
+    },
+    {
+      "source_id": "biomodels_search",
+      "name": "BioModels kinetic model search response",
+      "url": "https://www.ebi.ac.uk/biomodels/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/biomodels/kinetic_model_search.json"
+      ]
+    },
+    {
+      "source_id": "sbml",
+      "name": "Systems Biology Markup Language (SBML)",
+      "url": "https://sbml.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "reactome",
+      "name": "Reactome Content Service",
+      "url": "https://reactome.org/ContentService/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/reactome/R-HSA-109582.json"
+      ]
+    },
+    {
+      "source_id": "sabio_rk",
+      "name": "SABIO-RK reaction kinetics database",
+      "url": "https://sabio.h-its.org/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/sabio/searchKineticLaws.html"
+      ]
+    },
+    {
+      "source_id": "brenda",
+      "name": "BRENDA enzyme database",
+      "url": "https://www.brenda-enzymes.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "kegg",
+      "name": "KEGG pathway database",
+      "url": "https://www.genome.jp/kegg/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_mm",
+      "name": "Michaelis and Menten enzyme kinetics",
+      "url": "https://doi.org/10.1016/S0076-6879(09)63002-7",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_hh",
+      "name": "Hodgkin and Huxley action potential model",
+      "url": "https://doi.org/10.1113/jphysiol.1952.sp004764",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_sir",
+      "name": "Kermack and McKendrick compartmental epidemic model",
+      "url": "https://doi.org/10.1098/rspa.1927.0118",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_lotka_volterra",
+      "name": "Lotka-Volterra population dynamics",
+      "url": "https://doi.org/10.1038/140070a0",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "repressilator",
+      "name": "Elowitz and Leibler repressilator",
+      "url": "https://doi.org/10.1038/35002125",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000012.xml",
+        "extracted/BIOMD0000000012/"
+      ]
+    },
+    {
+      "source_id": "mapk_cascade",
+      "name": "Kholodenko MAPK cascade oscillation model",
+      "url": "https://doi.org/10.1046/j.1432-1327.2000.01197.x",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000010.xml",
+        "extracted/BIOMD0000000010/"
+      ]
+    },
+    {
+      "source_id": "erbb_model",
+      "name": "Chen et al. ErbB signaling mass-action model",
+      "url": "https://doi.org/10.1038/msb.2008.74",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "hepatic_glucose",
+      "name": "Konig et al. human hepatic glucose metabolism model",
+      "url": "https://doi.org/10.1371/journal.pcbi.1002577",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "REL_ACTIVATION",
+      "canonical_name": "activation",
+      "aliases": [
+        "activates",
+        "activation",
+        "up-regulates",
+        "upregulates",
+        "stimulates",
+        "promotes"
+      ],
+      "relation_type": "regulatory",
+      "direction": "directed",
+      "definition": "A source entity increases the activity, rate, or effective level of a target entity.",
+      "evidence_required": "Use only when the source states an increase, activation, stimulation, or promoting relation.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_SIGNAL_TRANSDUCTION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_INHIBITION",
+      "canonical_name": "inhibition",
+      "aliases": [
+        "inhibits",
+        "inhibition",
+        "suppresses",
+        "represses",
+        "down-regulates",
+        "downregulates",
+        "blocks"
+      ],
+      "relation_type": "regulatory",
+      "direction": "directed",
+      "definition": "A source entity decreases the activity, rate, or effective level of a target entity.",
+      "evidence_required": "Use when the source explicitly reports inhibition, repression, suppression, or blocking.",
+      "related_expressions": [
+        "EXPR_HILL_INHIBITION",
+        "EXPR_COMPETITIVE_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_ENZYME_INHIBITION",
+        "MODEL_SIGNAL_TRANSDUCTION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_POSITIVE_FEEDBACK",
+      "canonical_name": "positive feedback",
+      "aliases": [
+        "positive feedback loop",
+        "self-activation",
+        "autocatalysis"
+      ],
+      "relation_type": "network_motif",
+      "direction": "cyclic",
+      "definition": "A pathway or product increases an upstream component or its own production, reinforcing the response.",
+      "evidence_required": "Requires a source description of a loop, feedback, or self-reinforcement; do not infer from correlation alone.",
+      "related_expressions": [
+        "EXPR_LOGISTIC_GROWTH"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_MAPK_CASCADE"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_NEGATIVE_FEEDBACK",
+      "canonical_name": "negative feedback",
+      "aliases": [
+        "negative feedback loop",
+        "feedback inhibition",
+        "autoinhibition"
+      ],
+      "relation_type": "network_motif",
+      "direction": "cyclic",
+      "definition": "A pathway or product decreases an upstream component or its own production, stabilizing or oscillating the response.",
+      "evidence_required": "Requires an explicit feedback or feedback-inhibition statement.",
+      "related_expressions": [
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_MAPK_CASCADE",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_PHOSPHORYLATION",
+      "canonical_name": "phosphorylation",
+      "aliases": [
+        "phosphorylates",
+        "phosphorylation"
+      ],
+      "relation_type": "post_translational_modification",
+      "direction": "directed",
+      "definition": "A kinase or modifying enzyme adds a phosphate group to a target molecule.",
+      "evidence_required": "Evidence should identify the modifier and target or state that the modification occurs.",
+      "related_expressions": [
+        "EXPR_MASS_ACTION"
+      ],
+      "related_models": [
+        "MODEL_SIGNAL_TRANSDUCTION",
+        "MODEL_MAPK_CASCADE",
+        "MODEL_ERBB_SIGNALING"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_DEPHOSPHORYLATION",
+      "canonical_name": "dephosphorylation",
+      "aliases": [
+        "dephosphorylates",
+        "dephosphorylation"
+      ],
+      "relation_type": "post_translational_modification",
+      "direction": "directed",
+      "definition": "A phosphatase or modifying enzyme removes a phosphate group from a target molecule.",
+      "evidence_required": "Evidence should identify the phosphatase and target when available.",
+      "related_expressions": [
+        "EXPR_MASS_ACTION"
+      ],
+      "related_models": [
+        "MODEL_SIGNAL_TRANSDUCTION",
+        "MODEL_MAPK_CASCADE"
+      ],
+      "source_ids": [
+        "europepmc",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_BINDING",
+      "canonical_name": "binding",
+      "aliases": [
+        "binds",
+        "binding",
+        "associates",
+        "forms complex"
+      ],
+      "relation_type": "molecular_interaction",
+      "direction": "directed_or_bidirectional",
+      "definition": "Two or more entities form a bound complex or measurable association.",
+      "evidence_required": "Use for explicit binding or complex-formation statements; distinguish from statistical association.",
+      "related_expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_REVERSIBLE_BINDING"
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_RECEPTOR_LIGAND"
+      ],
+      "source_ids": [
+        "biomodels",
+        "reactome",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_UNBINDING",
+      "canonical_name": "unbinding or dissociation",
+      "aliases": [
+        "unbinds",
+        "dissociates",
+        "dissociation",
+        "release"
+      ],
+      "relation_type": "molecular_interaction",
+      "direction": "directed_or_bidirectional",
+      "definition": "A bound complex separates into its components or a ligand leaves a binding site.",
+      "evidence_required": "Requires explicit dissociation, release, or unbinding evidence.",
+      "related_expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_RECEPTOR_LIGAND",
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "biomodels",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_CATALYSIS",
+      "canonical_name": "catalysis",
+      "aliases": [
+        "catalyzes",
+        "catalyses",
+        "enzyme conversion",
+        "enzymatic conversion"
+      ],
+      "relation_type": "chemical_transformation",
+      "direction": "directed",
+      "definition": "An enzyme accelerates conversion of substrate to product without being consumed in the net reaction.",
+      "evidence_required": "Evidence should identify enzyme, substrate, and product when stated.",
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_MASS_ACTION"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_KINETICS",
+        "MODEL_METABOLIC_NETWORK"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "brenda"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_REVERSIBLE_REACTION",
+      "canonical_name": "reversible reaction",
+      "aliases": [
+        "reversible",
+        "forward and reverse reaction",
+        "bidirectional conversion"
+      ],
+      "relation_type": "chemical_transformation",
+      "direction": "bidirectional",
+      "definition": "A reaction can proceed in both forward and reverse directions under the modelled conditions.",
+      "evidence_required": "Requires explicit reversible notation or reversible kinetic terms.",
+      "related_expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_MASS_ACTION"
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_TRANSCRIPTION_ACTIVATION",
+      "canonical_name": "transcriptional activation",
+      "aliases": [
+        "transcription activation",
+        "activates transcription",
+        "promoter activation",
+        "gene activation"
+      ],
+      "relation_type": "gene_regulation",
+      "direction": "directed",
+      "definition": "A regulator increases transcription of a target gene or promoter.",
+      "evidence_required": "Evidence must connect the regulator to transcription, promoter activity, or mRNA production.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_MRNA_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_TRANSCRIPTION_REPRESSION",
+      "canonical_name": "transcriptional repression",
+      "aliases": [
+        "transcription repression",
+        "represses transcription",
+        "gene repression",
+        "promoter repression"
+      ],
+      "relation_type": "gene_regulation",
+      "direction": "directed",
+      "definition": "A regulator decreases transcription of a target gene or promoter.",
+      "evidence_required": "Evidence must connect the regulator to repression of transcription or mRNA production.",
+      "related_expressions": [
+        "EXPR_HILL_INHIBITION",
+        "EXPR_MRNA_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels",
+        "repressilator"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_TRANSLATION",
+      "canonical_name": "translation",
+      "aliases": [
+        "protein synthesis from mRNA",
+        "translates",
+        "translation"
+      ],
+      "relation_type": "gene_expression",
+      "direction": "directed",
+      "definition": "An mRNA template directs synthesis of a protein product.",
+      "evidence_required": "Requires mRNA-to-protein production evidence or a modelling definition.",
+      "related_expressions": [
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "biomodels",
+        "repressilator"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_DEGRADATION",
+      "canonical_name": "degradation",
+      "aliases": [
+        "degrades",
+        "degradation",
+        "decay",
+        "turnover"
+      ],
+      "relation_type": "turnover",
+      "direction": "directed",
+      "definition": "A molecular species is removed, destroyed, or turned over.",
+      "evidence_required": "Requires an explicit degradation, decay, or turnover statement.",
+      "related_expressions": [
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_METABOLIC_NETWORK"
+      ],
+      "source_ids": [
+        "biomodels",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_CLEARANCE",
+      "canonical_name": "clearance",
+      "aliases": [
+        "cleared",
+        "clearance",
+        "elimination",
+        "removal from compartment"
+      ],
+      "relation_type": "pharmacokinetics",
+      "direction": "directed",
+      "definition": "A substance is removed from a compartment by clearance or elimination processes.",
+      "evidence_required": "Requires compartment, substance, and clearance or elimination context.",
+      "related_expressions": [
+        "EXPR_FIRST_ORDER_CLEARANCE",
+        "EXPR_INPUT_OUTPUT_KINETICS"
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc",
+        "hepatic_glucose"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_TRANSPORT",
+      "canonical_name": "transport",
+      "aliases": [
+        "transports",
+        "transport",
+        "uptake",
+        "efflux",
+        "import",
+        "export"
+      ],
+      "relation_type": "spatial_transport",
+      "direction": "directed",
+      "definition": "An entity moves between compartments or across a membrane.",
+      "evidence_required": "Requires a source statement of transport, uptake, efflux, import, or export.",
+      "related_expressions": [
+        "EXPR_FICK_DIFFUSION"
+      ],
+      "related_models": [
+        "MODEL_REACTION_DIFFUSION",
+        "MODEL_TRANSPORT"
+      ],
+      "source_ids": [
+        "reactome",
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_DIFFUSION",
+      "canonical_name": "diffusion",
+      "aliases": [
+        "diffuses",
+        "diffusion",
+        "spatial spreading"
+      ],
+      "relation_type": "spatial_transport",
+      "direction": "directed_by_gradient",
+      "definition": "A substance spreads in space in response to a concentration gradient.",
+      "evidence_required": "Use only when diffusion or spatial transport is explicitly modelled or measured.",
+      "related_expressions": [
+        "EXPR_FICK_DIFFUSION"
+      ],
+      "related_models": [
+        "MODEL_REACTION_DIFFUSION"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_ALLOSTERIC_ACTIVATION",
+      "canonical_name": "allosteric activation",
+      "aliases": [
+        "allosteric activation",
+        "cooperative activation",
+        "positive cooperativity"
+      ],
+      "relation_type": "allostery",
+      "direction": "directed",
+      "definition": "Binding at one site increases activity or affinity at another site, often producing sigmoidal response.",
+      "evidence_required": "Requires allosteric, cooperative, or sigmoidal activation evidence.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION"
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_ALLOSTERY"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_ALLOSTERIC_INHIBITION",
+      "canonical_name": "allosteric inhibition",
+      "aliases": [
+        "allosteric inhibition",
+        "negative cooperativity"
+      ],
+      "relation_type": "allostery",
+      "direction": "directed",
+      "definition": "Binding at one site decreases activity or affinity at another site.",
+      "evidence_required": "Requires allosteric or cooperative inhibition evidence.",
+      "related_expressions": [
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_ALLOSTERY"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_COMPETITIVE_INHIBITION",
+      "canonical_name": "competitive inhibition",
+      "aliases": [
+        "competitive inhibition",
+        "competes with substrate"
+      ],
+      "relation_type": "enzyme_inhibition",
+      "direction": "directed",
+      "definition": "An inhibitor competes with substrate binding and increases the apparent Km without changing Vmax in the standard model.",
+      "evidence_required": "Requires competitive inhibition, substrate competition, or equivalent kinetic evidence.",
+      "related_expressions": [
+        "EXPR_COMPETITIVE_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_INHIBITION"
+      ],
+      "source_ids": [
+        "sabio_rk",
+        "brenda",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_RECEPTOR_DIMERIZATION",
+      "canonical_name": "receptor dimerization",
+      "aliases": [
+        "dimerization",
+        "receptor dimerization",
+        "forms dimers"
+      ],
+      "relation_type": "signal_transduction",
+      "direction": "directed",
+      "definition": "Receptor monomers associate into dimers or higher-order receptor complexes.",
+      "evidence_required": "Requires explicit dimerization or receptor-complex formation evidence.",
+      "related_expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_REVERSIBLE_BINDING"
+      ],
+      "related_models": [
+        "MODEL_RECEPTOR_LIGAND",
+        "MODEL_ERBB_SIGNALING"
+      ],
+      "source_ids": [
+        "erbb_model",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_SIGNAL_TRANSDUCTION",
+      "canonical_name": "signal transduction",
+      "aliases": [
+        "signaling cascade",
+        "signal transduction",
+        "pathway activation"
+      ],
+      "relation_type": "signal_transduction",
+      "direction": "directed",
+      "definition": "A signal is propagated through molecular interactions to produce a downstream response.",
+      "evidence_required": "Requires a source-supported chain or pathway relation; do not infer missing intermediates.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION"
+      ],
+      "related_models": [
+        "MODEL_SIGNAL_TRANSDUCTION",
+        "MODEL_ERBB_SIGNALING",
+        "MODEL_MAPK_CASCADE"
+      ],
+      "source_ids": [
+        "reactome",
+        "erbb_model",
+        "mapk_cascade"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_FLUX_REGULATION",
+      "canonical_name": "flux regulation",
+      "aliases": [
+        "regulates flux",
+        "flux control",
+        "metabolic regulation"
+      ],
+      "relation_type": "metabolic_regulation",
+      "direction": "directed",
+      "definition": "A regulator changes the rate or flux through a metabolic reaction or pathway.",
+      "evidence_required": "Requires flux, pathway rate, or metabolic regulation evidence.",
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_POWER_LAW"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_NETWORK",
+        "MODEL_GENOME_SCALE_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels",
+        "hepatic_glucose"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_PARAMETER_MODULATION",
+      "canonical_name": "parameter modulation",
+      "aliases": [
+        "modulates parameter",
+        "parameter dependence",
+        "sensitivity"
+      ],
+      "relation_type": "model_relation",
+      "direction": "directed_or_association",
+      "definition": "A condition or variable changes the value or effective influence of a model parameter.",
+      "evidence_required": "Requires an explicit parameter change, sensitivity, or modulation statement.",
+      "related_expressions": [],
+      "related_models": [
+        "MODEL_GENERAL_KINETIC"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_DOSE_RESPONSE",
+      "canonical_name": "dose-response relation",
+      "aliases": [
+        "dose response",
+        "concentration response",
+        "dose-dependent effect"
+      ],
+      "relation_type": "pharmacology",
+      "direction": "directed",
+      "definition": "A measured effect changes as a function of dose or concentration.",
+      "evidence_required": "Requires the dose or concentration range and measured response.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_DOSE_RESPONSE"
+      ],
+      "source_ids": [
+        "europepmc",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_INFECTION_TRANSMISSION",
+      "canonical_name": "infection transmission",
+      "aliases": [
+        "transmission",
+        "infection event",
+        "susceptible to infected"
+      ],
+      "relation_type": "epidemiology",
+      "direction": "directed",
+      "definition": "A susceptible individual becomes infected through contact or transmission.",
+      "evidence_required": "Requires transmission structure or infection-flow evidence.",
+      "related_expressions": [
+        "EXPR_SIR_TRANSMISSION",
+        "EXPR_SEIR_LATENT"
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_RECOVERY",
+      "canonical_name": "recovery or removal",
+      "aliases": [
+        "recovery",
+        "removal from infected compartment"
+      ],
+      "relation_type": "epidemiology",
+      "direction": "directed",
+      "definition": "An infected individual recovers, becomes non-infectious, or leaves the infected compartment.",
+      "evidence_required": "Requires recovery or removal-flow evidence.",
+      "related_expressions": [
+        "EXPR_SIR_RECOVERY"
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_STATE_TRANSITION",
+      "canonical_name": "state transition",
+      "aliases": [
+        "transitions to",
+        "state transition",
+        "conformational transition"
+      ],
+      "relation_type": "state_model",
+      "direction": "directed_or_bidirectional",
+      "definition": "A modelled system changes from one discrete state to another with an associated rate or probability.",
+      "evidence_required": "Requires named states and a transition, rate, or probability statement.",
+      "related_expressions": [
+        "EXPR_MARKOV_TRANSITION"
+      ],
+      "related_models": [
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_GATING",
+      "canonical_name": "voltage-dependent gating",
+      "aliases": [
+        "gating",
+        "activation gate",
+        "inactivation gate"
+      ],
+      "relation_type": "electrophysiology",
+      "direction": "directed",
+      "definition": "A voltage- or ligand-dependent variable controls opening or inactivation of an ion channel.",
+      "evidence_required": "Requires gating-variable or channel-state evidence.",
+      "related_expressions": [
+        "EXPR_HH_GATING"
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_COOPERATIVITY",
+      "canonical_name": "cooperativity",
+      "aliases": [
+        "cooperative binding",
+        "cooperativity",
+        "sigmoidal binding"
+      ],
+      "relation_type": "allostery",
+      "direction": "directed",
+      "definition": "Binding or activity at one site changes the affinity or response at another site.",
+      "evidence_required": "Requires cooperative or sigmoidal-response evidence.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_ALLOSTERY"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "REL_FEEDBACK_LOOP",
+      "canonical_name": "feedback loop",
+      "aliases": [
+        "feedback loop",
+        "closed-loop regulation"
+      ],
+      "relation_type": "network_motif",
+      "direction": "cyclic",
+      "definition": "A regulatory path returns to affect its own upstream component, producing stabilization, amplification, or oscillation.",
+      "evidence_required": "Requires explicit loop or feedback description.",
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_MAPK_CASCADE",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "mapk_cascade"
+      ],
+      "confidence": "high",
+      "notes": ""
+    }
+  ]
+}

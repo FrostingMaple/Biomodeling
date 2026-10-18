@@ -1,0 +1,1964 @@
+{
+  "schema_version": "1.0",
+  "lexicon_type": "parameters",
+  "generated_at": "2026-09-29",
+  "description": "Common biological mathematical modelling parameters, compiled from retrieved BioModels, Europe PMC, Reactome, SBML and classic model sources.",
+  "sources": [
+    {
+      "source_id": "europepmc",
+      "name": "Europe PMC REST API",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/michaelis_menten.json",
+        "raw/europepmc/hill_equation.json",
+        "raw/europepmc/hodgkin_huxley.json",
+        "raw/europepmc/sir_model.json",
+        "raw/europepmc/lotka_volterra.json",
+        "raw/europepmc/repressilator.json",
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    },
+    {
+      "source_id": "biomodels",
+      "name": "BioModels curated model repository",
+      "url": "https://www.ebi.ac.uk/biomodels/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "sbml_statistics.json",
+        "LOCAL_ARCHIVE_MANIFEST.csv"
+      ]
+    },
+    {
+      "source_id": "biomodels_search",
+      "name": "BioModels kinetic model search response",
+      "url": "https://www.ebi.ac.uk/biomodels/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/biomodels/kinetic_model_search.json"
+      ]
+    },
+    {
+      "source_id": "sbml",
+      "name": "Systems Biology Markup Language (SBML)",
+      "url": "https://sbml.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "reactome",
+      "name": "Reactome Content Service",
+      "url": "https://reactome.org/ContentService/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/reactome/R-HSA-109582.json"
+      ]
+    },
+    {
+      "source_id": "sabio_rk",
+      "name": "SABIO-RK reaction kinetics database",
+      "url": "https://sabio.h-its.org/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/sabio/searchKineticLaws.html"
+      ]
+    },
+    {
+      "source_id": "brenda",
+      "name": "BRENDA enzyme database",
+      "url": "https://www.brenda-enzymes.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "kegg",
+      "name": "KEGG pathway database",
+      "url": "https://www.genome.jp/kegg/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_mm",
+      "name": "Michaelis and Menten enzyme kinetics",
+      "url": "https://doi.org/10.1016/S0076-6879(09)63002-7",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_hh",
+      "name": "Hodgkin and Huxley action potential model",
+      "url": "https://doi.org/10.1113/jphysiol.1952.sp004764",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_sir",
+      "name": "Kermack and McKendrick compartmental epidemic model",
+      "url": "https://doi.org/10.1098/rspa.1927.0118",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_lotka_volterra",
+      "name": "Lotka-Volterra population dynamics",
+      "url": "https://doi.org/10.1038/140070a0",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "repressilator",
+      "name": "Elowitz and Leibler repressilator",
+      "url": "https://doi.org/10.1038/35002125",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000012.xml",
+        "extracted/BIOMD0000000012/"
+      ]
+    },
+    {
+      "source_id": "mapk_cascade",
+      "name": "Kholodenko MAPK cascade oscillation model",
+      "url": "https://doi.org/10.1046/j.1432-1327.2000.01197.x",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000010.xml",
+        "extracted/BIOMD0000000010/"
+      ]
+    },
+    {
+      "source_id": "erbb_model",
+      "name": "Chen et al. ErbB signaling mass-action model",
+      "url": "https://doi.org/10.1038/msb.2008.74",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "hepatic_glucose",
+      "name": "Konig et al. human hepatic glucose metabolism model",
+      "url": "https://doi.org/10.1371/journal.pcbi.1002577",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "PARAM_KM",
+      "canonical_name": "Michaelis constant",
+      "symbols": [
+        "Km",
+        "K_M",
+        "K_m",
+        "KM"
+      ],
+      "aliases": [
+        "Michaelis constant",
+        "Michaelis-Menten constant",
+        "half-saturation constant",
+        "Km",
+        "K_M",
+        "K_m",
+        "KM",
+        "Knm",
+        "half saturation"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Substrate concentration at which the reaction rate is half of Vmax under a Michaelis-Menten rate law.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "M, mM, µM, nM",
+          "context": "typically reported in kinetic tables or fitted parameter sets"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_COMPETITIVE_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN",
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels",
+        "sabio_rk",
+        "brenda",
+        "classic_mm"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_VMAX",
+      "canonical_name": "Maximum reaction rate",
+      "symbols": [
+        "Vmax",
+        "V_max",
+        "VMAX"
+      ],
+      "aliases": [
+        "maximum velocity",
+        "maximum reaction rate",
+        "limiting rate",
+        "Vmax",
+        "V_max",
+        "VMAX",
+        "maximum rate"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Asymptotic reaction velocity approached as substrate concentration becomes saturating in a Michaelis-Menten model.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "rate",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "substance/time",
+          "context": "reported with enzyme amount or normalized to protein concentration"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_COMPETITIVE_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN",
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "brenda",
+        "classic_mm"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KCAT",
+      "canonical_name": "Catalytic turnover number",
+      "symbols": [
+        "kcat",
+        "k_cat",
+        "kcat/Km"
+      ],
+      "aliases": [
+        "turnover number",
+        "catalytic constant",
+        "kcat",
+        "k_cat"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Number of substrate molecules converted per enzyme active site per unit time under saturating substrate conditions.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "enzyme-specific",
+          "unit": "s^-1, min^-1",
+          "context": "often derived as Vmax divided by enzyme concentration"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_CATALYTIC_EFFICIENCY"
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN",
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "brenda"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KCAT_KM",
+      "canonical_name": "Catalytic efficiency",
+      "symbols": [
+        "kcat_Km",
+        "kcat/Km"
+      ],
+      "aliases": [
+        "specificity constant",
+        "catalytic efficiency"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Ratio of catalytic turnover to Michaelis constant, often used as a measure of enzyme efficiency at low substrate concentration.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration_per_time",
+      "typical_values": [
+        {
+          "value": "enzyme-specific",
+          "unit": "M^-1 s^-1",
+          "context": "high values indicate efficient catalysis at low substrate"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_CATALYTIC_EFFICIENCY"
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN"
+      ],
+      "source_ids": [
+        "brenda",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KON",
+      "canonical_name": "Association rate constant",
+      "symbols": [
+        "kon",
+        "k_on",
+        "kf",
+        "k_f"
+      ],
+      "aliases": [
+        "association rate constant",
+        "forward binding rate",
+        "binding on-rate",
+        "kon",
+        "k_on",
+        "kf",
+        "k_f",
+        "association rate",
+        "on-rate",
+        "on rate"
+      ],
+      "category": "binding_kinetics",
+      "definition": "Second-order rate constant governing formation of a complex from its binding partners.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration_per_time",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "M^-1 s^-1",
+          "context": "used in mass-action binding and receptor-ligand kinetics"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_REVERSIBLE_BINDING"
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_RECEPTOR_LIGAND"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KOFF",
+      "canonical_name": "Dissociation rate constant",
+      "symbols": [
+        "koff",
+        "k_off",
+        "kr",
+        "k_r"
+      ],
+      "aliases": [
+        "dissociation rate constant",
+        "reverse binding rate",
+        "binding off-rate",
+        "koff",
+        "k_off",
+        "kr",
+        "k_r",
+        "dissociation rate",
+        "off-rate",
+        "off rate"
+      ],
+      "category": "binding_kinetics",
+      "definition": "First-order rate constant governing dissociation of a bound complex.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "s^-1, min^-1",
+          "context": "used with kon to determine equilibrium binding affinity"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_RECEPTOR_LIGAND",
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KD",
+      "canonical_name": "Equilibrium dissociation constant",
+      "symbols": [
+        "Kd",
+        "K_D",
+        "KD"
+      ],
+      "aliases": [
+        "dissociation constant",
+        "binding affinity constant",
+        "Kd",
+        "K_D",
+        "KD"
+      ],
+      "category": "binding_equilibrium",
+      "definition": "Equilibrium ratio koff/kon for a reversible binding reaction; lower values indicate tighter binding.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "M, nM, pM",
+          "context": "used for receptor-ligand or protein-complex affinity"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_RECEPTOR_BINDING_EQUILIBRIUM"
+      ],
+      "related_models": [
+        "MODEL_RECEPTOR_LIGAND",
+        "MODEL_MASS_ACTION"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KI",
+      "canonical_name": "Inhibition constant",
+      "symbols": [
+        "Ki",
+        "K_i",
+        "KI"
+      ],
+      "aliases": [
+        "inhibitor constant",
+        "inhibition constant"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Dissociation constant for inhibitor binding to free enzyme or enzyme-substrate complex in inhibition models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "inhibitor-specific",
+          "unit": "M, mM, µM",
+          "context": "used in competitive, noncompetitive, and uncompetitive inhibition expressions"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_COMPETITIVE_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_INHIBITION"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "brenda"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_IC50",
+      "canonical_name": "Half-maximal inhibitory concentration",
+      "symbols": [
+        "IC50",
+        "IC_50"
+      ],
+      "aliases": [
+        "50% inhibitory concentration",
+        "half-inhibitory concentration"
+      ],
+      "category": "dose_response",
+      "definition": "Concentration of an inhibitor producing 50% reduction of a specified response under stated assay conditions.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "assay-specific",
+          "unit": "M, nM, µM",
+          "context": "requires assay, substrate, time, and endpoint context"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_DOSE_RESPONSE",
+        "MODEL_ENZYME_INHIBITION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_EC50",
+      "canonical_name": "Half-maximal effective concentration",
+      "symbols": [
+        "EC50",
+        "EC_50"
+      ],
+      "aliases": [
+        "50% effective concentration",
+        "half-effective concentration"
+      ],
+      "category": "dose_response",
+      "definition": "Concentration producing 50% of the maximal observed effect under stated experimental conditions.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "assay-specific",
+          "unit": "M, nM, µM",
+          "context": "requires response definition and assay context"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION"
+      ],
+      "related_models": [
+        "MODEL_DOSE_RESPONSE"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_HILL",
+      "canonical_name": "Hill coefficient",
+      "symbols": [
+        "n",
+        "n_H",
+        "nH"
+      ],
+      "aliases": [
+        "Hill coefficient",
+        "cooperativity coefficient",
+        "nH",
+        "n_H",
+        "Hill constant"
+      ],
+      "category": "allostery",
+      "definition": "Empirical exponent in a Hill function that describes cooperativity or apparent ultrasensitivity.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "typically 1-4 in many biological systems",
+          "unit": "dimensionless",
+          "context": "n=1 is noncooperative; larger values indicate steeper response"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_GENE_REGULATION",
+        "MODEL_MAPK_CASCADE"
+      ],
+      "source_ids": [
+        "biomodels",
+        "repressilator",
+        "mapk_cascade"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_BETA",
+      "canonical_name": "Transmission or production parameter",
+      "symbols": [
+        "beta",
+        "β"
+      ],
+      "aliases": [
+        "infection rate",
+        "transmission rate",
+        "production rate"
+      ],
+      "category": "population_dynamics",
+      "definition": "Context-dependent rate parameter for transmission in epidemic models or production in gene-expression models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time_or_context",
+      "typical_values": [
+        {
+          "value": "model-specific",
+          "unit": "per_time or state-dependent",
+          "context": "must be interpreted from the enclosing model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_SIR_TRANSMISSION",
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "classic_sir",
+        "repressilator"
+      ],
+      "confidence": "high",
+      "notes": "Symbol beta is used in multiple model families; semantic review must retain context-specific disambiguation."
+    },
+    {
+      "id": "PARAM_GAMMA",
+      "canonical_name": "Recovery or removal rate",
+      "symbols": [
+        "gamma",
+        "γ"
+      ],
+      "aliases": [
+        "recovery rate",
+        "removal rate"
+      ],
+      "category": "epidemiology",
+      "definition": "Rate at which infected individuals recover or leave the infectious compartment in SIR/SEIR models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "disease-specific",
+          "unit": "day^-1",
+          "context": "inverse gives mean infectious period"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_SIR_RECOVERY"
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_SIGMA",
+      "canonical_name": "Latent or incubation rate",
+      "symbols": [
+        "sigma",
+        "σ"
+      ],
+      "aliases": [
+        "incubation rate",
+        "latent transition rate"
+      ],
+      "category": "epidemiology",
+      "definition": "Rate of transition from exposed to infectious compartment in SEIR-type models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "disease-specific",
+          "unit": "day^-1",
+          "context": "inverse gives mean latent period"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_SEIR_LATENT"
+      ],
+      "related_models": [
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_R0",
+      "canonical_name": "Basic reproduction number",
+      "symbols": [
+        "R0",
+        "R_0"
+      ],
+      "aliases": [
+        "basic reproduction number",
+        "basic reproductive ratio"
+      ],
+      "category": "epidemiology",
+      "definition": "Expected number of secondary infections generated by one infected individual in a fully susceptible population.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "disease- and contact-pattern-specific",
+          "unit": "dimensionless",
+          "context": "for simple SIR, R0=beta/gamma"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_R0_SIR"
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_MU_GROWTH",
+      "canonical_name": "Specific growth rate",
+      "symbols": [
+        "mu",
+        "μ",
+        "r"
+      ],
+      "aliases": [
+        "growth rate",
+        "specific growth rate"
+      ],
+      "category": "population_dynamics",
+      "definition": "Per-capita rate of increase in population size, tumor volume, or biomass.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "system-specific",
+          "unit": "hour^-1, day^-1",
+          "context": "used in exponential, logistic, and Gompertz models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_LOGISTIC_GROWTH",
+        "EXPR_GOMPERTZ_GROWTH"
+      ],
+      "related_models": [
+        "MODEL_LOGISTIC_GROWTH",
+        "MODEL_GOMPERTZ_GROWTH"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_CARRYING_CAPACITY",
+      "canonical_name": "Carrying capacity",
+      "symbols": [
+        "K",
+        "Kcap"
+      ],
+      "aliases": [
+        "carrying capacity",
+        "saturation level"
+      ],
+      "category": "population_dynamics",
+      "definition": "Maximum population size supported by the environment in logistic and related growth models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "amount_or_concentration",
+      "typical_values": [
+        {
+          "value": "system-specific",
+          "unit": "cells, biomass, concentration",
+          "context": "must be distinguished from equilibrium constants symbolized by K"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_LOGISTIC_GROWTH"
+      ],
+      "related_models": [
+        "MODEL_LOGISTIC_GROWTH"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": "Symbol K is highly context-dependent; keep separate from Km, Kd, and inhibition constants."
+    },
+    {
+      "id": "PARAM_CLEARANCE",
+      "canonical_name": "Clearance rate",
+      "symbols": [
+        "k_clear",
+        "k_clearance",
+        "CL"
+      ],
+      "aliases": [
+        "clearance rate",
+        "elimination rate"
+      ],
+      "category": "pharmacokinetics",
+      "definition": "Rate constant or volume-normalized rate describing removal of a substance from a compartment.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time_or_volume_per_time",
+      "typical_values": [
+        {
+          "value": "compound-specific",
+          "unit": "time^-1 or volume/time",
+          "context": "used in one-compartment and biomarker kinetic models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_FIRST_ORDER_CLEARANCE"
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc",
+        "hepatic_glucose"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_RELEASE_RATE",
+      "canonical_name": "Release rate",
+      "symbols": [
+        "k_release",
+        "k_rel"
+      ],
+      "aliases": [
+        "release rate",
+        "input rate"
+      ],
+      "category": "pharmacokinetics",
+      "definition": "Rate parameter describing entry or release of a substance into a measured compartment.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "amount_per_time_or_per_time",
+      "typical_values": [
+        {
+          "value": "context-specific",
+          "unit": "mass/time or time^-1",
+          "context": "paired with clearance in input-output kinetic models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_INPUT_OUTPUT_KINETICS"
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_HALF_LIFE",
+      "canonical_name": "Half-life",
+      "symbols": [
+        "t_half",
+        "t1/2",
+        "half_life"
+      ],
+      "aliases": [
+        "half-life",
+        "elimination half-life"
+      ],
+      "category": "pharmacokinetics",
+      "definition": "Time required for a quantity to fall to half of its reference value under a specified kinetic process.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "time",
+      "typical_values": [
+        {
+          "value": "compound-specific",
+          "unit": "min, h, day",
+          "context": "for first-order decay, t_half=ln(2)/k"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_EXPONENTIAL_DECAY",
+        "EXPR_FIRST_ORDER_CLEARANCE"
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_DIFFUSION",
+      "canonical_name": "Diffusion coefficient",
+      "symbols": [
+        "D",
+        "D_diff"
+      ],
+      "aliases": [
+        "diffusion coefficient",
+        "diffusivity",
+        "D",
+        "D_diff"
+      ],
+      "category": "spatial_transport",
+      "definition": "Proportionality constant relating diffusive flux to a concentration gradient under Fickian transport.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "area_per_time",
+      "typical_values": [
+        {
+          "value": "molecule- and medium-specific",
+          "unit": "µm^2/s, cm^2/s",
+          "context": "used in reaction-diffusion models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_FICK_DIFFUSION"
+      ],
+      "related_models": [
+        "MODEL_REACTION_DIFFUSION"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_MEMBRANE_POTENTIAL",
+      "canonical_name": "Membrane potential",
+      "symbols": [
+        "Vm",
+        "V_m"
+      ],
+      "aliases": [
+        "membrane potential",
+        "transmembrane voltage"
+      ],
+      "category": "electrophysiology",
+      "definition": "Electrical potential difference across a cell membrane.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "voltage",
+      "typical_values": [
+        {
+          "value": "cell- and condition-specific",
+          "unit": "mV",
+          "context": "central state variable in Hodgkin-Huxley models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HH_MEMBRANE_CURRENT"
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_CONDUCTANCE",
+      "canonical_name": "Ion channel conductance",
+      "symbols": [
+        "g",
+        "g_Na",
+        "g_K",
+        "g_L"
+      ],
+      "aliases": [
+        "conductance",
+        "maximal conductance"
+      ],
+      "category": "electrophysiology",
+      "definition": "Maximum ionic conductance associated with a channel population in electrophysiological models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "conductance",
+      "typical_values": [
+        {
+          "value": "cell-type-specific",
+          "unit": "mS/cm^2",
+          "context": "multiplied by gating variables in Hodgkin-Huxley currents"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HH_IONIC_CURRENT"
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_REVERSAL_POTENTIAL",
+      "canonical_name": "Reversal potential",
+      "symbols": [
+        "E",
+        "E_Na",
+        "E_K",
+        "E_L"
+      ],
+      "aliases": [
+        "reversal potential",
+        "Nernst potential"
+      ],
+      "category": "electrophysiology",
+      "definition": "Membrane potential at which net ionic current for a given ion reverses direction.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "voltage",
+      "typical_values": [
+        {
+          "value": "ion- and cell-specific",
+          "unit": "mV",
+          "context": "used in driving-force terms (Vm-Eion)"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HH_IONIC_CURRENT",
+        "EXPR_NERNST"
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_CAPACITANCE",
+      "canonical_name": "Membrane capacitance",
+      "symbols": [
+        "Cm",
+        "C_m"
+      ],
+      "aliases": [
+        "membrane capacitance",
+        "specific capacitance"
+      ],
+      "category": "electrophysiology",
+      "definition": "Capacitance per unit membrane area relating charge accumulation to membrane potential.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "capacitance_per_area",
+      "typical_values": [
+        {
+          "value": "commonly about 1 µF/cm^2 in many preparations",
+          "unit": "µF/cm^2",
+          "context": "membrane equation Cm dV/dt = -I_total"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_HH_MEMBRANE_CURRENT"
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_ALPHA_TRANSCRIPTION",
+      "canonical_name": "Constitutive transcription rate",
+      "symbols": [
+        "alpha",
+        "alpha0",
+        "a_tr",
+        "a0_tr"
+      ],
+      "aliases": [
+        "transcription rate",
+        "basal transcription rate"
+      ],
+      "category": "gene_expression",
+      "definition": "Rate parameter controlling production of mRNA in gene-expression models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration_per_time_or_per_time",
+      "typical_values": [
+        {
+          "value": "gene- and model-specific",
+          "unit": "nM/min or time^-1",
+          "context": "observed in the repressilator SBML model as alpha, alpha0, a_tr, and a0_tr"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MRNA_SYNTHESIS",
+        "EXPR_REPRESSILATOR"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KD_MRNA",
+      "canonical_name": "mRNA degradation rate",
+      "symbols": [
+        "kd_mRNA",
+        "k_deg_mRNA"
+      ],
+      "aliases": [
+        "mRNA degradation rate",
+        "mRNA decay rate"
+      ],
+      "category": "gene_expression",
+      "definition": "First-order removal rate for mRNA in gene-expression models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "gene-specific",
+          "unit": "time^-1",
+          "context": "observed in BIOMD0000000012 repressilator model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MRNA_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KD_PROT",
+      "canonical_name": "Protein degradation rate",
+      "symbols": [
+        "kd_prot",
+        "k_deg_prot"
+      ],
+      "aliases": [
+        "protein degradation rate",
+        "protein decay rate"
+      ],
+      "category": "gene_expression",
+      "definition": "First-order removal rate for protein in gene-expression models.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "per_time",
+      "typical_values": [
+        {
+          "value": "protein-specific",
+          "unit": "time^-1",
+          "context": "observed in BIOMD0000000012 repressilator model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_KT_L",
+      "canonical_name": "Translation rate",
+      "symbols": [
+        "k_tl",
+        "k_tl",
+        "translation_rate"
+      ],
+      "aliases": [
+        "translation rate",
+        "protein synthesis rate constant"
+      ],
+      "category": "gene_expression",
+      "definition": "Rate parameter controlling protein production from mRNA.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration_per_time_per_mRNA_or_per_time",
+      "typical_values": [
+        {
+          "value": "gene-specific",
+          "unit": "model dependent",
+          "context": "observed in BIOMD0000000012 repressilator model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_PROTEIN_SYNTHESIS",
+        "EXPR_REPRESSILATOR"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_TAU_MRNA",
+      "canonical_name": "mRNA time constant",
+      "symbols": [
+        "tau_mRNA"
+      ],
+      "aliases": [
+        "mRNA lifetime",
+        "mRNA time constant"
+      ],
+      "category": "gene_expression",
+      "definition": "Characteristic time scale for mRNA turnover, often reciprocal of mRNA degradation rate.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "time",
+      "typical_values": [
+        {
+          "value": "gene-specific",
+          "unit": "min",
+          "context": "observed in BIOMD0000000012 repressilator model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MRNA_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_TAU_PROT",
+      "canonical_name": "Protein time constant",
+      "symbols": [
+        "tau_prot"
+      ],
+      "aliases": [
+        "protein lifetime",
+        "protein time constant"
+      ],
+      "category": "gene_expression",
+      "definition": "Characteristic time scale for protein turnover, often reciprocal of protein degradation rate.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "time",
+      "typical_values": [
+        {
+          "value": "protein-specific",
+          "unit": "min",
+          "context": "observed in BIOMD0000000012 repressilator model"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_ENZYME_CONCENTRATION",
+      "canonical_name": "Enzyme concentration",
+      "symbols": [
+        "E",
+        "[E]"
+      ],
+      "aliases": [
+        "enzyme concentration",
+        "catalyst concentration"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Concentration of catalytically active enzyme available to convert substrate to product.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "assay-specific",
+          "unit": "nM, µM, mg/mL",
+          "context": "used to convert Vmax to kcat"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk",
+        "brenda"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_SUBSTRATE_CONCENTRATION",
+      "canonical_name": "Substrate concentration",
+      "symbols": [
+        "S",
+        "[S]"
+      ],
+      "aliases": [
+        "substrate concentration"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Concentration of substrate available for an enzymatic or transport reaction.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "time- and condition-dependent",
+          "unit": "M, mM, µM",
+          "context": "input to saturation and inhibition expressions"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_HILL_ACTIVATION"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_KINETICS",
+        "MODEL_ENZYME_INHIBITION"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_PRODUCT_CONCENTRATION",
+      "canonical_name": "Product concentration",
+      "symbols": [
+        "P",
+        "[P]"
+      ],
+      "aliases": [
+        "product concentration"
+      ],
+      "category": "enzyme_kinetics",
+      "definition": "Concentration of product generated by a reaction or transported across a compartment.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "time-dependent",
+          "unit": "M, mM, µM",
+          "context": "state variable in kinetic networks"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MASS_ACTION"
+      ],
+      "related_models": [
+        "MODEL_ENZYME_KINETICS",
+        "MODEL_METABOLIC_NETWORK"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_REACTION_FLUX",
+      "canonical_name": "Reaction flux",
+      "symbols": [
+        "v",
+        "J",
+        "flux"
+      ],
+      "aliases": [
+        "reaction flux",
+        "reaction rate",
+        "metabolic flux"
+      ],
+      "category": "metabolic_modeling",
+      "definition": "Rate of conversion through a reaction or pathway under a specified kinetic law.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "amount_per_time_per_volume",
+      "typical_values": [
+        {
+          "value": "network- and condition-specific",
+          "unit": "mM/s, mmol/gDW/h",
+          "context": "may be simulated, measured, or constrained"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_MICHAELIS_MENTEN"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_NETWORK",
+        "MODEL_GENOME_SCALE_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels",
+        "biomodels_search"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_ELASTICITY",
+      "canonical_name": "Kinetic elasticity",
+      "symbols": [
+        "epsilon",
+        "ε"
+      ],
+      "aliases": [
+        "elasticity coefficient",
+        "flux control coefficient"
+      ],
+      "category": "metabolic_control",
+      "definition": "Local sensitivity of reaction rate to a metabolite concentration in metabolic control analysis.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "system-specific",
+          "unit": "dimensionless",
+          "context": "observed in linlog metabolic models"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_POWER_LAW"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_CONTROL",
+        "MODEL_GENOME_SCALE_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_THERMODYNAMIC_DRIVING_FORCE",
+      "canonical_name": "Thermodynamic driving force",
+      "symbols": [
+        "DeltaG",
+        "ΔG"
+      ],
+      "aliases": [
+        "free energy change",
+        "thermodynamic driving force"
+      ],
+      "category": "thermodynamics",
+      "definition": "Change in Gibbs free energy associated with a reaction or transition.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "energy",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "kJ/mol or model energy units",
+          "context": "sign indicates favorable or unfavorable direction"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_THERMODYNAMIC_DRIVING_FORCE"
+      ],
+      "related_models": [
+        "MODEL_THERMODYNAMIC_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_BINDING_PROBABILITY",
+      "canonical_name": "Binding or state-transition probability",
+      "symbols": [
+        "p",
+        "P",
+        "pi",
+        "π"
+      ],
+      "aliases": [
+        "binding probability",
+        "state probability",
+        "transition probability"
+      ],
+      "category": "stochastic_modeling",
+      "definition": "Probability associated with binding, occupancy, or transition between discrete states.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "between 0 and 1",
+          "unit": "dimensionless",
+          "context": "must be distinguished from p-values and generic probability notation"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_MARKOV_TRANSITION"
+      ],
+      "related_models": [
+        "MODEL_MARKOV_STATE",
+        "MODEL_STOCHASTIC_BINDING"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_INITIAL_CONCENTRATION",
+      "canonical_name": "Initial concentration",
+      "symbols": [
+        "C0",
+        "C_0",
+        "X0",
+        "X_0"
+      ],
+      "aliases": [
+        "initial concentration",
+        "initial condition"
+      ],
+      "category": "initial_conditions",
+      "definition": "Concentration assigned at the start of a simulation or observation window.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "concentration",
+      "typical_values": [
+        {
+          "value": "model- and subject-specific",
+          "unit": "M, mM, µM, ng/mL",
+          "context": "reported in initial-condition sections or parameter tables"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_EXPONENTIAL_DECAY",
+        "EXPR_INPUT_OUTPUT_KINETICS"
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS",
+        "MODEL_MASS_ACTION"
+      ],
+      "source_ids": [
+        "biomodels",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_TEMPERATURE",
+      "canonical_name": "Temperature",
+      "symbols": [
+        "T",
+        "temperature"
+      ],
+      "aliases": [
+        "temperature",
+        "T",
+        "absolute temperature"
+      ],
+      "category": "environmental_condition",
+      "definition": "Thermodynamic temperature affecting kinetic constants, diffusion, and conformational transitions.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "temperature",
+      "typical_values": [
+        {
+          "value": "assay- or environment-specific",
+          "unit": "K or °C",
+          "context": "often introduced through Arrhenius or Q10 relationships"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_ARRHENIUS"
+      ],
+      "related_models": [
+        "MODEL_TEMPERATURE_DEPENDENT_KINETICS",
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "PARAM_FLUX_CONTROL_COEFFICIENT",
+      "canonical_name": "flux control coefficient",
+      "symbols": [
+        "C_J",
+        "C^J",
+        "CJ"
+      ],
+      "aliases": [
+        "flux control coefficient",
+        "control coefficient",
+        "flux control"
+      ],
+      "category": "metabolic_control",
+      "definition": "Relative change in a steady-state pathway flux caused by a relative change in an enzyme activity or reaction rate.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "sum to 1 across a pathway",
+          "unit": "dimensionless",
+          "context": "summation theorem in metabolic control analysis"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_POWER_LAW"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_CONTROL",
+        "MODEL_GENOME_SCALE_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": "Central quantity in metabolic control analysis; distinct from concentration control coefficients."
+    },
+    {
+      "id": "PARAM_CONCENTRATION_CONTROL_COEFFICIENT",
+      "canonical_name": "concentration control coefficient",
+      "symbols": [
+        "C_S",
+        "C^S",
+        "CS"
+      ],
+      "aliases": [
+        "concentration control coefficient",
+        "metabolite control coefficient"
+      ],
+      "category": "metabolic_control",
+      "definition": "Relative change in a steady-state metabolite concentration caused by a relative change in an enzyme activity or reaction rate.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "sum to zero across a pathway",
+          "unit": "dimensionless",
+          "context": "summation theorem in metabolic control analysis"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_POWER_LAW"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_CONTROL"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": "Sign indicates whether a metabolite rises or falls with increasing enzyme activity."
+    },
+    {
+      "id": "PARAM_RESPONSE_COEFFICIENT",
+      "canonical_name": "response coefficient",
+      "symbols": [
+        "R",
+        "R^J",
+        "RJ"
+      ],
+      "aliases": [
+        "response coefficient",
+        "systemic response coefficient"
+      ],
+      "category": "metabolic_control",
+      "definition": "Relative change in a system variable caused by a relative change in an external parameter or effector.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "system-specific",
+          "unit": "dimensionless",
+          "context": "links external effectors to pathway responses"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_POWER_LAW"
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_CONTROL"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "medium",
+      "notes": "Symbol R is also used for reproduction number and rates; requires context disambiguation."
+    },
+    {
+      "id": "PARAM_MASS_ACTION_RATIO",
+      "canonical_name": "mass action ratio",
+      "symbols": [
+        "Gamma",
+        "Γ",
+        "Q"
+      ],
+      "aliases": [
+        "mass action ratio",
+        "reaction quotient"
+      ],
+      "category": "thermodynamics",
+      "definition": "Ratio of product activities to reactant activities at prevailing concentrations, used to assess displacement from equilibrium.",
+      "role": "parameter",
+      "kind": "continuous",
+      "unit": "dimensionless",
+      "typical_values": [
+        {
+          "value": "compared with equilibrium constant",
+          "unit": "dimensionless",
+          "context": "thermodynamic feasibility analysis"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_THERMODYNAMIC_DRIVING_FORCE"
+      ],
+      "related_models": [
+        "MODEL_THERMODYNAMIC_KINETIC",
+        "MODEL_METABOLIC_CONTROL"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": "Distinguish from the reaction quotient symbol Q used elsewhere."
+    },
+    {
+      "id": "PARAM_EQUILIBRIUM_CONSTANT",
+      "canonical_name": "equilibrium constant",
+      "symbols": [
+        "Keq",
+        "K_eq",
+        "K"
+      ],
+      "aliases": [
+        "equilibrium constant",
+        "thermodynamic equilibrium constant"
+      ],
+      "category": "thermodynamics",
+      "definition": "Ratio of product to reactant activities at thermodynamic equilibrium for a reaction.",
+      "role": "parameter",
+      "kind": "constant",
+      "unit": "dimensionless or concentration-dependent",
+      "typical_values": [
+        {
+          "value": "reaction-specific",
+          "unit": "dimensionless",
+          "context": "relates to standard free energy by Keq = exp(-DeltaG0/RT)"
+        }
+      ],
+      "related_expressions": [
+        "EXPR_THERMODYNAMIC_DRIVING_FORCE"
+      ],
+      "related_models": [
+        "MODEL_THERMODYNAMIC_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": "Symbol K overlaps with Km and carrying capacity; keep separate with disambiguation."
+    }
+  ],
+  "symbol_conflicts": [
+    {
+      "symbol": "kcat/Km",
+      "entry_ids": [
+        "PARAM_KCAT",
+        "PARAM_KCAT_KM"
+      ],
+      "resolution": "PARAM_KCAT uses kcat alone; PARAM_KCAT_KM is the composite efficiency ratio."
+    },
+    {
+      "symbol": "E",
+      "entry_ids": [
+        "PARAM_ENZYME_CONCENTRATION",
+        "PARAM_REVERSAL_POTENTIAL"
+      ],
+      "resolution": "E denotes enzyme concentration only in enzyme-kinetics context; E_Na, E_K, and E_L denote reversal potentials in electrophysiology."
+    },
+    {
+      "symbol": "k_tl",
+      "entry_ids": [
+        "PARAM_KT_L"
+      ],
+      "resolution": "Duplicate spelling within one entry was normalized; canonical symbol is k_tl."
+    },
+    {
+      "symbol": "P",
+      "entry_ids": [
+        "PARAM_PRODUCT_CONCENTRATION",
+        "PARAM_BINDING_PROBABILITY"
+      ],
+      "resolution": "P denotes product concentration in reaction kinetics and a probability in stochastic or state models; context determines the meaning."
+    }
+  ],
+  "symbol_variants": {
+    "k_on": [
+      "kon",
+      "k_on",
+      "kf",
+      "k_f"
+    ],
+    "k_off": [
+      "koff",
+      "k_off",
+      "kr",
+      "k_r"
+    ],
+    "Km": [
+      "Km",
+      "K_M",
+      "K_m",
+      "KM",
+      "Knm"
+    ],
+    "kcat": [
+      "kcat",
+      "k_cat"
+    ],
+    "Vmax": [
+      "Vmax",
+      "V_max",
+      "VMAX"
+    ],
+    "Kd": [
+      "Kd",
+      "K_D",
+      "KD"
+    ],
+    "IC50": [
+      "IC50",
+      "IC_50",
+      "IC 50"
+    ],
+    "EC50": [
+      "EC50",
+      "EC_50",
+      "EC 50"
+    ],
+    "t_half": [
+      "t_half",
+      "t1/2",
+      "half-life",
+      "half life"
+    ]
+  }
+}

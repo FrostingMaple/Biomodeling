@@ -1,0 +1,1250 @@
+{
+  "schema_version": "1.0",
+  "lexicon_type": "models",
+  "generated_at": "2026-09-29",
+  "description": "Classic and common biological mathematical model families with linked parameters, expressions, and relations.",
+  "sources": [
+    {
+      "source_id": "europepmc",
+      "name": "Europe PMC REST API",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/michaelis_menten.json",
+        "raw/europepmc/hill_equation.json",
+        "raw/europepmc/hodgkin_huxley.json",
+        "raw/europepmc/sir_model.json",
+        "raw/europepmc/lotka_volterra.json",
+        "raw/europepmc/repressilator.json",
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    },
+    {
+      "source_id": "biomodels",
+      "name": "BioModels curated model repository",
+      "url": "https://www.ebi.ac.uk/biomodels/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "sbml_statistics.json",
+        "LOCAL_ARCHIVE_MANIFEST.csv"
+      ]
+    },
+    {
+      "source_id": "biomodels_search",
+      "name": "BioModels kinetic model search response",
+      "url": "https://www.ebi.ac.uk/biomodels/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/biomodels/kinetic_model_search.json"
+      ]
+    },
+    {
+      "source_id": "sbml",
+      "name": "Systems Biology Markup Language (SBML)",
+      "url": "https://sbml.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "reactome",
+      "name": "Reactome Content Service",
+      "url": "https://reactome.org/ContentService/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/reactome/R-HSA-109582.json"
+      ]
+    },
+    {
+      "source_id": "sabio_rk",
+      "name": "SABIO-RK reaction kinetics database",
+      "url": "https://sabio.h-its.org/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/sabio/searchKineticLaws.html"
+      ]
+    },
+    {
+      "source_id": "brenda",
+      "name": "BRENDA enzyme database",
+      "url": "https://www.brenda-enzymes.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "kegg",
+      "name": "KEGG pathway database",
+      "url": "https://www.genome.jp/kegg/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_mm",
+      "name": "Michaelis and Menten enzyme kinetics",
+      "url": "https://doi.org/10.1016/S0076-6879(09)63002-7",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_hh",
+      "name": "Hodgkin and Huxley action potential model",
+      "url": "https://doi.org/10.1113/jphysiol.1952.sp004764",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_sir",
+      "name": "Kermack and McKendrick compartmental epidemic model",
+      "url": "https://doi.org/10.1098/rspa.1927.0118",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_lotka_volterra",
+      "name": "Lotka-Volterra population dynamics",
+      "url": "https://doi.org/10.1038/140070a0",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "repressilator",
+      "name": "Elowitz and Leibler repressilator",
+      "url": "https://doi.org/10.1038/35002125",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000012.xml",
+        "extracted/BIOMD0000000012/"
+      ]
+    },
+    {
+      "source_id": "mapk_cascade",
+      "name": "Kholodenko MAPK cascade oscillation model",
+      "url": "https://doi.org/10.1046/j.1432-1327.2000.01197.x",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000010.xml",
+        "extracted/BIOMD0000000010/"
+      ]
+    },
+    {
+      "source_id": "erbb_model",
+      "name": "Chen et al. ErbB signaling mass-action model",
+      "url": "https://doi.org/10.1038/msb.2008.74",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "hepatic_glucose",
+      "name": "Konig et al. human hepatic glucose metabolism model",
+      "url": "https://doi.org/10.1371/journal.pcbi.1002577",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "MODEL_MASS_ACTION",
+      "canonical_name": "mass-action kinetic model",
+      "aliases": [
+        "mass action model",
+        "law of mass action model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "chemical_kinetics",
+      "description": "Reaction network whose elementary reaction rates are proportional to the product of reactant concentrations or abundances.",
+      "state_variables": [
+        "species_concentration"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF"
+      ],
+      "expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_REVERSIBLE_BINDING"
+      ],
+      "relations": [
+        "REL_BINDING",
+        "REL_UNBINDING",
+        "REL_CATALYSIS"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels",
+        "sbml",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_MICHAELIS_MENTEN",
+      "canonical_name": "Michaelis-Menten enzyme model",
+      "aliases": [
+        "Michaelis-Menten model",
+        "saturation enzyme model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "enzyme_kinetics",
+      "description": "Single-substrate enzyme reaction model using saturating velocity as a function of substrate concentration.",
+      "state_variables": [
+        "PARAM_SUBSTRATE_CONCENTRATION",
+        "PARAM_PRODUCT_CONCENTRATION"
+      ],
+      "parameters": [
+        "PARAM_VMAX",
+        "PARAM_KM",
+        "PARAM_KCAT"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_CATALYTIC_EFFICIENCY"
+      ],
+      "relations": [
+        "REL_CATALYSIS"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "classic_mm",
+        "brenda",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_ENZYME_KINETICS",
+      "canonical_name": "enzyme kinetics model",
+      "aliases": [
+        "enzymatic rate model",
+        "kinetic enzyme model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "enzyme_kinetics",
+      "description": "General kinetic description of enzyme-catalysed reactions, including saturation, inhibition, and catalytic efficiency.",
+      "state_variables": [
+        "PARAM_SUBSTRATE_CONCENTRATION",
+        "PARAM_PRODUCT_CONCENTRATION",
+        "PARAM_ENZYME_CONCENTRATION"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_KCAT",
+        "PARAM_KI"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_COMPETITIVE_INHIBITION",
+        "EXPR_CATALYTIC_EFFICIENCY"
+      ],
+      "relations": [
+        "REL_CATALYSIS",
+        "REL_COMPETITIVE_INHIBITION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "brenda",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_ENZYME_INHIBITION",
+      "canonical_name": "enzyme inhibition model",
+      "aliases": [
+        "inhibition model",
+        "competitive inhibition model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "enzyme_inhibition",
+      "description": "Enzyme kinetic model in which inhibitors modify apparent substrate affinity or maximal velocity.",
+      "state_variables": [
+        "PARAM_SUBSTRATE_CONCENTRATION",
+        "PARAM_PRODUCT_CONCENTRATION"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_KI",
+        "PARAM_IC50"
+      ],
+      "expressions": [
+        "EXPR_COMPETITIVE_INHIBITION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "relations": [
+        "REL_INHIBITION",
+        "REL_COMPETITIVE_INHIBITION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "brenda",
+        "sabio_rk",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_HILL",
+      "canonical_name": "Hill response model",
+      "aliases": [
+        "Hill model",
+        "sigmoidal response model",
+        "cooperativity model"
+      ],
+      "model_class": "empirical response",
+      "domain": "allostery",
+      "description": "Empirical sigmoidal dose-response or regulation model characterized by a half-saturation constant and Hill coefficient.",
+      "state_variables": [
+        "regulator_concentration"
+      ],
+      "parameters": [
+        "PARAM_HILL",
+        "PARAM_EC50",
+        "PARAM_IC50"
+      ],
+      "expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "relations": [
+        "REL_COOPERATIVITY",
+        "REL_ALLOSTERIC_ACTIVATION",
+        "REL_ALLOSTERIC_INHIBITION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_SIR",
+      "canonical_name": "SIR compartmental epidemic model",
+      "aliases": [
+        "SIR model",
+        "susceptible-infected-recovered model"
+      ],
+      "model_class": "compartmental ODE",
+      "domain": "epidemiology",
+      "description": "Population divided into susceptible, infected, and recovered compartments with transmission and recovery flows.",
+      "state_variables": [
+        "susceptible_population",
+        "infected_population",
+        "recovered_population"
+      ],
+      "parameters": [
+        "PARAM_BETA",
+        "PARAM_GAMMA",
+        "PARAM_R0"
+      ],
+      "expressions": [
+        "EXPR_SIR_TRANSMISSION",
+        "EXPR_SIR_RECOVERY",
+        "EXPR_R0_SIR"
+      ],
+      "relations": [
+        "REL_INFECTION_TRANSMISSION",
+        "REL_RECOVERY"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_SEIR",
+      "canonical_name": "SEIR compartmental epidemic model",
+      "aliases": [
+        "SEIR model",
+        "exposed-infected-recovered model"
+      ],
+      "model_class": "compartmental ODE",
+      "domain": "epidemiology",
+      "description": "Extension of SIR with an exposed but not yet infectious compartment.",
+      "state_variables": [
+        "susceptible_population",
+        "exposed_population",
+        "infected_population",
+        "recovered_population"
+      ],
+      "parameters": [
+        "PARAM_BETA",
+        "PARAM_GAMMA",
+        "PARAM_SIGMA",
+        "PARAM_R0"
+      ],
+      "expressions": [
+        "EXPR_SIR_TRANSMISSION",
+        "EXPR_SEIR_LATENT",
+        "EXPR_SIR_RECOVERY"
+      ],
+      "relations": [
+        "REL_INFECTION_TRANSMISSION",
+        "REL_RECOVERY"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_LOGISTIC_GROWTH",
+      "canonical_name": "logistic growth model",
+      "aliases": [
+        "Verhulst model",
+        "logistic population model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "population_dynamics",
+      "description": "Population growth with a rate that declines linearly as population size approaches carrying capacity.",
+      "state_variables": [
+        "population_size"
+      ],
+      "parameters": [
+        "PARAM_MU_GROWTH",
+        "PARAM_CARRYING_CAPACITY"
+      ],
+      "expressions": [
+        "EXPR_LOGISTIC_GROWTH"
+      ],
+      "relations": [
+        "REL_POSITIVE_FEEDBACK"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_GOMPERTZ_GROWTH",
+      "canonical_name": "Gompertz growth model",
+      "aliases": [
+        "Gompertz model",
+        "Gompertz tumour growth model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "population_dynamics",
+      "description": "Asymmetric sigmoidal growth model frequently used for tumour and organism growth.",
+      "state_variables": [
+        "population_size"
+      ],
+      "parameters": [
+        "PARAM_MU_GROWTH",
+        "PARAM_CARRYING_CAPACITY"
+      ],
+      "expressions": [
+        "EXPR_GOMPERTZ_GROWTH"
+      ],
+      "relations": [
+        "REL_POSITIVE_FEEDBACK"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_HODGKIN_HUXLEY",
+      "canonical_name": "Hodgkin-Huxley neuron model",
+      "aliases": [
+        "Hodgkin-Huxley model",
+        "HH model"
+      ],
+      "model_class": "electrophysiological ODE",
+      "domain": "electrophysiology",
+      "description": "Conductance-based model of action potential generation using voltage-gated sodium, potassium, and leak currents.",
+      "state_variables": [
+        "PARAM_MEMBRANE_POTENTIAL",
+        "gating_variable"
+      ],
+      "parameters": [
+        "PARAM_CAPACITANCE",
+        "PARAM_CONDUCTANCE",
+        "PARAM_REVERSAL_POTENTIAL"
+      ],
+      "expressions": [
+        "EXPR_HH_MEMBRANE_CURRENT",
+        "EXPR_HH_IONIC_CURRENT",
+        "EXPR_HH_GATING",
+        "EXPR_NERNST"
+      ],
+      "relations": [
+        "REL_GATING"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "classic_hh",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_REPRESSILATOR",
+      "canonical_name": "repressilator synthetic oscillator",
+      "aliases": [
+        "repressilator",
+        "cyclic repression oscillator"
+      ],
+      "model_class": "deterministic or stochastic ODE",
+      "domain": "gene_regulation",
+      "description": "Synthetic ring of three mutually repressing genes producing oscillatory protein expression.",
+      "state_variables": [
+        "mRNA_concentration",
+        "protein_concentration"
+      ],
+      "parameters": [
+        "PARAM_ALPHA_TRANSCRIPTION",
+        "PARAM_HILL",
+        "PARAM_KD_MRNA",
+        "PARAM_KD_PROT",
+        "PARAM_KT_L"
+      ],
+      "expressions": [
+        "EXPR_REPRESSILATOR",
+        "EXPR_MRNA_SYNTHESIS",
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "relations": [
+        "REL_TRANSCRIPTION_REPRESSION",
+        "REL_FEEDBACK_LOOP"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000012"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_MAPK_CASCADE",
+      "canonical_name": "MAPK cascade model",
+      "aliases": [
+        "MAPK cascade",
+        "mitogen-activated protein kinase cascade model"
+      ],
+      "model_class": "deterministic ODE",
+      "domain": "signal_transduction",
+      "description": "Multi-tier kinase cascade with phosphorylation, dephosphorylation, feedback, and possible oscillatory dynamics.",
+      "state_variables": [
+        "kinase_activity",
+        "phosphorylated_state"
+      ],
+      "parameters": [
+        "PARAM_HILL",
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_KCAT"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "relations": [
+        "REL_PHOSPHORYLATION",
+        "REL_DEPHOSPHORYLATION",
+        "REL_NEGATIVE_FEEDBACK",
+        "REL_SIGNAL_TRANSDUCTION"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000010"
+      ],
+      "source_ids": [
+        "mapk_cascade",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_ERBB_SIGNALING",
+      "canonical_name": "ErbB signaling kinetic model",
+      "aliases": [
+        "ErbB signaling model",
+        "EGFR signaling kinetic model"
+      ],
+      "model_class": "mass-action ODE",
+      "domain": "signal_transduction",
+      "description": "Reaction-network model of ligand-receptor binding, receptor dimerization, phosphorylation, and downstream ERK/Akt activation.",
+      "state_variables": [
+        "receptor_concentration",
+        "ligand_concentration",
+        "dimer_fraction",
+        "phosphorylated_ERK",
+        "phosphorylated_Akt"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF",
+        "PARAM_KD",
+        "PARAM_IC50"
+      ],
+      "expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_REVERSIBLE_BINDING"
+      ],
+      "relations": [
+        "REL_RECEPTOR_DIMERIZATION",
+        "REL_PHOSPHORYLATION",
+        "REL_SIGNAL_TRANSDUCTION",
+        "REL_INHIBITION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "erbb_model",
+        "reactome"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_METABOLIC_NETWORK",
+      "canonical_name": "metabolic reaction network",
+      "aliases": [
+        "metabolic network model",
+        "reaction network"
+      ],
+      "model_class": "network or ODE",
+      "domain": "metabolic_modeling",
+      "description": "Network of metabolic reactions with stoichiometry, fluxes, and optionally kinetic rate laws.",
+      "state_variables": [
+        "metabolite_concentration",
+        "reaction_flux"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_KCAT",
+        "PARAM_REACTION_FLUX"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_MASS_ACTION"
+      ],
+      "relations": [
+        "REL_CATALYSIS",
+        "REL_FLUX_REGULATION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels",
+        "kegg"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_GENOME_SCALE_KINETIC",
+      "canonical_name": "genome-scale kinetic metabolic model",
+      "aliases": [
+        "genome-scale kinetic model",
+        "genome scale metabolic kinetic model"
+      ],
+      "model_class": "large-scale ODE",
+      "domain": "metabolic_modeling",
+      "description": "Genome-scale metabolic network in which reaction fluxes are represented by kinetic or approximate rate laws.",
+      "state_variables": [
+        "metabolite_concentration",
+        "enzyme_concentration",
+        "reaction_flux"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_KCAT",
+        "PARAM_ELASTICITY",
+        "PARAM_REACTION_FLUX"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_POWER_LAW"
+      ],
+      "relations": [
+        "REL_CATALYSIS",
+        "REL_FLUX_REGULATION"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000471",
+        "BIOMD0000000496",
+        "BIOMD0000000497"
+      ],
+      "source_ids": [
+        "biomodels",
+        "biomodels_search"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_METABOLIC_CONTROL",
+      "canonical_name": "metabolic control analysis model",
+      "aliases": [
+        "MCA model",
+        "metabolic control model"
+      ],
+      "model_class": "sensitivity analysis",
+      "domain": "metabolic_modeling",
+      "description": "Framework relating local rate sensitivities and control coefficients to systemic metabolic flux control.",
+      "state_variables": [
+        "metabolite_concentration",
+        "reaction_flux"
+      ],
+      "parameters": [
+        "PARAM_ELASTICITY",
+        "PARAM_REACTION_FLUX"
+      ],
+      "expressions": [
+        "EXPR_POWER_LAW"
+      ],
+      "relations": [
+        "REL_FLUX_REGULATION"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000471"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_MARKOV_STATE",
+      "canonical_name": "Markov state kinetic model",
+      "aliases": [
+        "Markov state model",
+        "discrete-state kinetic model"
+      ],
+      "model_class": "stochastic or master-equation",
+      "domain": "state_model",
+      "description": "System represented by discrete conformational or functional states with transition rates or probabilities.",
+      "state_variables": [
+        "state_probability"
+      ],
+      "parameters": [
+        "PARAM_BINDING_PROBABILITY",
+        "PARAM_KOFF"
+      ],
+      "expressions": [
+        "EXPR_MARKOV_TRANSITION",
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "relations": [
+        "REL_STATE_TRANSITION",
+        "REL_UNBINDING"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_REACTION_DIFFUSION",
+      "canonical_name": "reaction-diffusion model",
+      "aliases": [
+        "reaction diffusion model",
+        "spatial kinetic model"
+      ],
+      "model_class": "partial differential equation",
+      "domain": "spatial_transport",
+      "description": "Coupled model in which molecular species diffuse in space while participating in local reactions.",
+      "state_variables": [
+        "concentration_field"
+      ],
+      "parameters": [
+        "PARAM_DIFFUSION"
+      ],
+      "expressions": [
+        "EXPR_FICK_DIFFUSION"
+      ],
+      "relations": [
+        "REL_DIFFUSION",
+        "REL_TRANSPORT"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_ONE_COMPARTMENT",
+      "canonical_name": "one-compartment pharmacokinetic model",
+      "aliases": [
+        "one compartment model",
+        "single compartment model"
+      ],
+      "model_class": "pharmacokinetic ODE",
+      "domain": "pharmacokinetics",
+      "description": "Well-mixed compartment with input, distribution volume, and first-order elimination.",
+      "state_variables": [
+        "concentration"
+      ],
+      "parameters": [
+        "PARAM_CLEARANCE",
+        "PARAM_RELEASE_RATE",
+        "PARAM_HALF_LIFE",
+        "PARAM_INITIAL_CONCENTRATION"
+      ],
+      "expressions": [
+        "EXPR_FIRST_ORDER_CLEARANCE",
+        "EXPR_INPUT_OUTPUT_KINETICS",
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "relations": [
+        "REL_CLEARANCE",
+        "REL_TRANSPORT"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000001"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_BIOMARKER_KINETICS",
+      "canonical_name": "biomarker release-clearance model",
+      "aliases": [
+        "biomarker kinetic model",
+        "release-clearance model"
+      ],
+      "model_class": "pharmacokinetic ODE",
+      "domain": "pharmacokinetics",
+      "description": "Model of biomarker entry into blood after injury and subsequent clearance, used for GFAP, UCH-L1, NF-L, and related markers.",
+      "state_variables": [
+        "biomarker_concentration"
+      ],
+      "parameters": [
+        "PARAM_RELEASE_RATE",
+        "PARAM_CLEARANCE",
+        "PARAM_HALF_LIFE",
+        "PARAM_INITIAL_CONCENTRATION"
+      ],
+      "expressions": [
+        "EXPR_INPUT_OUTPUT_KINETICS",
+        "EXPR_FIRST_ORDER_CLEARANCE",
+        "EXPR_EXPONENTIAL_DECAY"
+      ],
+      "relations": [
+        "REL_CLEARANCE"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_GENE_REGULATION",
+      "canonical_name": "gene regulatory network model",
+      "aliases": [
+        "GRN model",
+        "gene regulation model"
+      ],
+      "model_class": "ODE or logical",
+      "domain": "gene_regulation",
+      "description": "Network of genes and regulators whose activation or repression controls expression and downstream phenotype.",
+      "state_variables": [
+        "mRNA_concentration",
+        "protein_concentration",
+        "regulator_activity"
+      ],
+      "parameters": [
+        "PARAM_ALPHA_TRANSCRIPTION",
+        "PARAM_HILL",
+        "PARAM_KD_MRNA",
+        "PARAM_KD_PROT"
+      ],
+      "expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION",
+        "EXPR_MRNA_SYNTHESIS",
+        "EXPR_PROTEIN_SYNTHESIS"
+      ],
+      "relations": [
+        "REL_TRANSCRIPTION_ACTIVATION",
+        "REL_TRANSCRIPTION_REPRESSION",
+        "REL_FEEDBACK_LOOP"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000012",
+        "BIOMD0000000265"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels",
+        "repressilator"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_RECEPTOR_LIGAND",
+      "canonical_name": "receptor-ligand binding model",
+      "aliases": [
+        "receptor binding model",
+        "ligand binding model"
+      ],
+      "model_class": "binding equilibrium or ODE",
+      "domain": "binding_kinetics",
+      "description": "Model of ligand binding to receptors, including association, dissociation, occupancy, and downstream activation.",
+      "state_variables": [
+        "ligand_concentration",
+        "receptor_concentration",
+        "bound_complex"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF",
+        "PARAM_KD"
+      ],
+      "expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_RECEPTOR_BINDING_EQUILIBRIUM"
+      ],
+      "relations": [
+        "REL_BINDING",
+        "REL_UNBINDING"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000001",
+        "BIOMD0000000002"
+      ],
+      "source_ids": [
+        "biomodels",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_TEMPERATURE_DEPENDENT_KINETICS",
+      "canonical_name": "temperature-dependent kinetic model",
+      "aliases": [
+        "Arrhenius model",
+        "temperature-dependent rate model"
+      ],
+      "model_class": "kinetic ODE",
+      "domain": "thermodynamics",
+      "description": "Kinetic model in which rate constants vary with temperature through an Arrhenius-type relationship.",
+      "state_variables": [
+        "rate_constant"
+      ],
+      "parameters": [
+        "PARAM_TEMPERATURE"
+      ],
+      "expressions": [
+        "EXPR_ARRHENIUS"
+      ],
+      "relations": [
+        "REL_PARAMETER_MODULATION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_SIGNAL_TRANSDUCTION",
+      "canonical_name": "signal transduction network model",
+      "aliases": [
+        "signaling network model",
+        "signal pathway model"
+      ],
+      "model_class": "ODE or logical network",
+      "domain": "signal_transduction",
+      "description": "Network model of molecular interactions that propagate a signal from receptors to downstream effectors.",
+      "state_variables": [
+        "kinase_activity",
+        "phosphorylated_state"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF",
+        "PARAM_KM",
+        "PARAM_VMAX"
+      ],
+      "expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_MICHAELIS_MENTEN"
+      ],
+      "relations": [
+        "REL_PHOSPHORYLATION",
+        "REL_DEPHOSPHORYLATION",
+        "REL_SIGNAL_TRANSDUCTION"
+      ],
+      "biomodels_ids": [
+        "BIOMD0000000010"
+      ],
+      "source_ids": [
+        "reactome",
+        "biomodels",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_DOSE_RESPONSE",
+      "canonical_name": "dose-response model",
+      "aliases": [
+        "concentration-response model",
+        "pharmacodynamic response model"
+      ],
+      "model_class": "empirical response",
+      "domain": "pharmacology",
+      "description": "Model relating administered dose or concentration to a measured biological response, often through Hill-type functions.",
+      "state_variables": [
+        "dose_or_concentration"
+      ],
+      "parameters": [
+        "PARAM_EC50",
+        "PARAM_IC50",
+        "PARAM_HILL"
+      ],
+      "expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "relations": [
+        "REL_DOSE_RESPONSE"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_THERMODYNAMIC_KINETIC",
+      "canonical_name": "thermodynamic kinetic model",
+      "aliases": [
+        "thermodynamic model",
+        "thermodynamically constrained kinetic model"
+      ],
+      "model_class": "thermodynamic ODE",
+      "domain": "thermodynamics",
+      "description": "Kinetic model in which reaction rates or equilibrium constants are constrained by Gibbs free-energy relationships.",
+      "state_variables": [
+        "metabolite_concentration",
+        "reaction_flux"
+      ],
+      "parameters": [
+        "PARAM_THERMODYNAMIC_DRIVING_FORCE",
+        "PARAM_EQUILIBRIUM_CONSTANT",
+        "PARAM_MASS_ACTION_RATIO"
+      ],
+      "expressions": [
+        "EXPR_THERMODYNAMIC_DRIVING_FORCE"
+      ],
+      "relations": [
+        "REL_CATALYSIS"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_CHEMICAL_REACTION_NETWORK",
+      "canonical_name": "chemical reaction network",
+      "aliases": [
+        "reaction network",
+        "mass action reaction network"
+      ],
+      "model_class": "deterministic or stochastic ODE",
+      "domain": "chemical_kinetics",
+      "description": "Set of elementary reactions whose kinetics follow mass action, often analysed for steady states and stability.",
+      "state_variables": [
+        "species_concentration"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF"
+      ],
+      "expressions": [
+        "EXPR_MASS_ACTION"
+      ],
+      "relations": [
+        "REL_BINDING",
+        "REL_UNBINDING"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels",
+        "sbml"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_TRANSPORT",
+      "canonical_name": "membrane transport model",
+      "aliases": [
+        "transport model",
+        "transporter kinetic model"
+      ],
+      "model_class": "kinetic ODE",
+      "domain": "spatial_transport",
+      "description": "Model of substrate or ion movement across a membrane by transporters, channels, or pumps.",
+      "state_variables": [
+        "concentration",
+        "membrane_potential"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_DIFFUSION"
+      ],
+      "expressions": [
+        "EXPR_MICHAELIS_MENTEN",
+        "EXPR_FICK_DIFFUSION"
+      ],
+      "relations": [
+        "REL_TRANSPORT"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "reactome",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_ALLOSTERY",
+      "canonical_name": "allosteric regulation model",
+      "aliases": [
+        "allostery model",
+        "cooperativity model",
+        "MWC model",
+        "KNF model"
+      ],
+      "model_class": "equilibrium or kinetic",
+      "domain": "allostery",
+      "description": "Model describing how ligand binding at one site changes activity or affinity at another site, often producing cooperative or sigmoidal responses.",
+      "state_variables": [
+        "binding_occupancy"
+      ],
+      "parameters": [
+        "PARAM_HILL",
+        "PARAM_KD"
+      ],
+      "expressions": [
+        "EXPR_HILL_ACTIVATION",
+        "EXPR_HILL_INHIBITION"
+      ],
+      "relations": [
+        "REL_ALLOSTERIC_ACTIVATION",
+        "REL_ALLOSTERIC_INHIBITION",
+        "REL_COOPERATIVITY"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_STOCHASTIC_BINDING",
+      "canonical_name": "stochastic binding model",
+      "aliases": [
+        "stochastic binding",
+        "single-molecule binding model"
+      ],
+      "model_class": "stochastic",
+      "domain": "state_model",
+      "description": "Probabilistic model of binding and unbinding events for individual molecules or small numbers of sites.",
+      "state_variables": [
+        "binding_probability",
+        "bound_fraction"
+      ],
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF",
+        "PARAM_BINDING_PROBABILITY"
+      ],
+      "expressions": [
+        "EXPR_REVERSIBLE_BINDING",
+        "EXPR_MARKOV_TRANSITION"
+      ],
+      "relations": [
+        "REL_BINDING",
+        "REL_UNBINDING"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "medium",
+      "notes": ""
+    },
+    {
+      "id": "MODEL_GENERAL_KINETIC",
+      "canonical_name": "general kinetic model",
+      "aliases": [
+        "kinetic model",
+        "general rate model"
+      ],
+      "model_class": "kinetic ODE",
+      "domain": "chemical_kinetics",
+      "description": "Generic kinetic model whose rate parameters and dependencies are specified by the study.",
+      "state_variables": [
+        "concentration",
+        "rate"
+      ],
+      "parameters": [
+        "PARAM_KM",
+        "PARAM_VMAX",
+        "PARAM_REACTION_FLUX"
+      ],
+      "expressions": [
+        "EXPR_MASS_ACTION",
+        "EXPR_MICHAELIS_MENTEN"
+      ],
+      "relations": [
+        "REL_PARAMETER_MODULATION"
+      ],
+      "biomodels_ids": [],
+      "source_ids": [
+        "biomodels",
+        "sbml"
+      ],
+      "confidence": "high",
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "biomodeling/contracts/extraction.schema.json",
+  "title": "Unified Biological Extraction with optional Model IR",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "document",
+    "research_question",
+    "study_profile",
+    "variables",
+    "relationships",
+    "unresolved",
+    "extraction_metadata"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "document": {
+      "type": "object",
+      "required": [
+        "title",
+        "source_path",
+        "source_name",
+        "language"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authors": {
+          "type": "string"
+        },
+        "year": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "source_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "research_question": {
+      "type": "object",
+      "required": [
+        "question",
+        "scope",
+        "evidence"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceList"
+        }
+      }
+    },
+    "study_profile": {
+      "type": "object",
+      "required": [
+        "organism_or_system",
+        "study_design",
+        "model_type",
+        "sample_scale",
+        "time_scale"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "organism_or_system": {
+          "type": "string"
+        },
+        "study_design": {
+          "type": "string"
+        },
+        "model_type": {
+          "type": "string"
+        },
+        "sample_scale": {
+          "type": "string"
+        },
+        "time_scale": {
+          "type": "string"
+        }
+      }
+    },
+    "variables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/variable"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relationship"
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unresolved"
+      }
+    },
+    "extraction_metadata": {
+      "type": "object",
+      "required": [
+        "extracted_at",
+        "extractor",
+        "coverage",
+        "method",
+        "warnings"
+      ],
+      "properties": {
+        "extracted_at": {
+          "type": "string"
+        },
+        "extractor": {
+          "type": "string"
+        },
+        "coverage": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "review_status": {
+          "enum": [
+            "scaffold",
+            "needs_review",
+            "reviewed"
+          ]
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string"
+        }
+      }
+    },
+    "model_ir": {
+      "type": "object",
+      "description": "Optional complete biomodel-agent Model IR embedded in the extraction.",
+      "additionalProperties": true
+    },
+    "model_ir_seed": {
+      "type": "object",
+      "description": "Optional partial Model IR overrides used by the adapter.",
+      "additionalProperties": true
+    },
+    "conversion": {
+      "type": "object",
+      "description": "Adapter diagnostics, including model_ready and mapping warnings.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": [
+        "block_id",
+        "quote"
+      ],
+      "properties": {
+        "block_id": {
+          "type": "string",
+          "pattern": "^B[0-9]{4,}$"
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "section": {
+          "type": "string"
+        }
+      }
+    },
+    "evidenceList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "variable": {
+      "type": "object",
+      "required": [
+        "variable_id",
+        "raw_name",
+        "canonical_name",
+        "symbol",
+        "aliases",
+        "role",
+        "kind",
+        "definition",
+        "unit",
+        "value_or_range",
+        "relationship",
+        "evidence",
+        "confidence",
+        "notes"
+      ],
+      "properties": {
+        "variable_id": {
+          "type": "string",
+          "pattern": "^V[0-9]{3,}$"
+        },
+        "raw_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9_^{}\\[\\]()+\\-/]*$"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role": {
+          "enum": [
+            "independent",
+            "dependent",
+            "controlled",
+            "covariate",
+            "parameter",
+            "derived",
+            "categorical",
+            "latent",
+            "other"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "continuous",
+            "discrete",
+            "binary",
+            "categorical",
+            "ordinal",
+            "count",
+            "rate",
+            "constant",
+            "unknown"
+          ]
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value_or_range": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relationship": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceList"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": [
+        "relationship_id",
+        "type",
+        "from",
+        "to",
+        "expression",
+        "evidence",
+        "notes"
+      ],
+      "properties": {
+        "relationship_id": {
+          "type": "string",
+          "pattern": "^R[0-9]{3,}$"
+        },
+        "type": {
+          "enum": [
+            "equation",
+            "directional",
+            "definition",
+            "grouping",
+            "association",
+            "other"
+          ]
+        },
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceList"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "unresolved": {
+      "type": "object",
+      "required": [
+        "issue",
+        "related_variables",
+        "evidence",
+        "recommended_action"
+      ],
+      "properties": {
+        "issue": {
+          "type": "string",
+          "minLength": 1
+        },
+        "related_variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "recommended_action": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

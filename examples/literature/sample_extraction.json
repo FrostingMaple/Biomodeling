@@ -1,0 +1,441 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "title": "Temperature and nitrogen regulation of Escherichia coli growth",
+    "authors": "Example Authors",
+    "year": 2026,
+    "source_path": "examples/sample_paper.md",
+    "source_name": "sample_paper.md",
+    "language": "en",
+    "doi": null
+  },
+  "research_question": {
+    "question": "How do nitrogen availability and temperature regulate the specific growth rate of Escherichia coli in continuous culture?",
+    "scope": "Continuous and batch cultures of Escherichia coli K-12 across three temperatures and a range of ammonium concentrations.",
+    "confidence": "high",
+    "evidence": [
+      {
+        "block_id": "B0001",
+        "quote": "We investigated how nitrogen availability and temperature regulate the specific growth rate of *Escherichia coli* in continuous culture.",
+        "page": null,
+        "section": "abstract"
+      }
+    ]
+  },
+  "study_profile": {
+    "organism_or_system": "Escherichia coli K-12 in minimal medium",
+    "study_design": "Batch and chemostat experiments with three independent biological replicates per condition",
+    "model_type": "Temperature-dependent Monod model",
+    "sample_scale": "Three temperatures and ammonium concentrations from 0.1 to 10 mM",
+    "time_scale": "Exponential growth and continuous-culture steady state"
+  },
+  "variables": [
+    {
+      "variable_id": "V001",
+      "raw_name": "temperature",
+      "canonical_name": "Culture temperature",
+      "symbol": "T",
+      "aliases": [],
+      "role": "independent",
+      "kind": "continuous",
+      "definition": "Temperature at which the culture was maintained.",
+      "unit": "degrees Celsius",
+      "value_or_range": "25, 30, or 37",
+      "relationship": "Hypothesized to increase the maximum specific growth rate.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "*Escherichia coli* K-12 was grown in minimal medium. Ammonium chloride was the sole nitrogen source. The dilution rate was set to 0.2 per hour in chemostat cultures. Temperature was controlled at 25, 30, or 37 degrees Celsius.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Treated as an experimental factor in this extraction."
+    },
+    {
+      "variable_id": "V002",
+      "raw_name": "nitrogen availability",
+      "canonical_name": "Nitrogen availability",
+      "symbol": "N_avail",
+      "aliases": [
+        "nitrogen limitation",
+        "nitrogen-replete conditions"
+      ],
+      "role": "independent",
+      "kind": "categorical",
+      "definition": "Availability of nitrogen to the culture, operationalized through ammonium concentration and limitation state.",
+      "unit": "Not reported",
+      "value_or_range": "Limited versus replete; ammonium 0.1 to 10 mM",
+      "relationship": "Regulates the specific growth rate and the half-saturation constant.",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "We investigated how nitrogen availability and temperature regulate the specific growth rate of *Escherichia coli* in continuous culture.",
+          "page": null,
+          "section": "abstract"
+        },
+        {
+          "block_id": "B0001",
+          "quote": "We hypothesized that the maximum specific growth rate increases with temperature and that the half-saturation constant for nitrogen decreases under nitrogen limitation.",
+          "page": null,
+          "section": "abstract"
+        }
+      ],
+      "confidence": "high",
+      "notes": "The paper combines a continuous concentration range with a limitation/replete classification."
+    },
+    {
+      "variable_id": "V003",
+      "raw_name": "specific growth rate",
+      "canonical_name": "Specific growth rate",
+      "symbol": "mu",
+      "aliases": [],
+      "role": "dependent",
+      "kind": "rate",
+      "definition": "Natural logarithm of optical density change per unit time.",
+      "unit": "per hour",
+      "value_or_range": "Not reported as a full range",
+      "relationship": "mu = d(ln OD600)/dt; modeled as a function of N_avail and T.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "Optical density at 600 nm was converted to cell dry weight using a calibration curve. The specific growth rate was calculated as the natural logarithm of optical density change per unit time.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "high",
+      "notes": "The symbol mu follows the Monod convention used in the source."
+    },
+    {
+      "variable_id": "V004",
+      "raw_name": "maximum specific growth rate",
+      "canonical_name": "Maximum specific growth rate",
+      "symbol": "mu_max",
+      "aliases": [
+        "maximum growth rate"
+      ],
+      "role": "parameter",
+      "kind": "rate",
+      "definition": "Upper limit of the specific growth rate in the Monod model.",
+      "unit": "per hour",
+      "value_or_range": "0.61 per hour at 30 degrees Celsius",
+      "relationship": "mu = mu_max S / (K_s + S); hypothesized to increase with T.",
+      "evidence": [
+        {
+          "block_id": "B0004",
+          "quote": "At 30 degrees Celsius, the maximum specific growth rate was 0.61 per hour and the half-saturation constant for ammonium was 0.42 mM.",
+          "page": null,
+          "section": "results"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Estimate is temperature-specific."
+    },
+    {
+      "variable_id": "V005",
+      "raw_name": "half-saturation constant for ammonium",
+      "canonical_name": "Half-saturation constant for nitrogen",
+      "symbol": "K_s",
+      "aliases": [
+        "half-saturation constant"
+      ],
+      "role": "parameter",
+      "kind": "continuous",
+      "definition": "Substrate concentration at which the specific growth rate is half of the maximum specific growth rate.",
+      "unit": "mM",
+      "value_or_range": "0.42 mM at 30 degrees Celsius",
+      "relationship": "mu = mu_max S / (K_s + S); decreased under nitrogen limitation.",
+      "evidence": [
+        {
+          "block_id": "B0004",
+          "quote": "At 30 degrees Celsius, the maximum specific growth rate was 0.61 per hour and the half-saturation constant for ammonium was 0.42 mM.",
+          "page": null,
+          "section": "results"
+        }
+      ],
+      "confidence": "high",
+      "notes": "The paper assumes this parameter is independent of temperature, although estimates varied."
+    },
+    {
+      "variable_id": "V006",
+      "raw_name": "ammonium concentration",
+      "canonical_name": "Ammonium concentration",
+      "symbol": "S",
+      "aliases": [
+        "limiting substrate concentration",
+        "ammonium chloride concentration"
+      ],
+      "role": "independent",
+      "kind": "continuous",
+      "definition": "Concentration of the limiting nitrogen source in the medium.",
+      "unit": "mM",
+      "value_or_range": "0.1 to 10 mM",
+      "relationship": "Input substrate concentration in the Monod equation.",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "We hypothesized that the maximum specific growth rate increases with temperature and that the half-saturation constant for nitrogen decreases under nitrogen limitation.",
+          "page": null,
+          "section": "abstract"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Distinguished from the broader nitrogen-availability variable V002."
+    },
+    {
+      "variable_id": "V007",
+      "raw_name": "optical density at 600 nm",
+      "canonical_name": "Optical density at 600 nm",
+      "symbol": "OD600",
+      "aliases": [
+        "OD600"
+      ],
+      "role": "derived",
+      "kind": "continuous",
+      "definition": "Turbidity measurement used to estimate biomass and to calculate the specific growth rate.",
+      "unit": "dimensionless absorbance units",
+      "value_or_range": "Not reported",
+      "relationship": "Used to calculate mu and converted to cell dry weight using a calibration curve.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "Optical density at 600 nm was converted to cell dry weight using a calibration curve.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Measurement variable rather than a modeled biological state."
+    },
+    {
+      "variable_id": "V008",
+      "raw_name": "dissolved oxygen concentration",
+      "canonical_name": "Dissolved oxygen concentration",
+      "symbol": "DO",
+      "aliases": [
+        "dissolved oxygen"
+      ],
+      "role": "controlled",
+      "kind": "continuous",
+      "definition": "Oxygen available in the culture medium, maintained above a threshold to avoid oxygen limitation.",
+      "unit": "percent saturation",
+      "value_or_range": ">30 percent saturation",
+      "relationship": "Held as a controlled condition.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "Dissolved oxygen concentration was monitored continuously and maintained above 30 percent saturation.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Controlled variable, not an experimental treatment."
+    },
+    {
+      "variable_id": "V009",
+      "raw_name": "dilution rate",
+      "canonical_name": "Chemostat dilution rate",
+      "symbol": "D",
+      "aliases": [],
+      "role": "controlled",
+      "kind": "rate",
+      "definition": "Rate at which medium is diluted in the chemostat.",
+      "unit": "per hour",
+      "value_or_range": "0.2 per hour",
+      "relationship": "Set as a controlled operating condition.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "The dilution rate was set to 0.2 per hour in chemostat cultures.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Not reported as varying in this experiment."
+    },
+    {
+      "variable_id": "V010",
+      "raw_name": "carrying capacity",
+      "canonical_name": "Carrying capacity",
+      "symbol": "K_capacity",
+      "aliases": [],
+      "role": "parameter",
+      "kind": "continuous",
+      "definition": "Maximum population or biomass level supported by the environment, estimated from the growth-curve plateau.",
+      "unit": "Not reported",
+      "value_or_range": "Not reported",
+      "relationship": "Estimated from the plateau of the growth curve.",
+      "evidence": [
+        {
+          "block_id": "B0004",
+          "quote": "The carrying capacity was estimated from the plateau of the growth curve.",
+          "page": null,
+          "section": "results"
+        }
+      ],
+      "confidence": "medium",
+      "notes": "The source does not state the unit or numerical value."
+    },
+    {
+      "variable_id": "V011",
+      "raw_name": "yield coefficient",
+      "canonical_name": "Biomass yield coefficient",
+      "symbol": "Y",
+      "aliases": [
+        "yield"
+      ],
+      "role": "parameter",
+      "kind": "constant",
+      "definition": "Conversion of substrate into biomass, treated as constant during exponential growth.",
+      "unit": "Not reported",
+      "value_or_range": "Not reported",
+      "relationship": "Treated as a constant during exponential growth.",
+      "evidence": [
+        {
+          "block_id": "B0005",
+          "quote": "The yield coefficient was treated as a constant during exponential growth.",
+          "page": null,
+          "section": "discussion"
+        }
+      ],
+      "confidence": "medium",
+      "notes": "The source does not define the yield basis or unit."
+    },
+    {
+      "variable_id": "V012",
+      "raw_name": "cell dry weight",
+      "canonical_name": "Cell dry weight",
+      "symbol": "CDW",
+      "aliases": [],
+      "role": "dependent",
+      "kind": "continuous",
+      "definition": "Biomass concentration measured at the end of each experiment.",
+      "unit": "Not reported",
+      "value_or_range": "Not reported",
+      "relationship": "Calibrated against OD600.",
+      "evidence": [
+        {
+          "block_id": "B0003",
+          "quote": "Optical density at 600 nm was converted to cell dry weight using a calibration curve.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "confidence": "medium",
+      "notes": "The abstract mentions cell dry weight; the supplied methods chunk gives the calibration relationship but not the unit."
+    }
+  ],
+  "relationships": [
+    {
+      "relationship_id": "R001",
+      "type": "equation",
+      "from": [
+        "V006"
+      ],
+      "to": [
+        "V003"
+      ],
+      "expression": "mu = mu_max * S / (K_s + S)",
+      "evidence": [
+        {
+          "block_id": "B0002",
+          "quote": "The Monod model describes the relationship between the specific growth rate and the limiting substrate concentration using a maximum specific growth rate and a half-saturation constant.",
+          "page": null,
+          "section": "methods"
+        }
+      ],
+      "notes": "The Monod form is named in the source; the exact expression is a standard statement of that named model."
+    },
+    {
+      "relationship_id": "R002",
+      "type": "directional",
+      "from": [
+        "V001"
+      ],
+      "to": [
+        "V004"
+      ],
+      "expression": "Increasing temperature is hypothesized to increase mu_max.",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "We hypothesized that the maximum specific growth rate increases with temperature and that the half-saturation constant for nitrogen decreases under nitrogen limitation.",
+          "page": null,
+          "section": "abstract"
+        }
+      ],
+      "notes": "Hypothesized rather than established at all temperatures."
+    },
+    {
+      "relationship_id": "R003",
+      "type": "directional",
+      "from": [
+        "V002"
+      ],
+      "to": [
+        "V005"
+      ],
+      "expression": "Nitrogen limitation decreases the half-saturation constant.",
+      "evidence": [
+        {
+          "block_id": "B0004",
+          "quote": "Nitrogen limitation reduced the half-saturation constant relative to nitrogen-replete conditions.",
+          "page": null,
+          "section": "results"
+        }
+      ],
+      "notes": "Reported as a result."
+    }
+  ],
+  "unresolved": [
+    {
+      "issue": "The mechanism linking nitrogen availability to the half-saturation constant was not measured.",
+      "related_variables": [
+        "V002",
+        "V005"
+      ],
+      "evidence": [
+        {
+          "block_id": "B0006",
+          "quote": "The study did not measure intracellular nitrogen pools, so the mechanism linking nitrogen availability to the half-saturation constant remains unresolved.",
+          "page": null,
+          "section": "discussion"
+        }
+      ],
+      "recommended_action": "Treat the relationship as empirical and avoid adding an unmeasured intracellular intermediate."
+    },
+    {
+      "issue": "The source assumes that the half-saturation constant is independent of temperature but reports variation across temperatures.",
+      "related_variables": [
+        "V001",
+        "V005"
+      ],
+      "evidence": [
+        {
+          "block_id": "B0005",
+          "quote": "The model assumes that the half-saturation constant is independent of temperature, although our estimates varied slightly across temperatures.",
+          "page": null,
+          "section": "discussion"
+        }
+      ],
+      "recommended_action": "Record the assumption and the observed variation separately; do not encode temperature dependence as established."
+    }
+  ],
+  "extraction_metadata": {
+    "extracted_at": "2026-09-28T00:00:00Z",
+    "extractor": "Example agent run",
+    "coverage": "Title, abstract, introduction, methods, results, discussion, and limitations of the supplied sample.",
+    "method": "Agent extraction from prepared chunks, followed by schema validation and deterministic rendering.",
+    "warnings": [
+      "The document is a synthetic teaching example rather than a publication.",
+      "Some units and values are not reported in the supplied text."
+    ],
+    "review_status": "reviewed",
+    "reviewer": "Example expert reviewer",
+    "reviewed_at": "2026-09-29T00:00:00Z"
+  }
+}
