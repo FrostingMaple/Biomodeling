@@ -1,0 +1,1038 @@
+{
+  "schema_version": "1.0",
+  "lexicon_type": "expressions",
+  "generated_at": "2026-09-29",
+  "description": "Classic expressions used in biological mathematical modelling, with parameter and model links.",
+  "sources": [
+    {
+      "source_id": "europepmc",
+      "name": "Europe PMC REST API",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/michaelis_menten.json",
+        "raw/europepmc/hill_equation.json",
+        "raw/europepmc/hodgkin_huxley.json",
+        "raw/europepmc/sir_model.json",
+        "raw/europepmc/lotka_volterra.json",
+        "raw/europepmc/repressilator.json",
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    },
+    {
+      "source_id": "biomodels",
+      "name": "BioModels curated model repository",
+      "url": "https://www.ebi.ac.uk/biomodels/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "sbml_statistics.json",
+        "LOCAL_ARCHIVE_MANIFEST.csv"
+      ]
+    },
+    {
+      "source_id": "biomodels_search",
+      "name": "BioModels kinetic model search response",
+      "url": "https://www.ebi.ac.uk/biomodels/search",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/biomodels/kinetic_model_search.json"
+      ]
+    },
+    {
+      "source_id": "sbml",
+      "name": "Systems Biology Markup Language (SBML)",
+      "url": "https://sbml.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "reactome",
+      "name": "Reactome Content Service",
+      "url": "https://reactome.org/ContentService/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/reactome/R-HSA-109582.json"
+      ]
+    },
+    {
+      "source_id": "sabio_rk",
+      "name": "SABIO-RK reaction kinetics database",
+      "url": "https://sabio.h-its.org/",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/sabio/searchKineticLaws.html"
+      ]
+    },
+    {
+      "source_id": "brenda",
+      "name": "BRENDA enzyme database",
+      "url": "https://www.brenda-enzymes.org/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "kegg",
+      "name": "KEGG pathway database",
+      "url": "https://www.genome.jp/kegg/",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_mm",
+      "name": "Michaelis and Menten enzyme kinetics",
+      "url": "https://doi.org/10.1016/S0076-6879(09)63002-7",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_hh",
+      "name": "Hodgkin and Huxley action potential model",
+      "url": "https://doi.org/10.1113/jphysiol.1952.sp004764",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_sir",
+      "name": "Kermack and McKendrick compartmental epidemic model",
+      "url": "https://doi.org/10.1098/rspa.1927.0118",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "classic_lotka_volterra",
+      "name": "Lotka-Volterra population dynamics",
+      "url": "https://doi.org/10.1038/140070a0",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "repressilator",
+      "name": "Elowitz and Leibler repressilator",
+      "url": "https://doi.org/10.1038/35002125",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000012.xml",
+        "extracted/BIOMD0000000012/"
+      ]
+    },
+    {
+      "source_id": "mapk_cascade",
+      "name": "Kholodenko MAPK cascade oscillation model",
+      "url": "https://doi.org/10.1046/j.1432-1327.2000.01197.x",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "BIOMD0000000010.xml",
+        "extracted/BIOMD0000000010/"
+      ]
+    },
+    {
+      "source_id": "erbb_model",
+      "name": "Chen et al. ErbB signaling mass-action model",
+      "url": "https://doi.org/10.1038/msb.2008.74",
+      "accessed": "2026-09-29",
+      "local_files": []
+    },
+    {
+      "source_id": "hepatic_glucose",
+      "name": "Konig et al. human hepatic glucose metabolism model",
+      "url": "https://doi.org/10.1371/journal.pcbi.1002577",
+      "accessed": "2026-09-29",
+      "local_files": [
+        "raw/europepmc/hepatic_glucose.json"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "EXPR_MASS_ACTION",
+      "canonical_name": "mass-action rate law",
+      "aliases": [
+        "law of mass action",
+        "mass action kinetics"
+      ],
+      "domain": "chemical_kinetics",
+      "expression": "v = k * product_i [X_i]^{n_i}",
+      "latex": "v = k \\prod_i [X_i]^{n_i}",
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF"
+      ],
+      "response_variables": [
+        "PARAM_REACTION_FLUX"
+      ],
+      "assumptions": [
+        "Elementary reactions are treated as stochastic or deterministic events with rate proportional to reactant abundance."
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_CHEMICAL_REACTION_NETWORK"
+      ],
+      "source_ids": [
+        "biomodels",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_MICHAELIS_MENTEN",
+      "canonical_name": "Michaelis-Menten rate law",
+      "aliases": [
+        "Michaelis-Menten equation",
+        "Michaelis Menten kinetics",
+        "saturation kinetics"
+      ],
+      "domain": "enzyme_kinetics",
+      "expression": "v = Vmax * [S] / (Km + [S])",
+      "latex": "v = \\frac{V_{max}[S]}{K_m+[S]}",
+      "parameters": [
+        "PARAM_VMAX",
+        "PARAM_KM",
+        "PARAM_SUBSTRATE_CONCENTRATION"
+      ],
+      "response_variables": [
+        "PARAM_REACTION_FLUX"
+      ],
+      "assumptions": [
+        "Single-substrate enzyme reaction; quasi-steady-state assumption for enzyme-substrate complex; no inhibition or cooperativity."
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN",
+        "MODEL_ENZYME_KINETICS"
+      ],
+      "source_ids": [
+        "classic_mm",
+        "brenda",
+        "sabio_rk",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_CATALYTIC_EFFICIENCY",
+      "canonical_name": "catalytic efficiency",
+      "aliases": [
+        "specificity constant",
+        "kcat/Km"
+      ],
+      "domain": "enzyme_kinetics",
+      "expression": "efficiency = kcat / Km",
+      "latex": "\\eta = \\frac{k_{cat}}{K_m}",
+      "parameters": [
+        "PARAM_KCAT",
+        "PARAM_KM"
+      ],
+      "response_variables": [
+        "PARAM_KCAT_KM"
+      ],
+      "assumptions": [
+        "Used to compare enzyme efficiency in the low-substrate regime of a Michaelis-Menten model."
+      ],
+      "related_models": [
+        "MODEL_MICHAELIS_MENTEN"
+      ],
+      "source_ids": [
+        "brenda",
+        "sabio_rk"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_COMPETITIVE_INHIBITION",
+      "canonical_name": "competitive inhibition rate law",
+      "aliases": [
+        "competitive inhibition equation",
+        "apparent Km inhibition"
+      ],
+      "domain": "enzyme_inhibition",
+      "expression": "v = Vmax * [S] / (Km * (1 + [I]/Ki) + [S])",
+      "latex": "v = \\frac{V_{max}[S]}{K_m(1+[I]/K_i)+[S]}",
+      "parameters": [
+        "PARAM_VMAX",
+        "PARAM_KM",
+        "PARAM_KI",
+        "PARAM_SUBSTRATE_CONCENTRATION"
+      ],
+      "response_variables": [
+        "PARAM_REACTION_FLUX"
+      ],
+      "assumptions": [
+        "Inhibitor binds free enzyme reversibly and competes with substrate; standard rapid-equilibrium or steady-state derivation."
+      ],
+      "related_models": [
+        "MODEL_ENZYME_INHIBITION"
+      ],
+      "source_ids": [
+        "brenda",
+        "sabio_rk",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_HILL_ACTIVATION",
+      "canonical_name": "Hill activation function",
+      "aliases": [
+        "Hill equation",
+        "sigmoidal activation",
+        "cooperative activation"
+      ],
+      "domain": "dose_response",
+      "expression": "response = basal + (max - basal) * X^n / (K^n + X^n)",
+      "latex": "R = R_{base} + (R_{max}-R_{base})\\frac{X^n}{K^n+X^n}",
+      "parameters": [
+        "PARAM_HILL",
+        "PARAM_EC50"
+      ],
+      "response_variables": [
+        "response"
+      ],
+      "assumptions": [
+        "Empirical sigmoidal relation; n describes apparent cooperativity; mechanism not uniquely identified by the fit."
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_DOSE_RESPONSE",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_HILL_INHIBITION",
+      "canonical_name": "Hill inhibition function",
+      "aliases": [
+        "Hill inhibition",
+        "sigmoidal inhibition",
+        "repression function"
+      ],
+      "domain": "dose_response",
+      "expression": "response = basal + (max - basal) * K^n / (K^n + X^n)",
+      "latex": "R = R_{base} + (R_{max}-R_{base})\\frac{K^n}{K^n+X^n}",
+      "parameters": [
+        "PARAM_HILL",
+        "PARAM_IC50"
+      ],
+      "response_variables": [
+        "response"
+      ],
+      "assumptions": [
+        "Empirical decreasing sigmoidal relation used for inhibition or repression; mechanism must be supported separately."
+      ],
+      "related_models": [
+        "MODEL_HILL",
+        "MODEL_DOSE_RESPONSE",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels",
+        "repressilator"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_REVERSIBLE_BINDING",
+      "canonical_name": "reversible bimolecular binding",
+      "aliases": [
+        "reversible binding",
+        "association-dissociation kinetics",
+        "receptor-ligand binding"
+      ],
+      "domain": "binding_kinetics",
+      "expression": "d[AB]/dt = kon*[A]*[B] - koff*[AB]",
+      "latex": "\\frac{d[AB]}{dt}=k_{on}[A][B]-k_{off}[AB]",
+      "parameters": [
+        "PARAM_KON",
+        "PARAM_KOFF",
+        "PARAM_KD"
+      ],
+      "response_variables": [
+        "binding_complex_concentration"
+      ],
+      "assumptions": [
+        "Bimolecular association and first-order dissociation; concentrations treated as deterministic and well mixed."
+      ],
+      "related_models": [
+        "MODEL_MASS_ACTION",
+        "MODEL_RECEPTOR_LIGAND"
+      ],
+      "source_ids": [
+        "biomodels",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_RECEPTOR_BINDING_EQUILIBRIUM",
+      "canonical_name": "receptor binding equilibrium",
+      "aliases": [
+        "binding equilibrium",
+        "fractional occupancy",
+        "Langmuir binding"
+      ],
+      "domain": "binding_equilibrium",
+      "expression": "fraction_bound = [L] / (Kd + [L])",
+      "latex": "f = \\frac{[L]}{K_d+[L]}",
+      "parameters": [
+        "PARAM_KD"
+      ],
+      "response_variables": [
+        "fraction_bound"
+      ],
+      "assumptions": [
+        "Equilibrium binding with a single independent binding site and no cooperativity."
+      ],
+      "related_models": [
+        "MODEL_RECEPTOR_LIGAND"
+      ],
+      "source_ids": [
+        "biomodels",
+        "erbb_model"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_EXPONENTIAL_DECAY",
+      "canonical_name": "first-order exponential decay",
+      "aliases": [
+        "exponential decay",
+        "first-order elimination"
+      ],
+      "domain": "kinetics",
+      "expression": "X(t) = X0 * exp(-k*t)",
+      "latex": "X(t)=X_0e^{-kt}",
+      "parameters": [
+        "PARAM_INITIAL_CONCENTRATION",
+        "PARAM_HALF_LIFE"
+      ],
+      "response_variables": [
+        "X(t)"
+      ],
+      "assumptions": [
+        "First-order removal with a constant rate coefficient and no production input."
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS",
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "europepmc",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_FIRST_ORDER_CLEARANCE",
+      "canonical_name": "first-order clearance kinetics",
+      "aliases": [
+        "clearance equation",
+        "one-compartment elimination"
+      ],
+      "domain": "pharmacokinetics",
+      "expression": "dC/dt = input - k_clear * C",
+      "latex": "\\frac{dC}{dt}=I(t)-k_{clear}C",
+      "parameters": [
+        "PARAM_CLEARANCE",
+        "PARAM_RELEASE_RATE",
+        "PARAM_INITIAL_CONCENTRATION"
+      ],
+      "response_variables": [
+        "concentration"
+      ],
+      "assumptions": [
+        "One well-mixed compartment; first-order clearance; input function must be specified separately."
+      ],
+      "related_models": [
+        "MODEL_ONE_COMPARTMENT",
+        "MODEL_BIOMARKER_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc",
+        "hepatic_glucose"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_INPUT_OUTPUT_KINETICS",
+      "canonical_name": "input-output compartment kinetics",
+      "aliases": [
+        "release-clearance kinetics",
+        "biomarker release and clearance"
+      ],
+      "domain": "pharmacokinetics",
+      "expression": "dC/dt = k_release * D(t) - k_clear * C",
+      "latex": "\\frac{dC}{dt}=k_{release}D(t)-k_{clear}C",
+      "parameters": [
+        "PARAM_RELEASE_RATE",
+        "PARAM_CLEARANCE"
+      ],
+      "response_variables": [
+        "concentration"
+      ],
+      "assumptions": [
+        "Requires a defined input or damage function D(t) and a single measured compartment."
+      ],
+      "related_models": [
+        "MODEL_BIOMARKER_KINETICS",
+        "MODEL_ONE_COMPARTMENT"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_LOGISTIC_GROWTH",
+      "canonical_name": "logistic growth",
+      "aliases": [
+        "Verhulst model",
+        "logistic equation",
+        "saturating population growth"
+      ],
+      "domain": "population_dynamics",
+      "expression": "dN/dt = r*N*(1 - N/K)",
+      "latex": "\\frac{dN}{dt}=rN\\left(1-\\frac{N}{K}\\right)",
+      "parameters": [
+        "PARAM_MU_GROWTH",
+        "PARAM_CARRYING_CAPACITY"
+      ],
+      "response_variables": [
+        "population_size"
+      ],
+      "assumptions": [
+        "Growth rate decreases linearly with population size; carrying capacity is constant in the analysed interval."
+      ],
+      "related_models": [
+        "MODEL_LOGISTIC_GROWTH"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_GOMPERTZ_GROWTH",
+      "canonical_name": "Gompertz growth",
+      "aliases": [
+        "Gompertz equation",
+        "Gompertz tumour growth"
+      ],
+      "domain": "population_dynamics",
+      "expression": "dN/dt = r*N*ln(K/N)",
+      "latex": "\\frac{dN}{dt}=rN\\ln\\left(\\frac{K}{N}\\right)",
+      "parameters": [
+        "PARAM_MU_GROWTH",
+        "PARAM_CARRYING_CAPACITY"
+      ],
+      "response_variables": [
+        "population_size"
+      ],
+      "assumptions": [
+        "Asymmetric sigmoidal growth with initially fast relative growth and a smooth approach to carrying capacity."
+      ],
+      "related_models": [
+        "MODEL_GOMPERTZ_GROWTH"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_SIR_TRANSMISSION",
+      "canonical_name": "SIR transmission term",
+      "aliases": [
+        "mass-action transmission",
+        "infection flow"
+      ],
+      "domain": "epidemiology",
+      "expression": "new_infections = beta * S * I / N",
+      "latex": "\\text{new infections}=\\beta\\frac{SI}{N}",
+      "parameters": [
+        "PARAM_BETA"
+      ],
+      "response_variables": [
+        "susceptible_population",
+        "infected_population"
+      ],
+      "assumptions": [
+        "Homogeneous mixing and frequency- or density-dependent transmission as specified by the model."
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_SIR_RECOVERY",
+      "canonical_name": "SIR recovery term",
+      "aliases": [
+        "recovery flow",
+        "removal from infected compartment"
+      ],
+      "domain": "epidemiology",
+      "expression": "new_recoveries = gamma * I",
+      "latex": "\\text{new recoveries}=\\gamma I",
+      "parameters": [
+        "PARAM_GAMMA"
+      ],
+      "response_variables": [
+        "infected_population"
+      ],
+      "assumptions": [
+        "Per-capita recovery rate is constant and recovery confers immunity in the simplest SIR form."
+      ],
+      "related_models": [
+        "MODEL_SIR",
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_SEIR_LATENT",
+      "canonical_name": "SEIR latent transition",
+      "aliases": [
+        "exposed to infectious transition",
+        "incubation flow"
+      ],
+      "domain": "epidemiology",
+      "expression": "new_infectious = sigma * E",
+      "latex": "\\text{new infectious}=\\sigma E",
+      "parameters": [
+        "PARAM_SIGMA"
+      ],
+      "response_variables": [
+        "exposed_population",
+        "infected_population"
+      ],
+      "assumptions": [
+        "Exposed individuals are not infectious and transition at a constant per-capita rate."
+      ],
+      "related_models": [
+        "MODEL_SEIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_R0_SIR",
+      "canonical_name": "basic reproduction number for simple SIR",
+      "aliases": [
+        "R0 relation",
+        "basic reproductive ratio"
+      ],
+      "domain": "epidemiology",
+      "expression": "R0 = beta / gamma",
+      "latex": "R_0=\\frac{\\beta}{\\gamma}",
+      "parameters": [
+        "PARAM_R0",
+        "PARAM_BETA",
+        "PARAM_GAMMA"
+      ],
+      "response_variables": [
+        "R0"
+      ],
+      "assumptions": [
+        "Closed homogeneous SIR population with no vaccination, waning immunity, or vital dynamics."
+      ],
+      "related_models": [
+        "MODEL_SIR"
+      ],
+      "source_ids": [
+        "classic_sir"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_FICK_DIFFUSION",
+      "canonical_name": "Fickian diffusion",
+      "aliases": [
+        "Fick law",
+        "diffusion equation",
+        "reaction-diffusion transport"
+      ],
+      "domain": "spatial_transport",
+      "expression": "dC/dt = D * laplacian(C) + reaction",
+      "latex": "\\frac{\\partial C}{\\partial t}=D\\nabla^2C+R(C)",
+      "parameters": [
+        "PARAM_DIFFUSION"
+      ],
+      "response_variables": [
+        "concentration"
+      ],
+      "assumptions": [
+        "Isotropic homogeneous medium and Fickian flux proportional to the concentration gradient."
+      ],
+      "related_models": [
+        "MODEL_REACTION_DIFFUSION"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_ARRHENIUS",
+      "canonical_name": "Arrhenius temperature dependence",
+      "aliases": [
+        "Arrhenius equation",
+        "temperature-dependent rate"
+      ],
+      "domain": "thermodynamics",
+      "expression": "k(T) = A * exp(-Ea / (R*T))",
+      "latex": "k(T)=Ae^{-E_a/(RT)}",
+      "parameters": [
+        "PARAM_TEMPERATURE"
+      ],
+      "response_variables": [
+        "rate_constant"
+      ],
+      "assumptions": [
+        "Single activated process with a temperature-independent pre-exponential factor over the analysed interval."
+      ],
+      "related_models": [
+        "MODEL_TEMPERATURE_DEPENDENT_KINETICS"
+      ],
+      "source_ids": [
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_NERNST",
+      "canonical_name": "Nernst equilibrium potential",
+      "aliases": [
+        "Nernst equation",
+        "equilibrium potential"
+      ],
+      "domain": "electrophysiology",
+      "expression": "E_ion = (R*T/(z*F)) * ln([ion_out]/[ion_in])",
+      "latex": "E_{ion}=\\frac{RT}{zF}\\ln\\frac{[ion]_{out}}{[ion]_{in}}",
+      "parameters": [
+        "PARAM_REVERSAL_POTENTIAL",
+        "PARAM_TEMPERATURE"
+      ],
+      "response_variables": [
+        "reversal_potential"
+      ],
+      "assumptions": [
+        "Ideal electrochemical equilibrium for a single permeant ion."
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_HH_MEMBRANE_CURRENT",
+      "canonical_name": "Hodgkin-Huxley membrane current balance",
+      "aliases": [
+        "Hodgkin-Huxley membrane equation",
+        "capacitive membrane current"
+      ],
+      "domain": "electrophysiology",
+      "expression": "Cm * dVm/dt = -I_Na - I_K - I_L + I_ext",
+      "latex": "C_m\\frac{dV_m}{dt}=-I_{Na}-I_K-I_L+I_{ext}",
+      "parameters": [
+        "PARAM_CAPACITANCE",
+        "PARAM_MEMBRANE_POTENTIAL",
+        "PARAM_CONDUCTANCE",
+        "PARAM_REVERSAL_POTENTIAL"
+      ],
+      "response_variables": [
+        "membrane_potential"
+      ],
+      "assumptions": [
+        "Space-clamped membrane patch; ionic currents follow Hodgkin-Huxley gating and linear driving-force terms."
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_HH_IONIC_CURRENT",
+      "canonical_name": "Hodgkin-Huxley ionic current",
+      "aliases": [
+        "ionic current equation",
+        "gating current"
+      ],
+      "domain": "electrophysiology",
+      "expression": "I_ion = gbar * m^a * h^b * (Vm - E_ion)",
+      "latex": "I_{ion}=\\bar{g}m^ah^b(V_m-E_{ion})",
+      "parameters": [
+        "PARAM_CONDUCTANCE",
+        "PARAM_REVERSAL_POTENTIAL",
+        "PARAM_MEMBRANE_POTENTIAL"
+      ],
+      "response_variables": [
+        "ionic_current"
+      ],
+      "assumptions": [
+        "Gating variables are bounded between zero and one and follow first-order voltage-dependent kinetics."
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_HH_GATING",
+      "canonical_name": "Hodgkin-Huxley gating kinetics",
+      "aliases": [
+        "gating variable kinetics",
+        "activation and inactivation"
+      ],
+      "domain": "electrophysiology",
+      "expression": "dx/dt = alpha_x(V)*(1-x) - beta_x(V)*x",
+      "latex": "\\frac{dx}{dt}=\\alpha_x(V)(1-x)-\\beta_x(V)x",
+      "parameters": [],
+      "response_variables": [
+        "gating_variable"
+      ],
+      "assumptions": [
+        "Two-state gating with voltage-dependent forward and backward rate functions."
+      ],
+      "related_models": [
+        "MODEL_HODGKIN_HUXLEY"
+      ],
+      "source_ids": [
+        "classic_hh"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_MRNA_SYNTHESIS",
+      "canonical_name": "mRNA synthesis and degradation",
+      "aliases": [
+        "mRNA turnover",
+        "transcription-degradation balance"
+      ],
+      "domain": "gene_expression",
+      "expression": "dm/dt = transcription(m) - kd_mRNA*m",
+      "latex": "\\frac{dm}{dt}=T(m)-k_{d,mRNA}m",
+      "parameters": [
+        "PARAM_ALPHA_TRANSCRIPTION",
+        "PARAM_KD_MRNA",
+        "PARAM_TAU_MRNA"
+      ],
+      "response_variables": [
+        "mRNA_concentration"
+      ],
+      "assumptions": [
+        "Transcription and first-order degradation are separated; regulation is encoded in the transcription term."
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_PROTEIN_SYNTHESIS",
+      "canonical_name": "protein synthesis and degradation",
+      "aliases": [
+        "protein turnover",
+        "translation-degradation balance"
+      ],
+      "domain": "gene_expression",
+      "expression": "dp/dt = k_tl*m - kd_prot*p",
+      "latex": "\\frac{dp}{dt}=k_{tl}m-k_{d,prot}p",
+      "parameters": [
+        "PARAM_KT_L",
+        "PARAM_KD_PROT",
+        "PARAM_TAU_PROT"
+      ],
+      "response_variables": [
+        "protein_concentration"
+      ],
+      "assumptions": [
+        "Translation is proportional to mRNA abundance and protein removal is first order."
+      ],
+      "related_models": [
+        "MODEL_GENE_REGULATION",
+        "MODEL_REPRESSILATOR"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_REPRESSILATOR",
+      "canonical_name": "repressilator ring oscillator",
+      "aliases": [
+        "repressilator model",
+        "cyclic repression oscillator"
+      ],
+      "domain": "gene_regulation",
+      "expression": "dm_i/dt = alpha0 + alpha/(1+p_j^n) - kd_mRNA*m_i; dp_i/dt = k_tl*m_i - kd_prot*p_i",
+      "latex": "\\frac{dm_i}{dt}=\\alpha_0+\\frac{\\alpha}{1+p_j^n}-k_{d,mRNA}m_i;\\quad \\frac{dp_i}{dt}=k_{tl}m_i-k_{d,prot}p_i",
+      "parameters": [
+        "PARAM_ALPHA_TRANSCRIPTION",
+        "PARAM_HILL",
+        "PARAM_KD_MRNA",
+        "PARAM_KD_PROT",
+        "PARAM_KT_L"
+      ],
+      "response_variables": [
+        "mRNA_concentration",
+        "protein_concentration"
+      ],
+      "assumptions": [
+        "Three repressors form a cyclic negative-feedback ring; Hill repression is used as a phenomenological regulatory function."
+      ],
+      "related_models": [
+        "MODEL_REPRESSILATOR",
+        "MODEL_GENE_REGULATION"
+      ],
+      "source_ids": [
+        "repressilator",
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_MARKOV_TRANSITION",
+      "canonical_name": "Markov state transition",
+      "aliases": [
+        "master equation",
+        "state transition kinetics"
+      ],
+      "domain": "state_model",
+      "expression": "dP_i/dt = sum_j k_ji*P_j - sum_j k_ij*P_i",
+      "latex": "\\frac{dP_i}{dt}=\\sum_j k_{ji}P_j-\\sum_j k_{ij}P_i",
+      "parameters": [
+        "PARAM_BINDING_PROBABILITY"
+      ],
+      "response_variables": [
+        "state_probability"
+      ],
+      "assumptions": [
+        "Discrete states, Markov property, and conservative transition rates between modelled states."
+      ],
+      "related_models": [
+        "MODEL_MARKOV_STATE"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_POWER_LAW",
+      "canonical_name": "power-law rate law",
+      "aliases": [
+        "linlog kinetics",
+        "power-law kinetics"
+      ],
+      "domain": "metabolic_modeling",
+      "expression": "v = v0 * product_i (X_i/X_i0)^{epsilon_i}",
+      "latex": "v=v_0\\prod_i\\left(\\frac{X_i}{X_{i0}}\\right)^{\\varepsilon_i}",
+      "parameters": [
+        "PARAM_ELASTICITY",
+        "PARAM_REACTION_FLUX"
+      ],
+      "response_variables": [
+        "PARAM_REACTION_FLUX"
+      ],
+      "assumptions": [
+        "Local linearization around a reference steady state; used in linlog metabolic models such as BIOMD0000000471."
+      ],
+      "related_models": [
+        "MODEL_METABOLIC_CONTROL",
+        "MODEL_GENOME_SCALE_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "id": "EXPR_THERMODYNAMIC_DRIVING_FORCE",
+      "canonical_name": "thermodynamic driving-force relation",
+      "aliases": [
+        "Gibbs free-energy driving force",
+        "thermodynamic potential"
+      ],
+      "domain": "thermodynamics",
+      "expression": "DeltaG = DeltaG0 + R*T*ln(Q)",
+      "latex": "\\Delta G=\\Delta G^{\\circ}+RT\\ln Q",
+      "parameters": [
+        "PARAM_THERMODYNAMIC_DRIVING_FORCE",
+        "PARAM_TEMPERATURE"
+      ],
+      "response_variables": [
+        "reaction_direction"
+      ],
+      "assumptions": [
+        "Reaction quotient Q and standard free energy are defined for the modelled conditions; sign indicates favorable or unfavorable direction."
+      ],
+      "related_models": [
+        "MODEL_THERMODYNAMIC_KINETIC"
+      ],
+      "source_ids": [
+        "biomodels",
+        "europepmc"
+      ],
+      "confidence": "high",
+      "notes": "Used to connect thermodynamic feasibility to kinetic model parameters."
+    }
+  ]
+}

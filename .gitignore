@@ -219,3 +219,12 @@ __marimo__/
 
 # Runtime session files
 output/sessions/
+
+runs/*
+!runs/.gitkeep
+
+
+# Local-only test literature (do not commit)
+/examples/modeling_test.pdf
+/examples/literature/sample_paper.md
+/examples/literature/sample_pdf.pdf

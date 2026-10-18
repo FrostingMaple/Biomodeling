@@ -1,247 +1,271 @@
-# biomodel-agent
+# Biomodeling 整合版
 
-AI **生物系统数学建模 Agent**：能够从生物文献文本中
+本目录将两个原有项目整合为一个统一工程，同时保留原项目目录不变：
 
-1. **自动复现** 文献中已有的数学模型（ODE / PDE）；
-2. **自发构建（hypothesis-driven）** 新的数学模型。
+- A：`bio_variable_extractor`，负责文献准备、证据化变量/参数提取、校验和变量交叉表。
+- B：`biomodel-agent`，负责 Model IR、ODE/PDE 数值求解、LLM Agent 和建模报告。
 
-是一个课程作业项目。整套系统由「LLM 驱动的智能体 + 可验证的数值求解引擎 +
-结构化模型中间表示（Model IR）」组成。
+## 项目来源与分支定位
 
----
+- B（`biomodel-agent`）的来源仓库为 [FrostingMaple/Biomodeling](https://github.com/FrostingMaple/Biomodeling)。
+- 统合后的本项目记为 B 的整合分支：`integration/parameter-extraction`。
+- 该分支在 B 的建模能力基础上，整合 A 的文献参数提取、变量交叉表与统一建模链路。
+- 该分支不替代 B 的上游仓库，也不得覆盖或改写 B 的既有历史；接入 Git 时应使用上述正式分支名，不直接在主分支开发。
 
-## 1. 快速开始
+统一后的主链路为：
 
-依赖由项目自带（`uv` 管理的 `.venv`）。需要 Python ≥ 3.12。
-
-### 1.1 无 API 演示（推荐先跑这个）
-
-不依赖任何大模型接口，自动用**内置的 Lotka-Volterra 模型**跑通"复现 → 模拟 →
-报告"完整流程，快速验证数值引擎是否工作：
-
-```bash
-.venv\Scripts\python.exe main.py --demo
+```text
+文献 / DOI
+  -> A: source.json + chunks.jsonl
+  -> A: extraction.json（证据化变量与关系）
+  -> 统一契约: extraction -> Model IR
+  -> B: Model IR 校验
+  -> B: ODE/PDE 仿真 JSON + PNG
+  -> Markdown 联合报告
 ```
 
-产物生成在 `output/` 下：
+## 目录结构
 
-| 产物 | 说明 |
-|---|---|
-| `output/model_ir_lotka_volterra_...__reproduce.json` | 提取的模型 IR |
-| `output/simulation_lotka_volterra_...__reproduce.json` | 数值解 |
-| `output/simulation_lotka_volterra_...__reproduce.png` | 轨迹图 |
-| `output/reports/report_lotka_volterra_reproduce.md` | 复现报告 |
-
-### 1.2 LLM 交互模式
-
-需要设置环境变量并联网：
-
-```bash
-# Windows PowerShell
-$env:USTC_LLM_API_KEY='sk-xxxx'
-$env:BIOMODEL_MODEL='deepseek-v4-flash-ascend'   # 可选，默认就是这个
-
-.venv\Scripts\python.exe main.py --data data\test.pdf
+```text
+Biomodeling-合并尝试/
+├─ pyproject.toml
+├─ run.ps1
+├─ bootstrap.ps1
+├─ src/
+│  └─ biomodeling/
+│     ├─ literature/          # 项目 A
+│     │  ├─ cli.py
+│     │  ├─ extraction.py
+│     │  ├─ validation.py
+│     │  ├─ doi.py
+│     │  ├─ rendering.py
+│     │  ├─ lexicons/
+│     │  ├─ prompts/
+│     │  └─ templates/
+│     ├─ modeling/            # 项目 B 的模型与求解层
+│     │  ├─ model_ir.py
+│     │  ├─ simulate.py
+│     │  └─ pdf_utils.py
+│     ├─ agent/               # 项目 B 的 Agent 层
+│     │  ├─ agent.py
+│     │  ├─ main.py
+│     │  ├─ prompts.py
+│     │  └─ tools.py
+│     ├─ contracts/           # 两项目统一契约
+│     │  ├─ extraction.schema.json
+│     │  ├─ model_ir.schema.json
+│     │  └─ extraction_to_model_ir.py
+│     └─ cli.py
+├─ examples/
+│  ├─ literature/             # A 的原始样例
+│  ├─ modeling_test.pdf       # B 的原始样例文献
+│  └─ model_ready_extraction.json
+├─ tests/
+├─ docs/
+└─ runs/                      # 统一运行产物
 ```
 
-不给 `--data` 则进入对话模式，直接描述你想要复现/构建的模型或给文件路径。
+> [!IMPORTANT]
+> **测试文献不提交到 Git。** `examples/modeling_test.pdf`、`examples/literature/sample_paper.md` 和 `examples/literature/sample_pdf.pdf` 仅用于本地验证，已在 `.gitignore` 中排除。克隆仓库后如需运行依赖这些文件的测试，请从团队共享位置获取并放回原路径；禁止使用 `git add -f` 强制提交。
 
-> 说明：`BIOMODEL_MODEL` 可以换成任意 OpenAI 兼容的模型名；接口地址在
-> `main.py` 中默认为 USTC 端点 `https://api.llm.ustc.edu.cn/v1`。
+## 环境与快速开始
 
-### 支持 PDF 文献 📄
+推荐 Python 3.12：
 
-`--data` 直接支持 `.pdf`（自动解析为文本，可处理**两栏学术排版**），也支持
-`.txt` / `.md` / `.tex`：
-
-```bash
-$env:USTC_LLM_API_KEY='sk-xxx'
-.venv\Scripts\python.exe main.py --data "data\我的论文.pdf"
+```powershell
+.\bootstrap.ps1
+.\run.ps1 --help
 ```
 
-> PDF 解析需要 `pymupdf`（已列入 `pyproject.toml`）。如果环境里没装，先执行：
-> `uv pip install --python .venv/Scripts/python.exe pymupdf`
-> 然后照常运行即可。
+如果不希望安装项目，也可以直接设置 `PYTHONPATH`：
 
----
-
-## 2. 系统架构
-
-```
-                    ┌──────────────────────────────────────────────┐
-                    │               用户 / 研究者                    │
-                    └───────────────┬──────────────────────────────┘
-                                    │ 自然语言 / 文献文件路径
-                                    ▼
-  ┌───────────────────────────────────────────────────────────────┐
-  │                        main.py (CLI 入口)                       │
-  │   --demo  无 API 演示   |  交互模式 + --data 指定文献             │
-  └───────────────┬───────────────────────────────────────────────┘
-                  ▼
-  ┌───────────────────────────────────────────────────────────────┐
-  │                        agent.py (LLM 循环)                     │
-  │   调用 DeepSeek，解析其 tool_calls，驱动下面 4 个工具            │
-  └───────────────┬───────────────────────────────────────────────┘
-                  ▼
-  ┌───────────────────────────────────────────────────────────────┐
-  │ tools.py  ──  agent 的工具面（LLM 可调用）                      │
-  │   read_text     读取文献正文（支持 .txt 与 .pdf 自动解析）               │
-  │   save_model_ir 保存模型中间表示 (Model IR)                     │
-  │   simulate_model 数值求解 ODE/PDE 并出图                       │
-  │   save_report    写 Markdown 建模报告                           │
-  └───────┬──────────────────────────────┬────────────────────────┘
-          │                              │
-          ▼                              ▼
-  ┌────────────────┐           ┌──────────────────────────────┐
-  │ model_ir.py    │           │ simulate.py (数值引擎)        │
-  │ Model IR 契约   │           │  ODE: scipy.solve_ivp(RK45)  │
-  │ (ODE/PDE schema)│           │  PDE: 有限差分 + 方法线 (BDF) │
-  └────────────────┘           │  sympy 安全解析方程表达式      │
-                              └──────────────────────────────┘
+```powershell
+$env:PYTHONPATH = "src"
+py -m biomodeling --help
 ```
 
-### 各模块职责
+如果本机已有可用环境，也可以直接运行测试：
 
-| 文件 | 职责 |
-|---|---|
-| `prompts.py` | 系统提示词：定义「复现」与「自发构建」两种工作模式的完整流程与守则 |
-| `model_ir.py` | **Model IR 契约**。统一描述 ODE/PDE 模型（变量、参数、方程、时间/空间域、初值/边值、来源、假设、缺失信息）。LLM 产出 IR，数值引擎消费 IR。 |
-| `simulate.py` | **数值引擎**。把 Model IR 翻译成可求解的系统：ODE 用 `solve_ivp`；PDE 用中心差分 + method-of-lines（`D*d2u/dx2` 自动识别为扩散项）。用 `sympy` 把方程文本安全解析成数值函数，**不使用 `exec`**。 |
-| `pdf_utils.py` | **PDF → 文本**。用 `pymupdf` 解析 `.pdf`，按行带聚簇正确处理两栏学术排版。`read_text` 遇到 `.pdf` 时自动调用它。 |
-| `tools.py` | agent 可调用的 4 个工具及其 OpenAI function-calling schema（`read_text` 支持 .txt/.pdf）。 |
-| `agent.py` | LLM 工具调用循环（`run_agent`）。 |
-| `main.py` | CLI 入口：`--demo` 与交互模式。 |
+```powershell
+$env:PYTHONPATH = "src"
+py -m unittest discover -s tests -v
+```
 
-### Model IR 结构（核心契约）
+## 统一命令
 
-一份 Model IR 是一份包含以下字段的 JSON：
+### 1. 文献准备（A）
 
-```jsonc
+```powershell
+.\run.ps1 literature prepare examples\literature\sample_paper.md `
+  --out runs\demo\source.json `
+  --chunks-out runs\demo\chunks.jsonl
+```
+
+也可以处理 DOI：
+
+```powershell
+.\run.ps1 literature prepare 10.1371/journal.pcbi.1007486 `
+  --out runs\demo\doi_source.json `
+  --chunks-out runs\demo\doi_chunks.jsonl
+```
+
+### 2. 校验与渲染 A 的结果
+
+```powershell
+.\run.ps1 literature validate runs\demo\extraction.json --source runs\demo\source.json
+.\run.ps1 literature render runs\demo\extraction.json `
+  --source runs\demo\source.json `
+  --out runs\demo\variable_crosswalk.md `
+  --final
+```
+
+### 3. A 输出转换为 B 输入
+
+```powershell
+.\run.ps1 to-model-ir runs\demo\extraction.json `
+  --out runs\demo\model_ir.json `
+  --mode reproduce
+```
+
+严格模式：
+
+```powershell
+.\run.ps1 to-model-ir runs\demo\extraction.json `
+  --out runs\demo\model_ir.json `
+  --strict
+```
+
+`--strict` 仅在模型具备以下条件时成功：
+
+- 有可求解的 ODE/PDE 方程；
+- 所有状态变量都有方程；
+- 参数有单一数值；
+- 初值有单一数值；
+- 时间域可确定。
+
+否则会明确失败，不会伪造缺失数据。
+
+### 4. 校验与仿真 Model IR
+
+```powershell
+.\run.ps1 validate-model runs\demo\model_ir.json --simulation
+.\run.ps1 simulate runs\demo\model_ir.json --output-dir runs\demo\simulation
+```
+
+### 5. 无 API 演示与 LLM Agent
+
+```powershell
+.\run.ps1 demo
+.\run.ps1 agent --data examples\modeling_test.pdf
+```
+
+LLM Agent 需要设置对应环境变量，详见 `.env.example` 和 `docs/modeling_README.md`。
+
+## A 输出与 B 输入的统一方式
+
+统一格式仍是 A 的 evidence extraction JSON，但新增两个可选顶层字段：
+
+```json
 {
-  "model_name": "...",
-  "model_type": "ODE | PDE | ...",
-  "description": "生物机制的自然语言描述",
-  "variables":   [{ "name", "description", "unit" }],
-  "parameters":  [{ "name", "value_known", "value", "unit" }],
-  "equations":   [{ "variable", "expression" }],      // 如 "a*X - b*X*Y"
-  "domain":      { "t_start", "t_end", "spatial": [{ "x_start", "x_end", "n_points" }] },
-  "initial_conditions": [{ "variable", "value_known", "value" | "expr" }],
-  "boundary_conditions": [{ "variable", "boundary", "type", "value" }],
-  "origin": { "mode": "reproduce|self_derived", "source_text", "confidence", "assumptions" },
-  "missing_information": ["..."]
+  "model_ir": {},
+  "model_ir_seed": {}
 }
 ```
 
-- 对 **复现**：`origin.mode = "reproduce"`，只使用原文明确信息，缺失值一律
-  `value_known: false` 并登记 `missing_information`。
-- 对 **自发构建**：`origin.mode = "self_derived"`，在 `assumptions` 中显式列出
-  建模假设（评分关键），并用 `simulate_model` 验证假设下的定性行为。
+- `model_ir`：完整的 B Model IR。存在时直接作为转换目标，适合“模型已经明确”的情况。
+- `model_ir_seed`：只覆盖部分 Model IR 字段，适合 Agent 已知方程、时间域或初值，但仍有部分信息缺失的情况。
 
----
+如果两者都不存在，适配器会保守地自动映射：
 
-## 3. 如何实现「复现文献模型」
-
-当文献给出完整方程（如 Fisher-KPP 反应扩散 `du/dt = D·uxx + r·u(1-u)`）时，
-agent 的流程：
-
-1. `read_text` 读取文献 → 识别出这是 PDE 还是 ODE，抽出各变量、参数、方程。
-2. `save_model_ir(tag="reproduce")` 保存 IR：变量 `u`、参数 `D, r`、空间域、
-   初值、边值。
-3. `simulate_model(tag="reproduce")` → `solve_ivp` 求解 → 得到传播波。
-4. 报告中对比理论指标（如波速 ≈ `2√(D·r)`）→ **复现成功**。
-
-`sympy` 会把 IR 里的文本方程解析为数值函数，因此 agent 输出什么样的方程文本
-`simulate.py` 都能安全求值，只要符号与 `variables` 一致。
-
----
-
-## 4. 如何实现「自发构建模型」
-
-当文献**只描述机制、没有给出方程**时（例如 CRISPR–Cas9 论文描述"RNA 引导的
-双链 DNA 切割"这类生化机制，`data/test.pdf` 即是这类），agent 的流程：
-
-1. `read_text` 提取机制：识别生物实体与相互作用（底物、酶、产物、速率过程）。
-2. 显式写出假设并据此推导方程（例如酶促切割可假设 Michaelis–Menten 动力学）：
-
-   ```
-   dE/dt = ...        dC/dt = k_on·E·S - (k_off + k_cat)·C
-   dS/dt = -k_on·E·S + k_off·C        dP/dt = k_cat·C
-   ```
-
-3. `save_model_ir(tag="self_derived")`，把每一步抽象用 `assumptions` 记录。
-4. `simulate_model` 用合理参数做数值验证，判断定性行为是否符合文献描述。
-5. `save_report` 写完整派生报告。
-
-> 自发构建的关键守则（已在 `prompts.py` 强制）：**每一项抽象都要落到
-> `origin.assumptions`**，让模型“假设驱动”的属性可被审查。
-
----
-
-## 5. 数值引擎要点（simulate.py）
-
-- **ODE**：`scipy.integrate.solve_ivp`（RK45），支持任意维数、参数代入、初值。
-- **PDE（一维反应扩散）**：方法线。把 `D*d2u/dx2`（写成 `D * d2u/dx2`、`D*u_xx`
-  或 `D*uxx`）识别为扩散项，用中心差分 `(u_{k+1}-2u_k+u_{k-1})/dx²` 离散，
-  得到半离散常微分系统后用 `solve_ivp`（BDF 刚性求解器）积分。
-- **安全求值**：方程一律经 `sympy.sympify` 解析，绝不 `exec`，避免任意代码注入。
-- **输出**：每跑一个模型在 `output/` 生成 `simulation_<slug>__<tag>.json`（数据）
-  与 `.png`（轨迹/热图），同名模型不同 tag 不互相覆盖。
-
-### 已知约束
-- PDE 目前支持**一维**反应扩散类；多维空间、隐式求解器边界条件处理为后续扩展。
-- 若参数/初值缺数值，引擎会明确报错，提示补齐，而非伪造数据。
-
----
-
-## 6. 目录结构
-
-```
-biomodel_agent/
-├── main.py          # CLI 入口（--demo / 交互，--data 支持 .txt/.pdf）
-├── agent.py         # LLM 工具循环
-├── prompts.py       # 系统提示词（两种工作模式 + 守则）
-├── model_ir.py      # Model IR 契约（ODE/PDE schema）
-├── simulate.py      # 数值引擎（ODE/PDE 求解 + 绘图）
-├── pdf_utils.py     # PDF → 文本解析（pymupdf，两栏排版）          ▲ 新增
-├── tools.py         # agent 工具面 + function-calling schema
-├── pyproject.toml   # 依赖与元数据
-├── data/            # 你放入的待建模文献（.pdf / .txt）
-│   └── test.pdf     # 示例：CRISPR–Cas9 论文（自发构建用：只有机制、无方程）
-└── output/          # agent 产出：IR、模拟 JSON/PNG、reports/（已 gitignore）
-```
-
----
-
-## 7. 复现完整运行步骤
-
-```bash
-# 1) 确保依赖
-uv pip install --python .venv/Scripts/python.exe \
-    "numpy==2.2.6" "scipy==1.15.2" "matplotlib==3.9.4" "sympy" "openai" pymupdf
-
-# 2) 无 API 演示（内置 Lotka-Volterra，验证引擎）
-.venv\Scripts\python.exe main.py --demo
-
-# 3) 用 LLM 处理你的文献（支持 .txt / .pdf，自动解析）
-$env:USTC_LLM_API_KEY='sk-xxx'
-.venv\Scripts\python.exe main.py --data data\test.pdf
-
-# 4) 换成任意你自己的文献
-.venv\Scripts\python.exe main.py --data "data\你的文献.pdf"
-```
-
----
-
-## 8. 依赖说明
-
-| 包 | 用途 | 注意 |
+| A 字段 | B 字段 | 行为 |
 |---|---|---|
-| `openai` | 调用 DeepSeek 兼容接口 | ≥3.8 |
-| `numpy` | 数值数组 | 固定 **2.2.6**（2.5.3 在部分机器上有 DLL 兼容问题） |
-| `scipy` | `solve_ivp` 求解器 | 匹配 numpy 的版本 |
-| `matplotlib` | 出图 | 用 **<3.10**（新版本 `_backend_agg` 二进制与本机不兼容） |
-| `sympy` | 方程符号解析/安全求值 | ≥1.14 |
-| `pymupdf` | 解析 `.pdf` 文献为文本 | ≥1.24（`read_text` 遇到 PDF 时使用） |
+| `document` / `study_profile` | `model_name` / `model_type` | 生成名称并归一化模型类型 |
+| `variables[role=dependent]` | `variables` | 映射为状态变量候选 |
+| `variables[role=parameter]` | `parameters` | 尝试解析单一数值 |
+| `value_or_range` | `initial_conditions` | 仅单一数值可作为初值 |
+| `relationships[type=equation]` | `equations` | 只有带明确导数符号的关系才自动映射 |
+| `unresolved` | `missing_information` | 汇总未解决问题 |
+| `evidence` | `evidence` | 保留 `block_id`、页码、章节和原文引用 |
 
-> 由于本机部分预编译二进制扩展存在加载问题，版本做了**固定**而非随最新——
-> 见 `pyproject.toml` 与上文“已知约束”。
+适配器还会写入：
+
+```json
+{
+  "conversion": {
+    "model_ready": false,
+    "warnings": [],
+    "algebraic_relationships": [],
+    "validation_for_simulation": {}
+  }
+}
+```
+
+`model_ready=false` 表示该 Model IR 可以继续由 Agent 或人工补全，但不能直接仿真。
+
+## 端到端验证样例
+
+`examples/model_ready_extraction.json` 同时包含：
+
+- A 格式的变量、参数、关系、证据和 review metadata；
+- 一个完整的 B 格式 `model_ir`。
+
+可直接验证：
+
+```powershell
+.\run.ps1 to-model-ir examples\model_ready_extraction.json `
+  --out runs\integration_demo\model_ir.json `
+  --strict
+
+.\run.ps1 validate-model runs\integration_demo\model_ir.json --simulation
+.\run.ps1 simulate runs\integration_demo\model_ir.json `
+  --output-dir runs\integration_demo\simulation `
+  --tag integration
+```
+
+预期产物：
+
+```text
+runs/integration_demo/
+├─ model_ir.json
+└─ simulation/
+   ├─ simulation_unified_lotka_volterra_demonstration__integration.json
+   └─ simulation_unified_lotka_volterra_demonstration__integration.png
+```
+
+## Agent 新增工具
+
+B 的 Agent 工具面新增：
+
+- `prepare_literature(source, out_dir)`：调用 A 的文献准备层，支持本地文件和 DOI。
+- `convert_extraction_to_model_ir(extraction_path, output_path, strict)`：调用统一契约层。
+
+原有工具仍然保留：
+
+- `read_text`
+- `save_model_ir`
+- `simulate_model`
+- `save_report`
+
+## 测试
+
+```powershell
+$env:PYTHONPATH = "src"
+py -m unittest discover -s tests -v
+```
+
+当前测试共 80 项，包括：
+
+- A 的 46 项原有文献处理测试；
+- B 的 Model IR、ODE 求解和工具测试；
+- 新增的 extraction → Model IR → simulation 集成测试；
+- B 的无 API 端到端 smoke test。
+
+## 重要限制
+
+1. **A 的变量提取不自动等于 B 的微分方程模型。** 适配器不会把普通代数关系伪造成 ODE。
+2. 自动转换只在能确定数值时填写参数和初值；范围、多个候选值和缺失值都会进入 `missing_information`。
+3. 时间域未知时使用 `[0, 1]` 作为草稿占位，并标记 `model_ready=false`；不得将该占位当作科学结论。
+4. 原 A、B 项目目录未修改；本目录是独立整合尝试。
+5. A 的部分 PDF 能力依赖 `pdfplumber`/`pypdf`，可通过 `pip install -e ".[pdf]"` 安装。
+6. LLM 模式需要联网和 API Key；无 API 的 `demo` 与数值仿真不需要 LLM。
+

@@ -1,0 +1,324 @@
+{
+  "schema_version": "1.0",
+  "document": {
+    "title": "Unified Lotka-Volterra demonstration paper",
+    "authors": "Integration demo",
+    "year": 2026,
+    "source_path": "examples/model_ready_extraction.json",
+    "source_name": "model_ready_extraction.json",
+    "language": "en",
+    "doi": null
+  },
+  "research_question": {
+    "question": "How do predator-prey interactions shape the coupled dynamics of X and Y?",
+    "scope": "A minimal two-state ODE model with mass-action predation.",
+    "confidence": "high",
+    "evidence": [
+      {
+        "block_id": "B0001",
+        "quote": "The prey population X grows logistically in the absence of predators and is consumed at rate b through mass-action interaction with Y.",
+        "page": 1,
+        "section": "model"
+      }
+    ]
+  },
+  "study_profile": {
+    "organism_or_system": "Abstract predator-prey system",
+    "study_design": "Mathematical model demonstration",
+    "model_type": "ODE",
+    "sample_scale": "Two state variables",
+    "time_scale": "0 to 20 time units"
+  },
+  "variables": [
+    {
+      "variable_id": "V001",
+      "raw_name": "prey population",
+      "canonical_name": "Prey population",
+      "symbol": "X",
+      "aliases": [
+        "prey"
+      ],
+      "role": "dependent",
+      "kind": "continuous",
+      "definition": "Population size of the prey species.",
+      "unit": "individuals",
+      "value_or_range": "10",
+      "relationship": "dX/dt = a*X - b*X*Y",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "The prey population X grows logistically in the absence of predators and is consumed at rate b through mass-action interaction with Y.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "State variable in the embedded Model IR."
+    },
+    {
+      "variable_id": "V002",
+      "raw_name": "predator population",
+      "canonical_name": "Predator population",
+      "symbol": "Y",
+      "aliases": [
+        "predator"
+      ],
+      "role": "dependent",
+      "kind": "continuous",
+      "definition": "Population size of the predator species.",
+      "unit": "individuals",
+      "value_or_range": "5",
+      "relationship": "dY/dt = c*X*Y - d*Y",
+      "evidence": [
+        {
+          "block_id": "B0002",
+          "quote": "The predator population Y grows by converting consumed prey with efficiency c and dies at rate d.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "State variable in the embedded Model IR."
+    },
+    {
+      "variable_id": "V003",
+      "raw_name": "prey growth rate",
+      "canonical_name": "Prey intrinsic growth rate",
+      "symbol": "a",
+      "aliases": [],
+      "role": "parameter",
+      "kind": "rate",
+      "definition": "Intrinsic growth rate of prey.",
+      "unit": "per time",
+      "value_or_range": "1.0",
+      "relationship": "dX/dt = a*X - b*X*Y",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "The prey population X grows logistically in the absence of predators and is consumed at rate b through mass-action interaction with Y.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Numeric parameter supplied by the demonstration."
+    },
+    {
+      "variable_id": "V004",
+      "raw_name": "predation rate",
+      "canonical_name": "Predation rate coefficient",
+      "symbol": "b",
+      "aliases": [],
+      "role": "parameter",
+      "kind": "rate",
+      "definition": "Mass-action predation coefficient.",
+      "unit": "per individual per time",
+      "value_or_range": "0.1",
+      "relationship": "dX/dt = a*X - b*X*Y",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "The prey population X grows logistically in the absence of predators and is consumed at rate b through mass-action interaction with Y.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Numeric parameter supplied by the demonstration."
+    },
+    {
+      "variable_id": "V005",
+      "raw_name": "conversion efficiency",
+      "canonical_name": "Predator conversion efficiency",
+      "symbol": "c",
+      "aliases": [],
+      "role": "parameter",
+      "kind": "rate",
+      "definition": "Efficiency with which consumed prey become predators.",
+      "unit": "individuals per individual",
+      "value_or_range": "0.075",
+      "relationship": "dY/dt = c*X*Y - d*Y",
+      "evidence": [
+        {
+          "block_id": "B0002",
+          "quote": "The predator population Y grows by converting consumed prey with efficiency c and dies at rate d.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Numeric parameter supplied by the demonstration."
+    },
+    {
+      "variable_id": "V006",
+      "raw_name": "predator death rate",
+      "canonical_name": "Predator death rate",
+      "symbol": "d",
+      "aliases": [],
+      "role": "parameter",
+      "kind": "rate",
+      "definition": "Per-capita death rate of predators.",
+      "unit": "per time",
+      "value_or_range": "1.5",
+      "relationship": "dY/dt = c*X*Y - d*Y",
+      "evidence": [
+        {
+          "block_id": "B0002",
+          "quote": "The predator population Y grows by converting consumed prey with efficiency c and dies at rate d.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "confidence": "high",
+      "notes": "Numeric parameter supplied by the demonstration."
+    }
+  ],
+  "relationships": [
+    {
+      "relationship_id": "R001",
+      "type": "equation",
+      "from": [
+        "V001",
+        "V003",
+        "V004"
+      ],
+      "to": [
+        "V001"
+      ],
+      "expression": "dX/dt = a*X - b*X*Y",
+      "evidence": [
+        {
+          "block_id": "B0001",
+          "quote": "The prey population X grows logistically in the absence of predators and is consumed at rate b through mass-action interaction with Y.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "notes": "Runnable ODE for prey dynamics."
+    },
+    {
+      "relationship_id": "R002",
+      "type": "equation",
+      "from": [
+        "V001",
+        "V002",
+        "V005",
+        "V006"
+      ],
+      "to": [
+        "V002"
+      ],
+      "expression": "dY/dt = c*X*Y - d*Y",
+      "evidence": [
+        {
+          "block_id": "B0002",
+          "quote": "The predator population Y grows by converting consumed prey with efficiency c and dies at rate d.",
+          "page": 1,
+          "section": "model"
+        }
+      ],
+      "notes": "Runnable ODE for predator dynamics."
+    }
+  ],
+  "unresolved": [],
+  "extraction_metadata": {
+    "extracted_at": "2026-10-18T13:40:00Z",
+    "extractor": "Unified integration example",
+    "coverage": "Complete demonstration model",
+    "method": "Evidence-grounded manual extraction plus embedded Model IR",
+    "warnings": [],
+    "review_status": "reviewed",
+    "reviewer": "Integration example",
+    "reviewed_at": "2026-10-18T13:40:00Z",
+    "semantic_review": {
+      "reviewer": "Integration example",
+      "reviewed_at": "2026-10-18T13:40:00Z",
+      "changed_variable_count": 0
+    }
+  },
+  "model_ir": {
+    "model_name": "Unified Lotka-Volterra demonstration",
+    "model_type": "ODE",
+    "description": "Two-state mass-action predator-prey model.",
+    "variables": [
+      {
+        "name": "X",
+        "description": "Prey population",
+        "unit": "individuals"
+      },
+      {
+        "name": "Y",
+        "description": "Predator population",
+        "unit": "individuals"
+      }
+    ],
+    "parameters": [
+      {
+        "name": "a",
+        "description": "Prey growth rate",
+        "value_known": true,
+        "value": 1.0,
+        "unit": "per time"
+      },
+      {
+        "name": "b",
+        "description": "Predation rate",
+        "value_known": true,
+        "value": 0.1,
+        "unit": "per individual per time"
+      },
+      {
+        "name": "c",
+        "description": "Conversion efficiency",
+        "value_known": true,
+        "value": 0.075,
+        "unit": "individuals per individual"
+      },
+      {
+        "name": "d",
+        "description": "Predator death rate",
+        "value_known": true,
+        "value": 1.5,
+        "unit": "per time"
+      }
+    ],
+    "equations": [
+      {
+        "variable": "X",
+        "expression": "a*X - b*X*Y"
+      },
+      {
+        "variable": "Y",
+        "expression": "c*X*Y - d*Y"
+      }
+    ],
+    "domain": {
+      "t_start": 0,
+      "t_end": 20
+    },
+    "initial_conditions": [
+      {
+        "variable": "X",
+        "value_known": true,
+        "value": 10.0
+      },
+      {
+        "variable": "Y",
+        "value_known": true,
+        "value": 5.0
+      }
+    ],
+    "boundary_conditions": [],
+    "origin": {
+      "mode": "reproduce",
+      "source_text": "Unified Lotka-Volterra demonstration paper",
+      "confidence": "high",
+      "assumptions": [
+        "Mass-action interaction",
+        "Constant parameters",
+        "Well-mixed population"
+      ]
+    },
+    "missing_information": []
+  }
+}

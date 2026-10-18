@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "source_path": "C:\\Users\\我的电脑\\Documents\\ChatGPT\\Biomodeling\\bio_variable_extractor\\examples\\sample_paper.md",
+  "source_name": "sample_paper.md",
+  "source_sha256": "0e7e4776b099af88f0fc759c17d47bfe11dbd55a219b978dece2e8f63f6f6a99",
+  "character_count": 2650,
+  "word_count": 380,
+  "section_count": 6,
+  "chunk_count": 6,
+  "sections": [
+    {
+      "section": "abstract",
+      "order": 1,
+      "word_count": 97
+    },
+    {
+      "section": "introduction",
+      "order": 2,
+      "word_count": 37
+    },
+    {
+      "section": "methods",
+      "order": 3,
+      "word_count": 90
+    },
+    {
+      "section": "results",
+      "order": 4,
+      "word_count": 56
+    },
+    {
+      "section": "discussion",
+      "order": 5,
+      "word_count": 47
+    },
+    {
+      "section": "limitations",
+      "order": 6,
+      "word_count": 39
+    }
+  ],
+  "chunks": [
+    {
+      "block_id": "B0001",
+      "section": "abstract",
+      "section_order": 1,
+      "page": null,
+      "text": "We investigated how nitrogen availability and temperature regulate the specific growth rate of *Escherichia coli* in continuous culture. We hypothesized that the maximum specific growth rate increases with temperature and that the half-saturation constant for nitrogen decreases under nitrogen limitation. Batch and chemostat experiments were performed at 25, 30, and 37 degrees Celsius with ammonium concentrations from 0.1 to 10 mM. The specific growth rate was estimated from optical density at 600 nm. Cell dry weight was measured at the end of each experiment, and dissolved oxygen was held above 30 percent saturation to avoid oxygen limitation.",
+      "word_count": 97,
+      "sha256": "a0e0e293a47769481ead5c126d786814df5e9d8c4a3139ebe636e05260f47288"
+    },
+    {
+      "block_id": "B0002",
+      "section": "introduction",
+      "section_order": 2,
+      "page": null,
+      "text": "Bacterial growth is a function of nutrient availability and environmental temperature. The Monod model describes the relationship between the specific growth rate and the limiting substrate concentration using a maximum specific growth rate and a half-saturation constant.",
+      "word_count": 37,
+      "sha256": "aabc05e56977596bdf7f3c13b43a31e554832d89fe6065dc404080149ade5fbc"
+    },
+    {
+      "block_id": "B0003",
+      "section": "methods",
+      "section_order": 3,
+      "page": null,
+      "text": "*Escherichia coli* K-12 was grown in minimal medium. Ammonium chloride was the sole nitrogen source. The dilution rate was set to 0.2 per hour in chemostat cultures. Temperature was controlled at 25, 30, or 37 degrees Celsius. Optical density at 600 nm was converted to cell dry weight using a calibration curve. The specific growth rate was calculated as the natural logarithm of optical density change per unit time. Dissolved oxygen concentration was monitored continuously and maintained above 30 percent saturation. Each condition was tested in three independent biological replicates.",
+      "word_count": 90,
+      "sha256": "6e49f2db392af5949e8aed38fdf6982612fa39bb5873770ce81d88cde388d5dd"
+    },
+    {
+      "block_id": "B0004",
+      "section": "results",
+      "section_order": 4,
+      "page": null,
+      "text": "The specific growth rate increased with temperature up to 37 degrees Celsius. At 30 degrees Celsius, the maximum specific growth rate was 0.61 per hour and the half-saturation constant for ammonium was 0.42 mM. Nitrogen limitation reduced the half-saturation constant relative to nitrogen-replete conditions. The carrying capacity was estimated from the plateau of the growth curve.",
+      "word_count": 56,
+      "sha256": "ef24fbb1207777c2434f081710671a2ece188c9b4886b6305f585265869407d7"
+    },
+    {
+      "block_id": "B0005",
+      "section": "discussion",
+      "section_order": 5,
+      "page": null,
+      "text": "The results support a temperature-dependent Monod model. The model assumes that the half-saturation constant is independent of temperature, although our estimates varied slightly across temperatures. The yield coefficient was treated as a constant during exponential growth. Further work is needed to separate temperature effects from nitrogen availability.",
+      "word_count": 47,
+      "sha256": "c95d62600f426e991361d0a2a9e0ba7bbef675efb95570c6ac902e1fc1513776"
+    },
+    {
+      "block_id": "B0006",
+      "section": "limitations",
+      "section_order": 6,
+      "page": null,
+      "text": "The study did not measure intracellular nitrogen pools, so the mechanism linking nitrogen availability to the half-saturation constant remains unresolved. The data do not establish whether temperature affects the maximum specific growth rate directly or through another physiological parameter.",
+      "word_count": 39,
+      "sha256": "d83e56885b4546a293208114a27608d586f01a65ad6612d62182a97784637f52"
+    }
+  ]
+}
