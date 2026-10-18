@@ -17,12 +17,21 @@ Expressions are parsed with sympy so that equation text from the IR is
 turned into safe, validated numeric functions rather than exec'd code.
 """
 
+import hashlib
 import json
 import os
+import platform
+import sys
+import uuid
+from datetime import datetime, timezone
+from importlib import metadata as importlib_metadata
 from pathlib import Path
 
 import numpy as np
 from scipy.integrate import solve_ivp
+
+from model_ir import validate_model_ir
+from security_utils import safe_identifier
 
 try:
     # Keep matplotlib config/cache inside the workspace so it never tries to
@@ -252,7 +261,13 @@ def _simulate_pde(model, resolved):
     variables = [v["name"] for v in model["variables"]]
     param_names = [p["name"] for p in model["parameters"]]
 
-    spatial = (model["domain"].get("spatial") or [])[0]
+    spatial_intervals = model["domain"].get("spatial") or []
+    if len(spatial_intervals) != 1:
+        raise ValueError(
+            "PDE simulation currently supports exactly one spatial interval; "
+            f"got {len(spatial_intervals)}."
+        )
+    spatial = spatial_intervals[0]
     x0 = spatial["x_start"]
     x1 = spatial["x_end"]
     n = int(spatial.get("n_points", 201))
@@ -311,8 +326,23 @@ def _simulate_pde(model, resolved):
                 coeff = sp.N(coeff)
                 coeff_func = sp.lambdify("x", coeff, modules=["numpy"])
                 c = np.asarray(coeff_func(grid), dtype=float)
+                diff_states = states[var_token[diff_var]]
                 lap = np.zeros(n)
-                lap[1:-1] = (u[:-2] - 2 * u[1:-1] + u[2:]) / dx**2
+                lap[1:-1] = (
+                    diff_states[:-2] - 2 * diff_states[1:-1] + diff_states[2:]
+                ) / dx**2
+                # Ghost-node boundary stencils. Neumann means du/dx = value
+                # at both ends. Missing BCs use zero flux.
+                left_bc = bc_by.get((diff_var, "left"))
+                right_bc = bc_by.get((diff_var, "right"))
+                left_ghost = diff_states[1]
+                right_ghost = diff_states[-2]
+                if left_bc is not None and left_bc["type"] == "neumann":
+                    left_ghost = diff_states[1] - 2.0 * dx * float(left_bc["value"])
+                if right_bc is not None and right_bc["type"] == "neumann":
+                    right_ghost = diff_states[-2] + 2.0 * dx * float(right_bc["value"])
+                lap[0] = (left_ghost - 2.0 * diff_states[0] + diff_states[1]) / dx**2
+                lap[-1] = (diff_states[-2] - 2.0 * diff_states[-1] + right_ghost) / dx**2
                 dudt += c * lap
             # Reaction part: drop derivative tokens and evaluate pointwise.
             react_expr = info["sym_expr"].subs(
@@ -330,14 +360,12 @@ def _simulate_pde(model, resolved):
                 ]
                 react_vals = react_func(*args)
             dudt = dudt + np.asarray(react_vals, dtype=float)
-            # Boundary conditions.
+            # Dirichlet boundaries are held fixed; Neumann is applied to the
+            # diffusion stencil above. Missing conditions use zero flux.
             for bnd, interior in (("left", 0), ("right", -1)):
                 bc = bc_by.get((var, bnd))
-                if bc is not None:
-                    if bc["type"] == "dirichlet":
-                        dudt[interior] = 0.0  # held fixed
-                    else:  # neumann: zero-flux approximation does nothing here
-                        pass
+                if bc is not None and bc["type"] == "dirichlet":
+                    dudt[interior] = 0.0
             dy[idx * n:(idx + 1) * n] = dudt
         return dy
 
@@ -357,6 +385,16 @@ def _simulate_pde(model, resolved):
             y0[idx * n:(idx + 1) * n] = np.asarray(func(grid), dtype=float)
         else:
             y0[idx * n:(idx + 1) * n] = float(ic["value"])
+
+    # Make the initial state satisfy declared Dirichlet boundaries.
+    for (var, bnd), bc in bc_by.items():
+        if bc["type"] != "dirichlet":
+            continue
+        idx = var_to_idx.get(var)
+        if idx is None:
+            continue
+        boundary_index = 0 if bnd == "left" else n - 1
+        y0[idx * n + boundary_index] = float(bc["value"])
 
     sol = solve_ivp(
         rhs, (model["domain"]["t_start"], model["domain"]["t_end"]),
@@ -397,6 +435,36 @@ def _model_slug(model):
     return slug or "model"
 
 
+def _package_version(distribution_name):
+    try:
+        return importlib_metadata.version(distribution_name)
+    except importlib_metadata.PackageNotFoundError:
+        return "unknown"
+
+
+def _runtime_metadata(model, tag=None):
+    canonical = json.dumps(
+        model, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    ).encode("utf-8")
+    return {
+        "run_id": uuid.uuid4().hex[:12],
+        "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "tag": tag or "",
+        "model_ir_sha256": hashlib.sha256(canonical).hexdigest(),
+        "code_version": _package_version("biomodel-agent"),
+        "python_version": platform.python_version(),
+        "platform": platform.platform(),
+        "package_versions": {
+            "numpy": _package_version("numpy"),
+            "scipy": _package_version("scipy"),
+            "matplotlib": _package_version("matplotlib"),
+            "sympy": _package_version("sympy"),
+            "openai": _package_version("openai"),
+            "pymupdf": _package_version("pymupdf"),
+        },
+    }
+
+
 def simulate_model(model: dict, output_dir: str = "output", tag: str = None):
     """Run the simulation for a Model IR.
 
@@ -404,6 +472,14 @@ def simulate_model(model: dict, output_dir: str = "output", tag: str = None):
     invalid / non-simulatable input. `tag` optionally distinguishes runs of
     the same model (e.g. "reproduce" vs "self_derived_goal").
     """
+    tag = safe_identifier(tag, default=None)
+    validation = validate_model_ir(model, for_simulation=True)
+    if not validation["valid"]:
+        raise ValueError(
+            "Invalid Model IR:\n"
+            + "\n".join(f"- {item}" for item in validation["errors"])
+        )
+
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -437,9 +513,11 @@ def simulate_model(model: dict, output_dir: str = "output", tag: str = None):
             f"Unsupported model_type '{model_type}'; only ODE and PDE are supported."
         )
 
-    # Save numeric results.
+    # Save numeric results and provenance metadata.
     results_path = output_dir / f"simulation_{stem}.json"
+    run_metadata = _runtime_metadata(model, tag=tag)
     serialized = {
+        "run_metadata": run_metadata,
         "model_name": model.get("model_name"),
         "model_type": model_type,
         "t": list(map(float, t)),
@@ -465,6 +543,7 @@ def simulate_model(model: dict, output_dir: str = "output", tag: str = None):
         "status": "ok",
         "model_name": model.get("model_name"),
         "model_type": model_type,
+        "run_metadata": run_metadata,
         "t_range": [float(t[0]), float(t[-1])],
         "results_file": str(results_path),
         "plot_file": str(plot_path) if plot_path else None,

@@ -1,0 +1,311 @@
+[
+  {
+    "id": "ode_lotka_volterra",
+    "name": "ODE Lotka-Volterra",
+    "model_type": "ODE",
+    "paper_text": "捕食者-被捕食者系统，猎物按自然增长率增长，捕食者依赖猎物生存。",
+    "expected": {
+      "model_type": "ODE",
+      "variables": [
+        "X",
+        "Y"
+      ],
+      "origin_mode": "reproduce"
+    },
+    "ir": {
+      "model_name": "eval Lotka-Volterra",
+      "model_type": "ODE",
+      "description": "predator-prey regression case",
+      "variables": [
+        {
+          "name": "X",
+          "description": "prey",
+          "unit": "unknown"
+        },
+        {
+          "name": "Y",
+          "description": "predator",
+          "unit": "unknown"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "a",
+          "description": "prey growth",
+          "value_known": true,
+          "value": 1.0,
+          "unit": "unknown"
+        },
+        {
+          "name": "b",
+          "description": "predation",
+          "value_known": true,
+          "value": 0.1,
+          "unit": "unknown"
+        },
+        {
+          "name": "c",
+          "description": "conversion",
+          "value_known": true,
+          "value": 0.075,
+          "unit": "unknown"
+        },
+        {
+          "name": "d",
+          "description": "predator death",
+          "value_known": true,
+          "value": 1.5,
+          "unit": "unknown"
+        }
+      ],
+      "equations": [
+        {
+          "variable": "X",
+          "expression": "a*X - b*X*Y"
+        },
+        {
+          "variable": "Y",
+          "expression": "c*X*Y - d*Y"
+        }
+      ],
+      "domain": {
+        "t_start": 0,
+        "t_end": 20
+      },
+      "initial_conditions": [
+        {
+          "variable": "X",
+          "value_known": true,
+          "value": 10
+        },
+        {
+          "variable": "Y",
+          "value_known": true,
+          "value": 5
+        }
+      ],
+      "boundary_conditions": [],
+      "origin": {
+        "mode": "reproduce",
+        "source_text": "eval case",
+        "confidence": "high",
+        "assumptions": []
+      },
+      "missing_information": []
+    },
+    "report_sample": "## 模型方程\n\ndX/dt = aX - bXY; dY/dt = cXY - dY\n\n## 参数\n\na=1.0, b=0.1, c=0.075, d=1.5\n\n## 假设\n\n经典质量作用假设\n\n## 模拟结果\n\n模拟得到持续振荡，周期约 5.48。\n\n## 局限\n\n该案例用于回归测试，参数和初值来自人工整理。\n\n## 结论\n\n模型可通过当前数值引擎求解。\n"
+  },
+  {
+    "id": "pde_fisher_kpp",
+    "name": "PDE Fisher-KPP",
+    "model_type": "PDE",
+    "paper_text": "一维空间中的反应扩散种群模型，包含扩散和 Logistic 增长。",
+    "expected": {
+      "model_type": "PDE",
+      "variables": [
+        "u"
+      ],
+      "origin_mode": "self_derived"
+    },
+    "ir": {
+      "model_name": "eval Fisher-KPP",
+      "model_type": "PDE",
+      "description": "one-dimensional reaction-diffusion regression case",
+      "variables": [
+        {
+          "name": "u",
+          "description": "population density",
+          "unit": "unknown"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "D",
+          "description": "diffusion",
+          "value_known": true,
+          "value": 0.1,
+          "unit": "unknown"
+        },
+        {
+          "name": "r",
+          "description": "growth",
+          "value_known": true,
+          "value": 1.0,
+          "unit": "unknown"
+        }
+      ],
+      "equations": [
+        {
+          "variable": "u",
+          "expression": "D*d2u/dx2 + r*u*(1-u)"
+        }
+      ],
+      "domain": {
+        "t_start": 0,
+        "t_end": 0.3,
+        "spatial": [
+          {
+            "x_start": 0,
+            "x_end": 1,
+            "n_points": 41
+          }
+        ]
+      },
+      "initial_conditions": [
+        {
+          "variable": "u",
+          "value_known": true,
+          "expr": "0.1*exp(-((x-0.2)/0.1)**2)"
+        }
+      ],
+      "boundary_conditions": [
+        {
+          "variable": "u",
+          "boundary": "left",
+          "type": "neumann",
+          "value": 0.0
+        },
+        {
+          "variable": "u",
+          "boundary": "right",
+          "type": "neumann",
+          "value": 0.0
+        }
+      ],
+      "origin": {
+        "mode": "self_derived",
+        "source_text": "eval case",
+        "confidence": "medium",
+        "assumptions": [
+          "一维空间",
+          "常数扩散"
+        ]
+      },
+      "missing_information": []
+    },
+    "report_sample": "## 模型方程\n\ndu/dt = D*d2u/dx2 + r*u*(1-u)\n\n## 参数\n\nD=0.1, r=1.0\n\n## 假设\n\n一维空间、常数扩散、零通量边界\n\n## 模拟结果\n\n得到局部扩散前沿，边界保持零通量。\n\n## 局限\n\n该案例用于回归测试，参数和初值来自人工整理。\n\n## 结论\n\n模型可通过当前数值引擎求解。\n"
+  },
+  {
+    "id": "self_derived_enzyme_kinetics",
+    "name": "Self-derived enzyme kinetics",
+    "model_type": "ODE",
+    "paper_text": "酶与底物结合形成复合物并催化生成产物，缺少显式动力学方程。",
+    "expected": {
+      "model_type": "ODE",
+      "variables": [
+        "E",
+        "S",
+        "C",
+        "P"
+      ],
+      "origin_mode": "self_derived"
+    },
+    "ir": {
+      "model_name": "eval enzyme kinetics",
+      "model_type": "ODE",
+      "description": "hypothesis-driven Michaelis-Menten regression case",
+      "variables": [
+        {
+          "name": "E",
+          "description": "free enzyme",
+          "unit": "unknown"
+        },
+        {
+          "name": "S",
+          "description": "substrate",
+          "unit": "unknown"
+        },
+        {
+          "name": "C",
+          "description": "complex",
+          "unit": "unknown"
+        },
+        {
+          "name": "P",
+          "description": "product",
+          "unit": "unknown"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "k_on",
+          "description": "association",
+          "value_known": true,
+          "value": 1.0,
+          "unit": "unknown"
+        },
+        {
+          "name": "k_off",
+          "description": "dissociation",
+          "value_known": true,
+          "value": 0.1,
+          "unit": "unknown"
+        },
+        {
+          "name": "k_cat",
+          "description": "catalysis",
+          "value_known": true,
+          "value": 0.5,
+          "unit": "unknown"
+        }
+      ],
+      "equations": [
+        {
+          "variable": "E",
+          "expression": "-k_on*E*S + (k_off + k_cat)*C"
+        },
+        {
+          "variable": "S",
+          "expression": "-k_on*E*S + k_off*C"
+        },
+        {
+          "variable": "C",
+          "expression": "k_on*E*S - (k_off + k_cat)*C"
+        },
+        {
+          "variable": "P",
+          "expression": "k_cat*C"
+        }
+      ],
+      "domain": {
+        "t_start": 0,
+        "t_end": 2
+      },
+      "initial_conditions": [
+        {
+          "variable": "E",
+          "value_known": true,
+          "value": 1
+        },
+        {
+          "variable": "S",
+          "value_known": true,
+          "value": 10
+        },
+        {
+          "variable": "C",
+          "value_known": true,
+          "value": 0
+        },
+        {
+          "variable": "P",
+          "value_known": true,
+          "value": 0
+        }
+      ],
+      "boundary_conditions": [],
+      "origin": {
+        "mode": "self_derived",
+        "source_text": "eval case",
+        "confidence": "medium",
+        "assumptions": [
+          "质量作用动力学",
+          "单一底物",
+          "忽略空间异质性"
+        ]
+      },
+      "missing_information": []
+    },
+    "report_sample": "## 模型方程\n\ndE/dt = -k_on E S + (k_off + k_cat) C; dP/dt = k_cat C\n\n## 参数\n\nk_on=1.0, k_off=0.1, k_cat=0.5\n\n## 假设\n\n质量作用动力学、单一底物、空间均匀\n\n## 模拟结果\n\n复合物先积累后衰减，产物持续增加。\n\n## 局限\n\n该案例用于回归测试，参数和初值来自人工整理。\n\n## 结论\n\n模型可通过当前数值引擎求解。\n"
+  }
+]

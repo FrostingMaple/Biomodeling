@@ -8,10 +8,15 @@ dependencies = [
     "openai>=3.8.0",
     "numpy>=2.2.6",
     "scipy>=1.15.2",
-    "matplotlib<3.10",
+    "matplotlib<3.10; python_version < '3.14'",
+    "matplotlib>=3.11; python_version >= '3.14'",
     "sympy>=1.14.0",
     "pymupdf>=1.24",
 ]
+
+[project.urls]
+Homepage = "https://github.com/FrostingMaple/Biomodeling"
+Repository = "https://github.com/FrostingMaple/Biomodeling"
 
 [project.scripts]
 biomodel-agent = "main:main"

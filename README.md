@@ -8,19 +8,65 @@ AI **生物系统数学建模 Agent**：能够从生物文献文本中
 是一个课程作业项目。整套系统由「LLM 驱动的智能体 + 可验证的数值求解引擎 +
 结构化模型中间表示（Model IR）」组成。
 
+## 项目来源
+
+本项目是 **B：`biomodel-agent`**，来源仓库为 [FrostingMaple/Biomodeling](https://github.com/FrostingMaple/Biomodeling)。后续协作者应保留该上游来源信息，并通过独立分支和 Pull Request 提交改动。
+
+> [!IMPORTANT]
+> **本项目是团队合作项目。** 向 GitHub 上传、提交或合并代码时，必须使用本人的 GitHub 账号并以合作贡献者身份进行。请勿直接向主分支推送，也不要使用强制推送、覆盖提交等方式破坏团队其他成员的工作成果。
+
+## 参与贡献
+
+所有改动应先从最新主分支创建独立分支，再通过 Pull Request 申请合并。提交 PR 前请同步上游、运行测试，并在描述中说明改动范围、验证方式和潜在影响。主分支只接受经过审查的合并请求。
+
+- 禁止直接向 `main` / `master` 推送；
+- 禁止未经沟通覆盖、回退或删除他人的提交与文件；
+- 禁止冒用他人身份或使用他人的 GitHub 凭据；
+- 禁止提交 `data/` 中的测试文献或未获授权公开的论文；
+- 发现冲突时应先沟通，确认双方意图后再解决。
+
+完整的身份配置、分支命名、提交、Pull Request、审查和冲突处理要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 ---
 
 ## 1. 快速开始
 
-依赖由项目自带（`uv` 管理的 `.venv`）。需要 Python ≥ 3.12。
+首次运行推荐直接使用项目自带的一键入口。它会检查项目内 `.venv`：若环境不存在，则自动创建 **Python 3.12 专属环境**并安装全部依赖；优先使用 `uv`，没有 `uv` 时回退到 `py -3.12` + `pip`。
+
+> **Python 版本说明**：推荐 Python 3.12（默认一键脚本会使用它）。Python 3.14 也已验证可通过，但需要使用放宽后的绘图依赖（`matplotlib>=3.11`）；可执行 `.\bootstrap.ps1 -PythonVersion 3.14 -Recreate` 创建 3.14 环境，或直接执行 `.\run.ps1 -PythonVersion 3.14 --demo`（已有 3.12 `.venv` 时需加 `-Recreate`）。
+
+```powershell
+.\run.ps1 --demo
+```
+
+> 如果 PowerShell 禁止执行本地脚本，可使用：
+> `powershell -ExecutionPolicy Bypass -File .\run.ps1 --demo`
+
+也可以只初始化环境、不立即运行：
+
+```powershell
+.\bootstrap.ps1
+```
+
+只想检查环境是否齐全、不安装任何依赖：
+
+```powershell
+.\bootstrap.ps1 -CheckOnly
+```
+
+若目录中已有一个版本不符或损坏的 `.venv`，脚本会停止并提示，而不会静默删除环境。确认要重建时执行：
+
+```powershell
+.\bootstrap.ps1 -Recreate
+```
 
 ### 1.1 无 API 演示（推荐先跑这个）
 
 不依赖任何大模型接口，自动用**内置的 Lotka-Volterra 模型**跑通"复现 → 模拟 →
 报告"完整流程，快速验证数值引擎是否工作：
 
-```bash
-.venv\Scripts\python.exe main.py --demo
+```powershell
+.\run.ps1 --demo
 ```
 
 产物生成在 `output/` 下：
@@ -39,15 +85,27 @@ AI **生物系统数学建模 Agent**：能够从生物文献文本中
 ```bash
 # Windows PowerShell
 $env:USTC_LLM_API_KEY='sk-xxxx'
-$env:BIOMODEL_MODEL='deepseek-v4-flash-ascend'   # 可选，默认就是这个
+$env:BIOMODEL_MODEL='deepseek-flash'   # 可选，默认就是这个
 
-.venv\Scripts\python.exe main.py --data data\test.pdf
+.\run.ps1 --data data\test.pdf
 ```
 
 不给 `--data` 则进入对话模式，直接描述你想要复现/构建的模型或给文件路径。
 
-> 说明：`BIOMODEL_MODEL` 可以换成任意 OpenAI 兼容的模型名；接口地址在
-> `main.py` 中默认为 USTC 端点 `https://api.llm.ustc.edu.cn/v1`。
+> 说明：默认使用中国科学技术大学大模型公共服务平台（OpenAI 兼容接口），
+> 默认模型为 `deepseek-flash`，默认端点为 `https://api.llm.ustc.edu.cn/v1`。
+> `BIOMODEL_MODEL` 和 `BIOMODEL_BASE_URL` 可用于覆盖默认模型与端点。
+
+#### 可选：使用 DeepSeek 官方接口
+
+```powershell
+$env:BIOMODEL_PROVIDER='deepseek'
+$env:DEEPSEEK_API_KEY='sk-xxxx'
+# 可选；默认使用 deepseek-chat
+$env:BIOMODEL_MODEL='deepseek-chat'
+
+.\run.ps1 --data data\test.pdf
+```
 
 ### 支持 PDF 文献 📄
 
@@ -56,12 +114,112 @@ $env:BIOMODEL_MODEL='deepseek-v4-flash-ascend'   # 可选，默认就是这个
 
 ```bash
 $env:USTC_LLM_API_KEY='sk-xxx'
-.venv\Scripts\python.exe main.py --data "data\我的论文.pdf"
+.\run.ps1 --data "data\我的论文.pdf"
 ```
 
-> PDF 解析需要 `pymupdf`（已列入 `pyproject.toml`）。如果环境里没装，先执行：
-> `uv pip install --python .venv/Scripts/python.exe pymupdf`
+> PDF 解析需要 `pymupdf`（已列入初始化脚本和 `pyproject.toml`）。首次初始化环境时会自动安装；如果怀疑依赖缺失，可先检查并补齐：
+> `.\bootstrap.ps1 -CheckOnly`
+> `.\bootstrap.ps1`
 > 然后照常运行即可。
+
+---
+
+## 1.3 开发验证（运行测试）
+
+项目自带基于标准库 `unittest` 的最小回归测试，不需要额外测试依赖，也不会调用任何 LLM API：
+
+```powershell
+.\bootstrap.ps1 -CheckOnly
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+测试覆盖：
+
+- ODE 数值求解与结果落盘；
+- 缺少参数、初值、方程时的错误路径；
+- 工具层 JSON 修复与错误返回；
+- 无 API 的 `--demo` 端到端 smoke test。
+
+### Model IR 业务校验
+
+`save_model_ir` 和 `simulate_model` 都会在进入文件写入或数值求解前调用
+`validate_model_ir()`。校验失败时，错误会作为工具结果返回给 Agent，便于 Agent
+自动修正，而不是等到求解阶段才失败。
+
+校验内容包括变量/参数/方程引用关系、初值与空间域、PDE 网格、边界条件和
+`origin` 字段。合法 IR 可正常保存；不完整但结构合法的 IR 允许保存，并在模拟时
+给出明确的缺失信息。
+
+### Agent 调用可靠性
+
+交互模式支持以下可选环境变量：
+
+| 变量 | 默认值 | 作用 |
+|---|---:|---|
+| `BIOMODEL_REQUEST_TIMEOUT` | `120` | 单次 LLM 请求超时秒数 |
+| `BIOMODEL_MAX_RETRIES` | `2` | OpenAI SDK 网络重试次数 |
+| `BIOMODEL_MAX_TOOL_ROUNDS` | `40` | 单轮 Agent 最大工具调用循环数 |
+| `BIOMODEL_MAX_TOTAL_TOKENS` | `200000` | 单轮会话累计 Token 保护阈值；设为 `0` 可关闭 |
+
+网络超时与瞬时错误由 OpenAI SDK 负责重试；工具调用、错误和 Token 统计会触发
+会话持久化回调，Agent 异常时会保存当前会话并打印可读错误。
+
+### 结果追溯与可复现性
+
+每次数值模拟都会生成唯一 `run_id`，并在 simulation JSON 的 `run_metadata` 中记录：
+
+- `run_id`；
+- UTC 创建时间；
+- 模型 IR 的 SHA-256；
+- 代码版本；
+- Python 版本；
+- 操作系统平台；
+- NumPy、SciPy、Matplotlib、SymPy、OpenAI、PyMuPDF 版本。
+
+`simulate_model` 会把 `run_metadata` 返回给 Agent；调用 `save_report` 时可以传入
+该元数据，使报告头部附带 JSON 元数据块。未传入元数据时，报告格式保持兼容。
+
+### 持续集成（CI）
+
+项目提供 `.github/workflows/ci.yml`，在 GitHub 上启用 Actions 后会执行：
+
+- Python 3.12 和 Python 3.14 测试矩阵；
+- `uv lock --check`；
+- `uv sync --locked`；
+- 完整 `unittest` 测试；
+- 无 API 的 `main.py --demo`；
+- Windows 下 `bootstrap.ps1` 与 `run.ps1` 的 PowerShell 语法检查。
+
+CI 不读取 `USTC_LLM_API_KEY` 或 `DEEPSEEK_API_KEY`，不会调用真实 LLM API。
+
+### 报告验证
+
+`save_report` 默认执行软校验：
+
+- 检查方程、参数、假设、模拟结果、局限性和结论等章节；
+- 对缺失章节、`TODO`、`TBD`、`待补充` 返回 warning；
+- 默认仍保存报告，不因章节命名差异误拒绝；
+- 传入 `strict=true` / `strict=True` 时，警告会阻止报告保存。
+
+验证逻辑位于 `report_validation.py`，可由 Agent 在报告写入前发现明显的遗漏。
+
+### 模型能力评估
+
+`eval/` 提供可重复的离线回归案例和可选的真实 Agent 评估：
+
+```powershell
+.\.venv\Scripts\python.exe eval\run_eval.py --offline
+```
+
+离线模式不调用 LLM，使用固定 Model IR 检查校验、ODE/PDE 求解、运行元数据和
+报告完整性；在线模式使用：
+
+```powershell
+.\.venv\Scripts\python.exe eval\run_eval.py --live
+```
+
+在线模式需要 API Key，不在默认 CI 中运行。评估结果写入
+`eval/results/eval_results.json`（运行产物，已 gitignore）。
 
 ---
 
@@ -80,7 +238,7 @@ $env:USTC_LLM_API_KEY='sk-xxx'
                   ▼
   ┌───────────────────────────────────────────────────────────────┐
   │                        agent.py (LLM 循环)                     │
-  │   调用 DeepSeek，解析其 tool_calls，驱动下面 4 个工具            │
+  │   调用 OpenAI 兼容 LLM（默认 USTC），驱动下面 4 个工具           │
   └───────────────┬───────────────────────────────────────────────┘
                   ▼
   ┌───────────────────────────────────────────────────────────────┐
@@ -187,8 +345,32 @@ agent 的流程：
 - **输出**：每跑一个模型在 `output/` 生成 `simulation_<slug>__<tag>.json`（数据）
   与 `.png`（轨迹/热图），同名模型不同 tag 不互相覆盖。
 
-### 已知约束
-- PDE 目前支持**一维**反应扩散类；多维空间、隐式求解器边界条件处理为后续扩展。
+### PDE 当前能力与已知约束
+
+当前求解器支持：
+
+- **一维单空间区间**的反应扩散 PDE；
+- **Dirichlet** 边界：边界节点固定为 `boundary_conditions.value`；
+- **Neumann** 边界：`boundary_conditions.value` 表示边界处的 `du/dx`；
+- 未声明边界条件时使用零通量近似；
+- 多空间区间、二维或三维空间会明确报错，不会静默截断或忽略。
+
+> Neumann 符号约定：边界值表示 `du/dx`。因此左边界负值通常表示向域内输入通量，
+> 正值表示向外梯度；具体方向应结合模型定义解释。
+
+### 未来 PDE 扩展路线
+
+以下能力当前**尚未实现**，作为后续扩展目标：
+
+- 二维/三维 PDE 与多维空间网格；
+- 多空间区间、复杂几何与非均匀网格；
+- 张量/各向异性扩散；
+- Robin 边界、周期边界和时变边界条件；
+- 适用于高维问题的隐式、有限体积或有限元求解器；
+- 多维结果可视化与更完整的边界条件组合验证。
+
+### 其他已知约束
+
 - 若参数/初值缺数值，引擎会明确报错，提示补齐，而非伪造数据。
 
 ---
@@ -204,31 +386,62 @@ biomodel_agent/
 ├── simulate.py      # 数值引擎（ODE/PDE 求解 + 绘图）
 ├── pdf_utils.py     # PDF → 文本解析（pymupdf，两栏排版）          ▲ 新增
 ├── tools.py         # agent 工具面 + function-calling schema
+├── report_validation.py # 报告章节完整性校验
+├── eval/            # 离线/在线模型能力评估
+├── bootstrap.ps1    # 首次初始化：创建 .venv 并安装全部依赖
+├── run.ps1          # 一键入口：环境不存在时先初始化，再运行 main.py
+├── clean_output.ps1 # 安全清理运行产物（默认预览，需 -Execute 才删除）
 ├── pyproject.toml   # 依赖与元数据
 ├── data/            # 你放入的待建模文献（.pdf / .txt）
 │   └── test.pdf     # 示例：CRISPR–Cas9 论文（自发构建用：只有机制、无方程）
-└── output/          # agent 产出：IR、模拟 JSON/PNG、reports/（已 gitignore）
+└── output/          # 运行产物：IR、模拟 JSON/PNG、reports/（详见 output/README.md）
 ```
+
+### 输出目录治理
+
+`output/` 保存运行时生成的 IR、simulation JSON、PNG、报告和会话文件；这些文件
+不属于源码，已通过 `.gitignore` 排除，仅保留 `output/README.md` 作为目录说明。
+
+清理脚本默认只预览，不删除文件：
+
+```powershell
+.\clean_output.ps1 -DryRun
+```
+
+确认后保留最近 5 个文件并删除其余运行产物：
+
+```powershell
+.\clean_output.ps1 -Execute -KeepLatest 5
+```
+
+如需同时清理报告或会话文件，可显式增加 `-IncludeReports` 或 `-IncludeSessions`。
+脚本会拒绝操作 `output/` 之外的路径，并在未加 `-Force` 时要求输入 `YES` 确认。
 
 ---
 
 ## 7. 复现完整运行步骤
 
-```bash
-# 1) 确保依赖
-uv pip install --python .venv/Scripts/python.exe \
-    "numpy==2.2.6" "scipy==1.15.2" "matplotlib==3.9.4" "sympy" "openai" pymupdf
+```powershell
+# 1) 创建或检查项目专属环境，并安装全部依赖
+.\bootstrap.ps1
 
 # 2) 无 API 演示（内置 Lotka-Volterra，验证引擎）
-.venv\Scripts\python.exe main.py --demo
+.\run.ps1 --demo
 
 # 3) 用 LLM 处理你的文献（支持 .txt / .pdf，自动解析）
 $env:USTC_LLM_API_KEY='sk-xxx'
-.venv\Scripts\python.exe main.py --data data\test.pdf
+.\run.ps1 --data data\test.pdf
 
 # 4) 换成任意你自己的文献
-.venv\Scripts\python.exe main.py --data "data\你的文献.pdf"
+.\run.ps1 --data "data\你的文献.pdf"
 ```
+
+> `bootstrap.ps1` 默认按 Python 3.12 安装兼容版本：`numpy==2.2.6`、
+> `scipy==1.15.2`、`matplotlib==3.9.4`，并安装 `sympy`、`openai`、`pymupdf`。
+> 这样可以避开 README 中记录的本机预编译二进制兼容问题。
+>
+> 使用 `-PythonVersion 3.14` 时，脚本会改用 Python 3.14 可安装的
+> `numpy>=2.5.4`、`scipy>=1.18.1`、`matplotlib>=3.11` 组合。
 
 ---
 
@@ -236,10 +449,10 @@ $env:USTC_LLM_API_KEY='sk-xxx'
 
 | 包 | 用途 | 注意 |
 |---|---|---|
-| `openai` | 调用 DeepSeek 兼容接口 | ≥3.8 |
-| `numpy` | 数值数组 | 固定 **2.2.6**（2.5.3 在部分机器上有 DLL 兼容问题） |
-| `scipy` | `solve_ivp` 求解器 | 匹配 numpy 的版本 |
-| `matplotlib` | 出图 | 用 **<3.10**（新版本 `_backend_agg` 二进制与本机不兼容） |
+| `openai` | 调用 OpenAI 兼容接口（默认 USTC；可切 DeepSeek） | ≥3.8 |
+| `numpy` | 数值数组 | Python 3.12 用 **2.2.6**；Python 3.14 用 **>=2.5.4** |
+| `scipy` | `solve_ivp` 求解器 | Python 3.12 用 **1.15.2**；Python 3.14 用 **>=1.18.1** |
+| `matplotlib` | 出图 | Python 3.12 用 **<3.10**；Python 3.14 用 **>=3.11** |
 | `sympy` | 方程符号解析/安全求值 | ≥1.14 |
 | `pymupdf` | 解析 `.pdf` 文献为文本 | ≥1.24（`read_text` 遇到 PDF 时使用） |
 

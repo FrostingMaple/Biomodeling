@@ -13,6 +13,286 @@ The schema intentionally supports both ODE and PDE models.
 """
 
 
+# ---------------------------------------------------------------------------
+# Runtime validation
+# ---------------------------------------------------------------------------
+
+def _is_finite_number(value):
+    """Return True only for finite real numbers (booleans are not numbers here)."""
+    from math import isfinite
+    from numbers import Real
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return False
+    try:
+        return isfinite(float(value))
+    except (TypeError, ValueError, OverflowError):
+        return False
+
+
+def _is_nonempty_string(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
+def validate_model_ir(model, for_simulation=False):
+    """Validate a Model IR beyond the JSON schema.
+
+    Returns:
+        {
+            "valid": bool,
+            "errors": list[str],
+            "warnings": list[str],
+        }
+
+    `for_simulation=True` additionally requires a complete, numerically
+    runnable ODE/PDE model. Without it, incomplete scientific information is
+    allowed for saved IR documents but structurally invalid fields are still
+    rejected.
+    """
+    errors = []
+    warnings = []
+
+    if not isinstance(model, dict):
+        return {
+            "valid": False,
+            "errors": ["model must be a JSON object"],
+            "warnings": [],
+        }
+
+    required = [
+        "model_name", "model_type", "description", "variables", "parameters",
+        "equations", "domain", "initial_conditions", "boundary_conditions",
+        "origin", "missing_information",
+    ]
+    for field in required:
+        if field not in model:
+            errors.append(f"missing required field: {field}")
+
+    model_type = model.get("model_type")
+    if model_type not in {"ODE", "PDE", "stochastic", "unknown"}:
+        errors.append("model_type must be one of: ODE, PDE, stochastic, unknown")
+    elif for_simulation and model_type not in {"ODE", "PDE"}:
+        errors.append(
+            f"Unsupported model_type '{model_type}'; only ODE and PDE are supported."
+        )
+
+    variables = model.get("variables")
+    variable_names = []
+    if not isinstance(variables, list) or not variables:
+        errors.append("variables must be a non-empty list")
+        variables = []
+    else:
+        for i, var in enumerate(variables):
+            if not isinstance(var, dict):
+                errors.append(f"variables[{i}] must be an object")
+                continue
+            name = var.get("name")
+            if not _is_nonempty_string(name):
+                errors.append(f"variables[{i}].name must be a non-empty string")
+                continue
+            if name in variable_names:
+                errors.append(f"duplicate variable name: {name}")
+            else:
+                variable_names.append(name)
+            if not _is_nonempty_string(var.get("description")):
+                warnings.append(f"variables[{i}].description is missing or empty")
+            if not _is_nonempty_string(var.get("unit")):
+                warnings.append(f"variables[{i}].unit is missing or empty")
+
+    parameters = model.get("parameters")
+    parameter_names = []
+    missing_parameters = []
+    if not isinstance(parameters, list):
+        errors.append("parameters must be a list")
+        parameters = []
+    for i, param in enumerate(parameters):
+        if not isinstance(param, dict):
+            errors.append(f"parameters[{i}] must be an object")
+            continue
+        name = param.get("name")
+        if not _is_nonempty_string(name):
+            errors.append(f"parameters[{i}].name must be a non-empty string")
+            continue
+        if name in parameter_names:
+            errors.append(f"duplicate parameter name: {name}")
+        else:
+            parameter_names.append(name)
+        value_known = param.get("value_known")
+        if not isinstance(value_known, bool):
+            errors.append(f"parameters[{i}].value_known must be boolean")
+        elif value_known:
+            if not _is_finite_number(param.get("value")):
+                if for_simulation:
+                    missing_parameters.append(name)
+                else:
+                    errors.append(
+                        f"parameter '{name}' has value_known=true but no numeric value"
+                    )
+        elif param.get("value") is not None:
+            warnings.append(f"parameter '{name}' has value but value_known=false; value is ignored")
+
+    equations = model.get("equations")
+    equation_vars = []
+    if not isinstance(equations, list) or not equations:
+        errors.append("equations must be a non-empty list")
+        equations = []
+    for i, eq in enumerate(equations):
+        if not isinstance(eq, dict):
+            errors.append(f"equations[{i}] must be an object")
+            continue
+        var = eq.get("variable")
+        if not _is_nonempty_string(var):
+            errors.append(f"equations[{i}].variable must be a non-empty string")
+            continue
+        if var not in variable_names:
+            errors.append(f"equations[{i}] references unknown variable: {var}")
+        if var in equation_vars:
+            errors.append(f"duplicate equation for variable: {var}")
+        else:
+            equation_vars.append(var)
+        if not _is_nonempty_string(eq.get("expression")):
+            errors.append(f"equations[{i}].expression must be a non-empty string")
+
+    missing_equations = [v for v in variable_names if v not in equation_vars]
+    if missing_equations:
+        errors.append(f"Equations missing for variables: {missing_equations}")
+
+    domain = model.get("domain")
+    t_start = None
+    t_end = None
+    if not isinstance(domain, dict):
+        errors.append("domain must be an object")
+        domain = {}
+    else:
+        t_start = domain.get("t_start")
+        t_end = domain.get("t_end")
+        if not _is_finite_number(t_start):
+            errors.append("domain.t_start must be a finite number")
+        if not _is_finite_number(t_end):
+            errors.append("domain.t_end must be a finite number")
+        if _is_finite_number(t_start) and _is_finite_number(t_end) and t_end <= t_start:
+            errors.append("domain.t_end must be greater than domain.t_start")
+
+        if model_type == "PDE":
+            spatial = domain.get("spatial")
+            if not isinstance(spatial, list) or not spatial:
+                errors.append("PDE model requires a non-empty domain.spatial list")
+            else:
+                if len(spatial) != 1:
+                    errors.append(
+                        "PDE model currently supports exactly one spatial interval"
+                    )
+                for i, interval in enumerate(spatial):
+                    if not isinstance(interval, dict):
+                        errors.append(f"domain.spatial[{i}] must be an object")
+                        continue
+                    x_start = interval.get("x_start")
+                    x_end = interval.get("x_end")
+                    if not _is_finite_number(x_start):
+                        errors.append(f"domain.spatial[{i}].x_start must be a finite number")
+                    if not _is_finite_number(x_end):
+                        errors.append(f"domain.spatial[{i}].x_end must be a finite number")
+                    if _is_finite_number(x_start) and _is_finite_number(x_end) and x_end <= x_start:
+                        errors.append(f"domain.spatial[{i}].x_end must be greater than x_start")
+                    n_points = interval.get("n_points", 201)
+                    if not isinstance(n_points, int) or isinstance(n_points, bool) or n_points < 3:
+                        errors.append(f"domain.spatial[{i}].n_points must be an integer >= 3")
+
+    initial_conditions = model.get("initial_conditions")
+    ic_vars = []
+    missing_ics = []
+    if not isinstance(initial_conditions, list):
+        errors.append("initial_conditions must be a list")
+        initial_conditions = []
+    for i, ic in enumerate(initial_conditions):
+        if not isinstance(ic, dict):
+            errors.append(f"initial_conditions[{i}] must be an object")
+            continue
+        var = ic.get("variable")
+        if not _is_nonempty_string(var):
+            errors.append(f"initial_conditions[{i}].variable must be a non-empty string")
+            continue
+        if var not in variable_names:
+            errors.append(f"initial_conditions[{i}] references unknown variable: {var}")
+        if var in ic_vars:
+            errors.append(f"duplicate initial condition for variable: {var}")
+        else:
+            ic_vars.append(var)
+        value_known = ic.get("value_known")
+        if not isinstance(value_known, bool):
+            errors.append(f"initial_conditions[{i}].value_known must be boolean")
+            continue
+        has_value = _is_finite_number(ic.get("value"))
+        has_expr = _is_nonempty_string(ic.get("expr"))
+        if value_known:
+            if model_type == "ODE" and not has_value:
+                errors.append(f"ODE initial condition for {var} requires a numeric value")
+            elif not has_value and not has_expr:
+                errors.append(f"initial condition for {var} requires value or expr")
+        else:
+            missing_ics.append(var)
+
+    missing_ic_vars = [v for v in variable_names if v not in ic_vars]
+    if missing_ic_vars:
+        if for_simulation:
+            missing_ics.extend(missing_ic_vars)
+        else:
+            warnings.append(f"initial_conditions does not cover variables: {missing_ic_vars}")
+    if for_simulation and missing_ics:
+        errors.append(f"Cannot simulate: missing initial conditions for {sorted(set(missing_ics))}.")
+
+    boundary_conditions = model.get("boundary_conditions")
+    bc_keys = []
+    if not isinstance(boundary_conditions, list):
+        errors.append("boundary_conditions must be a list")
+        boundary_conditions = []
+    for i, bc in enumerate(boundary_conditions):
+        if not isinstance(bc, dict):
+            errors.append(f"boundary_conditions[{i}] must be an object")
+            continue
+        var = bc.get("variable")
+        boundary = bc.get("boundary")
+        bc_type = bc.get("type")
+        if var not in variable_names:
+            errors.append(f"boundary_conditions[{i}] references unknown variable: {var}")
+        if boundary not in {"left", "right"}:
+            errors.append(f"boundary_conditions[{i}].boundary must be left or right")
+        if bc_type not in {"dirichlet", "neumann"}:
+            errors.append(f"boundary_conditions[{i}].type must be dirichlet or neumann")
+        if not _is_finite_number(bc.get("value")):
+            errors.append(f"boundary_conditions[{i}].value must be a finite number")
+        key = (var, boundary)
+        if key in bc_keys:
+            errors.append(f"duplicate boundary condition for {var} {boundary}")
+        else:
+            bc_keys.append(key)
+
+    origin = model.get("origin")
+    if not isinstance(origin, dict):
+        errors.append("origin must be an object")
+    else:
+        if origin.get("mode") not in {"reproduce", "self_derived"}:
+            errors.append("origin.mode must be reproduce or self_derived")
+        if not _is_nonempty_string(origin.get("source_text")):
+            errors.append("origin.source_text must be a non-empty string")
+        if origin.get("confidence") not in (None, "high", "medium", "low"):
+            errors.append("origin.confidence must be high, medium, or low")
+        elif origin.get("confidence") is None:
+            warnings.append("origin.confidence is not set")
+        if origin.get("assumptions") is not None and not isinstance(origin.get("assumptions"), list):
+            errors.append("origin.assumptions must be a list")
+
+    if model.get("missing_information") is not None and not isinstance(model.get("missing_information"), list):
+        errors.append("missing_information must be a list")
+
+    if for_simulation and missing_parameters:
+        errors.append(
+            f"Cannot simulate: parameters without numeric values: {missing_parameters}. "
+            "请先在 IR 中提供参数数值。"
+        )
+
+    return {"valid": not errors, "errors": errors, "warnings": warnings}
+
+
 # Base schema for functions that take a full model document.
 MODEL_DOC_SCHEMA = {
     "type": "object",
@@ -103,7 +383,10 @@ MODEL_DOC_SCHEMA = {
                         },
                         "required": ["x_start", "x_end"],
                     },
-                    "description": "PDE 的空间区间列表（一维 PDE 通常一个区间）",
+                    "description": (
+                        "PDE 的空间区间列表。当前求解器仅支持一维单区间；"
+                        "未来将扩展为多区间和多维空间。"
+                    ),
                 },
             },
             "required": ["t_start", "t_end"],

@@ -219,3 +219,13 @@ __marimo__/
 
 # Runtime session files
 output/sessions/
+
+# Local test / literature files
+# Keep papers and test documents local; only this directory's README is tracked.
+/data/*
+!/data/README.md
+
+# Runtime outputs
+/output/*
+!/output/README.md
+/eval/results/

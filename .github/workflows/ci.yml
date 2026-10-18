@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Check lockfile
+        run: uv lock --check --python ${{ matrix.python-version }}
+
+      - name: Sync dependencies
+        run: uv sync --locked --python ${{ matrix.python-version }}
+
+      - name: Run unit tests
+        run: uv run --python ${{ matrix.python-version }} python -m unittest discover -s tests -v
+
+      - name: Run offline evaluation
+        run: uv run --python ${{ matrix.python-version }} python eval/run_eval.py --offline
+
+      - name: Run demo without API
+        run: uv run --python ${{ matrix.python-version }} python main.py --demo
+
+  powershell-syntax:
+    name: PowerShell syntax
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path '.\bootstrap.ps1'), [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path '.\run.ps1'), [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
+          Write-Host 'PowerShell scripts parse successfully.'

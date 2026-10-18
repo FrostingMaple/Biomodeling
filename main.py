@@ -9,7 +9,7 @@ Two modes:
       demo and for verifying the numerical engine works.
 
   python main.py [--data path_to_literature.txt]
-      Interactive mode: connect to the configured LLM (DeepSeek) and let the
+      Interactive mode: connect to the configured OpenAI-compatible LLM (USTC by default; DeepSeek optional) and let the
       agent read the literature, extract/reproduce or spontaneously derive
       the model, simulate it and write a report. The conversation is
       persistent: it is auto-saved after every round to output/sessions/, so
@@ -23,8 +23,14 @@ Two modes:
   python main.py --list-sessions
       List all saved conversations you can resume.
 
-Required env var for interactive mode:
-  DEEPSEEK_API_KEY    (also optionally BIOMODEL_MODEL for the model name)
+Required env vars for interactive mode:
+  USTC_LLM_API_KEY    (default provider; BIOMODEL_MODEL is optional)
+  DEEPSEEK_API_KEY    (only when BIOMODEL_PROVIDER=deepseek)
+  BIOMODEL_BASE_URL   (optional endpoint override)
+  BIOMODEL_REQUEST_TIMEOUT (optional, default 120 seconds)
+  BIOMODEL_MAX_RETRIES     (optional, default 2)
+  BIOMODEL_MAX_TOOL_ROUNDS (optional, default 40)
+  BIOMODEL_MAX_TOTAL_TOKENS (optional, default 200000; 0 disables)
 """
 
 import argparse
@@ -32,6 +38,53 @@ import json
 import os
 import sys
 from pathlib import Path
+
+from security_utils import redact_secrets
+
+
+LLM_PROVIDERS = {
+    "ustc": {
+        "api_key_env": "USTC_LLM_API_KEY",
+        "base_url": "https://api.llm.ustc.edu.cn/v1",
+        "model": "deepseek-flash",
+    },
+    "deepseek": {
+        "api_key_env": "DEEPSEEK_API_KEY",
+        "base_url": "https://api.deepseek.com/v1",
+        "model": "deepseek-chat",
+    },
+}
+
+
+def _env_int(name, default, minimum=0):
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        print(f"警告：{name}={raw!r} 不是整数，使用默认值 {default}。")
+        return default
+    if value < minimum:
+        print(f"警告：{name}={value} 低于最小值 {minimum}，使用 {minimum}。")
+        return minimum
+    return value
+
+
+def _env_float(name, default, minimum=0.0):
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        print(f"警告：{name}={raw!r} 不是数字，使用默认值 {default}。")
+        return default
+    if value < minimum:
+        print(f"警告：{name}={value} 低于最小值 {minimum}，使用 {minimum}。")
+        return minimum
+    return value
+
 
 # ---------------------------------------------------------------------------
 # Demo mode: full local pipeline with no API call.
@@ -116,6 +169,7 @@ def run_demo():
         title="Lotka-Volterra 模型复现报告",
         content=rep,
         filename="report_lotka_volterra_reproduce",
+        metadata=data.get("run_metadata"),
     )
     print("      ", msg)
     print("\n完成。图表与报告位于 output/ 目录。")
@@ -218,9 +272,15 @@ def _list_sessions():
 
 
 def run_interactive(data_path=None, resume_id=None):
-    api_key = os.getenv("DEEPSEEK_API_KEY")
+    provider = os.getenv("BIOMODEL_PROVIDER", "ustc").strip().lower()
+    preset = LLM_PROVIDERS.get(provider)
+    if preset is None:
+        print(f"不支持的 BIOMODEL_PROVIDER={provider!r}；可选值：{", ".join(sorted(LLM_PROVIDERS))}。")
+        return 1
+
+    api_key = os.getenv(preset["api_key_env"])
     if not api_key:
-        print("缺少环境变量 DEEPSEEK_API_KEY，无法连接 LLM。")
+        print(f"缺少环境变量 {preset['api_key_env']}，无法连接 LLM。")
         print("提示：可用 `python main.py --demo` 运行无 API 演示。")
         return 1
 
@@ -229,7 +289,10 @@ def run_interactive(data_path=None, resume_id=None):
     from tools import TOOLS, FUNCTIONS
     from prompts import SYSTEM_PROMPT
 
-    MODEL = os.getenv("BIOMODEL_MODEL", "deepseek-flash")
+    MODEL = os.getenv("BIOMODEL_MODEL", preset["model"])
+    BASE_URL = os.getenv("BIOMODEL_BASE_URL", preset["base_url"])
+    REQUEST_TIMEOUT = _env_float("BIOMODEL_REQUEST_TIMEOUT", 120.0, minimum=1.0)
+    MAX_RETRIES = _env_int("BIOMODEL_MAX_RETRIES", 2, minimum=0)
 
     # ---- Resume an existing session, or start a fresh one ----
     session_id = None
@@ -242,7 +305,7 @@ def run_interactive(data_path=None, resume_id=None):
         messages = session.get("messages") or []
         if not any(m.get("role") == "system" for m in messages):
             messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
-        MODEL = session.get("model", MODEL)
+        MODEL = os.getenv("BIOMODEL_MODEL") or session.get("model", MODEL)
         session_id = session["session_id"]
         note = session.get("note", "")
         print(f"已恢复会话 '{session_id}'（{session.get('created_at', '')}），"
@@ -266,7 +329,9 @@ def run_interactive(data_path=None, resume_id=None):
 
     client = OpenAI(
         api_key=api_key,
-        base_url="https://api.deepseek.com/v1",
+        base_url=BASE_URL,
+        timeout=REQUEST_TIMEOUT,
+        max_retries=MAX_RETRIES,
     )
 
     # 关键：把"当前会话"传给内部循环使用，以便每轮结束后落盘保存。
@@ -279,25 +344,37 @@ def run_interactive(data_path=None, resume_id=None):
         "messages": messages,
     }
 
-    def persist():
-        # keep messages in sync inside the session dict
+    def persist(event=None, **details):
+        # keep messages and the latest runtime event in sync on disk
         session["messages"] = messages
         session["model"] = MODEL
+        if event is not None:
+            session["last_event"] = {"type": event, **details}
         _save_session(session)
+
+    def record_agent_error(exc):
+        message = f"[Agent runtime error] {type(exc).__name__}: {redact_secrets(str(exc))}"
+        messages.append({"role": "assistant", "content": message})
+        persist("agent_error", error=str(exc))
+        print(f"\nAgent 运行失败：{message}")
 
     # First turn: process the data file (only for a fresh session with --data).
     if not resume_id and data_path:
         print(f"文献路径: {data_path}")
         print(f"[会话 {session_id}] 正在处理文献，请稍候……")
-        run_agent(
-            client=client,
-            model=MODEL,
-            messages=messages,
-            tools=TOOLS,
-            functions=FUNCTIONS,
-            verbose=False,
-        )
-        persist()
+        try:
+            run_agent(
+                client=client,
+                model=MODEL,
+                messages=messages,
+                tools=TOOLS,
+                functions=FUNCTIONS,
+                verbose=False,
+                on_event=persist,
+            )
+            persist()
+        except Exception as exc:
+            record_agent_error(exc)
 
     # Persistent chat loop: continue talking until the user types exit.
     print("\n（持续对话中：可继续提问或要求修改模型；输入 exit 退出。"
@@ -313,17 +390,22 @@ def run_interactive(data_path=None, resume_id=None):
             break
 
         messages.append({"role": "user", "content": user_input})
-        answer = run_agent(
-            client=client,
-            model=MODEL,
-            messages=messages,
-            tools=TOOLS,
-            functions=FUNCTIONS,
-            verbose=False,
-        )
-        print("\nAgent:")
-        print(answer)
-        persist()  # persist after each round so nothing is lost on crash/exit
+        try:
+            answer = run_agent(
+                client=client,
+                model=MODEL,
+                messages=messages,
+                tools=TOOLS,
+                functions=FUNCTIONS,
+                verbose=False,
+                on_event=persist,
+            )
+            print("\nAgent:")
+            print(answer)
+            persist()  # persist after each round so nothing is lost on crash/exit
+        except Exception as exc:
+            record_agent_error(exc)
+            continue
 
     return 0
 
