@@ -75,27 +75,16 @@ def initialize(destination):
     stage = Path(tempfile.mkdtemp(prefix='.biomodel-workspace-', dir=destination.parent))
     try:
         hashes = {}; _copy_assets(_assets(), stage, hashes)
-        from . import application, evidence, modeling_plan
+        from . import application
         from .storage import ArtifactStore
-        store = ArtifactStore(stage / 'store')
+        ArtifactStore(stage / 'store')
         source_refs = {}
-        for case in ('complete', 'ambiguous', 'missing'):
-            source_refs[case] = evidence.ingest_source(store, stage / 'examples' / f'{case}-source.txt')
-            path = stage / 'examples' / f'{case}-plan.json'
-            spec = json.loads(path.read_text(encoding='utf-8'))
-            for anchor in spec['evidence']:
-                if anchor['source_ref'] != 'SOURCE_REF':
-                    raise ValueError('unexpected example source placeholder')
-                anchor['source_ref'] = source_refs[case]
-            modeling_plan.validate(store, spec, [source_refs[case]])
-            path.write_text(json.dumps(spec, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-            hashes[str(path.relative_to(stage))] = hashlib.sha256(path.read_bytes()).hexdigest()
         manifest = dict(version=1, profile='external_agent_ode_workspace_v1',
             created_at_utc=datetime.now(timezone.utc).isoformat(), python_executable=sys.executable,
             project_source_sha256=application.environment_fingerprint()['modules_sha256'],
             example_source_refs=source_refs, file_sha256=hashes, environment=environment,
             scientific_runs=0, provider_calls=0,
-            note='Synthetic development controls. No host compatibility or scientific performance is certified.')
+            note='Empty user workspace. Templates specify input structure only; no sources or results are preloaded.')
         (stage / 'workspace.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         # destination was checked before preparation; reject concurrent creation.
         if destination.exists() or destination.is_symlink():
@@ -121,5 +110,5 @@ def command(args):
 def register(sub):
     p = sub.add_parser('workspace-doctor', help='check local dependencies; no network or model execution')
     p.set_defaults(func=command)
-    p = sub.add_parser('workspace-init', help='create a new external-Agent workspace with explicit synthetic examples')
+    p = sub.add_parser('workspace-init', help='create an empty external-Agent workspace with input templates')
     p.add_argument('--output', required=True); p.set_defaults(func=command)

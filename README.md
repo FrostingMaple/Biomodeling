@@ -1,17 +1,12 @@
 # Biomodeling 整合版
 
-## 可直接使用的独立 BioModel Agent（2026-10-30）
+## BioModel Agent 纯运行版
 
-新增 [biomodel-agent-standalone/](biomodel-agent-standalone/)：独立安装的研究工作台与小型模型示例。**使用方法见[中文说明](biomodel-agent-standalone/README.md)**。下载 ZIP 解压后进入该目录，在 Python 3.12 的 Linux / WSL2 环境执行：
+**仅下载运行程序，请使用 [纯运行版 ZIP](https://github.com/FrostingMaple/Biomodeling/archive/refs/heads/codex/runtime-only-20261030.zip)**，或切换到 [`codex/runtime-only-20261030`](https://github.com/FrostingMaple/Biomodeling/tree/codex/runtime-only-20261030) 分支。
 
-```bash
-bash setup.sh
-.venv/bin/python demo.py
-bash start.sh
-```
+该分支只含运行源码、安装/启动脚本、运行模板与[中文使用说明](https://github.com/FrostingMaple/Biomodeling/blob/codex/runtime-only-20261030/README.md)，没有测试、测试报告、演示项目、参考答案或历史结果。解压后在 Python 3.12 的 Linux / WSL2 中执行 `bash setup.sh`、`bash start.sh`。
 
-该目录仅包含运行必需文件、依赖配置和使用示例，没有附带测试、评测脚本、历史结果或密钥。它使用 `python -m biomodel_agent` 入口；下面的整合工程使用 `python -m biomodeling`，请按各自目录的说明安装。
-
+主分支的同一运行版位于 [biomodel-agent-standalone/](biomodel-agent-standalone/)。**主分支其余目录仍是原整合工程，其中包含原有测试和测试报告；下载整个主分支 ZIP 会包含它们。** 下文介绍原整合工程，与纯运行版入口不同。
 
 本目录将两个原有项目整合为一个统一工程，同时保留原项目目录不变：
 

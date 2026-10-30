@@ -1,5 +1,0 @@
-Synthetic development specification; not a real paper.
-Initial x = 1.
-Parameter k = 0.4.
-Equation dx/dt = -k*x.
-Time is measured in seconds.

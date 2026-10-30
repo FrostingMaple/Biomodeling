@@ -1,6 +1,6 @@
 # BioModel workspace guidance
 
-Use the installed `biomodel_agent` CLI for source ingestion, modeling-plan checks, simulation, reports and export. The interpreter and initial source references are recorded in `workspace.json`. This guidance applies to this workspace.
+Use the installed `biomodel_agent` CLI for source ingestion, modeling-plan checks, simulation, reports and export. The interpreter is recorded in `workspace.json`; ingest the user's own sources into the empty store. This guidance applies to this workspace.
 
 For supported rate-rule ODE tasks, use the `biomodel-ode` Skill under `.agents/skills/biomodel-ode/`. Read `references/commands.md` for concrete command contracts and `references/modeling-plan.md` when building a proposal.
 

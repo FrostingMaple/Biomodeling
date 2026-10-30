@@ -7,11 +7,11 @@ python -m biomodel_agent workspace-doctor
 python -m biomodel_agent source-ingest my-source.txt --store runs/task
 python -m biomodel_agent source-search --help
 
-python -m biomodel_agent model-plan-prepare --config examples/complete-plan.json --source-ref SOURCE_REF --store store
+python -m biomodel_agent model-plan-prepare --config my-plan.json --source-ref SOURCE_REF --store store
 python -m biomodel_agent model-plan-show PLAN_REF --store store
 python -m biomodel_agent model-plan-compile PLAN_REF --store store
 python -m biomodel_agent model-plan-compilation-show COMPILATION_REF --store store
-python -m biomodel_agent model-plan-execution-prepare COMPILATION_REF --config examples/execution.json --store store
+python -m biomodel_agent model-plan-execution-prepare COMPILATION_REF --config my-execution.json --store store
 python -m biomodel_agent model-plan-status TASK_REF --store store
 python -m biomodel_agent model-plan-execute TASK_REF --store store
 python -m biomodel_agent model-plan-summary RUN_REF --store store
@@ -20,7 +20,7 @@ python -m biomodel_agent report RUN_REF --output report.md --store store
 python -m biomodel_agent export RUN_REF --output bundle --store store
 ```
 
-Example source refs are in `workspace.json` under `example_source_refs`; corresponding JSON examples already contain their actual source refs. New task sources are explicitly ingested and their returned refs inserted into the plan. `--source-ref` may be repeated for an explicitly authorized source set.
+The workspace starts with no source records. Ingest your own task sources and insert the returned refs into your completed plan. Use `templates/ode-plan.json` for field layout only; it cannot be executed without resolving its missing choices. `--source-ref` may be repeated for an explicitly authorized source set.
 
 To revise a proposal, supply a complete revised config and explicit source set to `model-plan-prepare`, plus `--parent-ref OLD_PLAN_REF --reason 'Specific change'`. Prior versions stay available. Revision does not mutate a frozen execution task or automatically continue a completed run.
 

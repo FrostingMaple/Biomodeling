@@ -18,6 +18,5 @@
     }
   ],
   "update": "synchronous",
-  "clamps": {},
-  "note": "Synthetic feedback network, hand-enumerated cycle has period four."
+  "clamps": {}
 }

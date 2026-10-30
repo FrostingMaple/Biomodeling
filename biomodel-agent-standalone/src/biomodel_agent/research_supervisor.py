@@ -117,10 +117,10 @@ def _messages(store,project_ref):
     state=dict(project=view,constraints=project['constraints'],policy=project['policy'],source_catalog=material,iterations=iterations,
                prepared_models=[dict(model_ref=r,model=store.get(r)['payload'].get('model')) for r in project['model_refs']])
     state['researcher_replies']=[p.own(store,r,p.REPLY,project_ref) for r in view['reply_refs']]
-    assets=Path(__file__).parent/'workspace_assets/examples'
-    state['native_model_schema_examples']={kind:json.loads((assets/('research-'+kind+'.json')).read_text())
+    assets=Path(__file__).parent/'workspace_assets/templates'
+    state['native_model_schema_examples']={kind:json.loads((assets/(kind+'.json')).read_text())
         for kind in ('boolean','stochastic','pde','individual','fba')}
-    state['ode_decision_plan_example']=json.loads((assets/'complete-plan.json').read_text())
+    state['ode_decision_plan_example']=json.loads((assets/'ode-plan.json').read_text())
     state['schema_notice']='Examples describe syntax only. Example numbers/biological relations are not task evidence.'
     frozen=dict(project_ref=project_ref,scenario=project['scenario'],mode=project['mode'],policy=project['policy'],
         constraints=project['constraints'],initial_source_refs=project['source_refs'],reference_refs=project['reference_refs'],

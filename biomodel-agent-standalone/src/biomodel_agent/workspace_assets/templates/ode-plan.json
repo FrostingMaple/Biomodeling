@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "missing_example",
+  "id": "ode_plan_template",
   "model_type": "ode",
   "mode": "reproduction",
   "context": {},
@@ -10,33 +10,12 @@
       "label": "Supplied normalized state"
     }
   ],
-  "evidence": [
-    {
-      "id": "E0",
-      "source_ref": "SOURCE_REF",
-      "page": 1,
-      "start": 55,
-      "end": 69,
-      "quote": "Initial x = 1.",
-      "interpretation": "Candidate reading of the supplied declaration.",
-      "conditions": {}
-    },
-    {
-      "id": "E2",
-      "source_ref": "SOURCE_REF",
-      "page": 1,
-      "start": 99,
-      "end": 121,
-      "quote": "Equation dx/dt = -k*x.",
-      "interpretation": "Candidate reading of the supplied declaration.",
-      "conditions": {}
-    }
-  ],
+  "evidence": [],
   "mechanisms": [],
   "candidates": [
     {
       "id": "first_order",
-      "label": "Explicit first-order candidate",
+      "label": "Unresolved mathematical proposal; supply source evidence before execution",
       "variable_map": {
         "protein": "x"
       },
@@ -45,7 +24,7 @@
         "states": [
           {
             "id": "x",
-            "initial": 1.0,
+            "initial": null,
             "unit": "unknown",
             "quantity_kind": "variable",
             "nonnegative": false
@@ -80,12 +59,10 @@
       "decisions": [
         {
           "target": "x/initial",
-          "origin": "reported",
-          "evidence_ids": [
-            "E0"
-          ],
+          "origin": "unresolved",
+          "evidence_ids": [],
           "mechanism_ids": [],
-          "rationale": "Use the explicit supplied declaration.",
+          "rationale": "Supply an explicit choice with source evidence or an allowed exploration assumption.",
           "alternatives": []
         },
         {
@@ -93,21 +70,19 @@
           "origin": "unresolved",
           "evidence_ids": [],
           "mechanism_ids": [],
-          "rationale": "Which parameter value or mathematical rate law is intended?",
+          "rationale": "Supply an explicit choice with source evidence or an allowed exploration assumption.",
           "alternatives": []
         },
         {
           "target": "rule:x/expression",
-          "origin": "reported",
-          "evidence_ids": [
-            "E2"
-          ],
+          "origin": "unresolved",
+          "evidence_ids": [],
           "mechanism_ids": [],
-          "rationale": "Use the explicit supplied declaration.",
+          "rationale": "Supply an explicit choice with source evidence or an allowed exploration assumption.",
           "alternatives": []
         }
       ]
     }
   ],
-  "selected_candidate": "first_order"
+  "selected_candidate": null
 }

@@ -2,7 +2,7 @@
 
 Version 1 supports 1–16 states, at most 32 parameters, a default unit compartment and explicit rate-rule equations. Reactions, derived variables, non-default compartments and other model types retain their existing product entrypoints. Shared concepts can be extended later without forcing those types into this ODE representation.
 
-Start from `examples/complete-plan.json` for the exact JSON layout. Author only these top-level fields:
+Start from `templates/ode-plan.json` for the exact JSON layout. Author only these top-level fields:
 
 | Field | Meaning |
 |---|---|
@@ -29,4 +29,4 @@ A decision contains `target`, `origin`, `evidence_ids`, `mechanism_ids`, `ration
 
 Conditions on used evidence and mechanisms must match the task's explicit context. This is exact declared-field matching, not general scientific applicability reasoning. Unknown units and biological interpretation remain visible scientific unknowns; schema or binding success cannot approve them.
 
-The execution config contains `experiment`, with optional `solver`, `observations`, `reference`, `scales`, `threshold`, `nonnegative`. It cannot override mathematical choices using initial/parameter overrides or segments. A reference is a full `SimulationResult` with the same grid/time unit, all returned state/observation columns and explicit positive fixed scales. When requested, comparison must actually pass for the task to complete; an unavailable comparison remains incomplete even if numerical solver checks pass. The example omits a reference intentionally; analytic reference controls are a separate development diagnostic.
+The execution config contains `experiment`, with optional `solver`, `observations`, `reference`, `scales`, `threshold`, `nonnegative`. It cannot override mathematical choices using initial/parameter overrides or segments. A reference is a full `SimulationResult` with the same grid/time unit, all returned state/observation columns and explicit positive fixed scales. When requested, comparison must actually pass for the task to complete; an unavailable comparison remains incomplete even if numerical solver checks pass. The runtime template contains no expected results or reference answers. Select any required validation data explicitly for the new task.
