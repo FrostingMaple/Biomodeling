@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biomodel-agent"
+version = "0.1.0"
+description = "Auditable ODE modeling, simulation and bounded hypothesis research workflows"
+requires-python = ">=3.12"
+dependencies = [
+  "numpy",
+  "scipy",
+  "python-libsbml",
+  "libroadrunner",
+  "pypdf",
+  "httpx",
+]
+
+[project.optional-dependencies]
+pdf = ["pymupdf==1.28.2"]
+figures = ["Pillow==12.3.0", "matplotlib==3.11.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+biomodel_agent = ["workspace_assets/*.md", "workspace_assets/*.lock", "workspace_assets/templates/*", "workspace_assets/references/*.md", "workspace_assets/skills/*/SKILL.md", "workbench_assets/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

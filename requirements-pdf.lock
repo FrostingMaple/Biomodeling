@@ -1,0 +1,2 @@
+-r requirements.lock
+pymupdf==1.28.2
