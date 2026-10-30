@@ -1,279 +1,78 @@
-# Biomodeling 整合版
+# BioModel Agent 运行版
 
-## BioModel Agent 纯运行版
+本目录仅分发运行程序、安装/启动脚本、运行依赖和这份使用说明。不包含测试代码、测试报告、评测脚本、演示程序、演示项目、预期答案或历史计算结果。
 
-**仅下载运行程序，请使用 [纯运行版 ZIP](https://github.com/FrostingMaple/Biomodeling/archive/refs/heads/codex/runtime-only-20261030.zip)**，或切换到 [`codex/runtime-only-20261030`](https://github.com/FrostingMaple/Biomodeling/tree/codex/runtime-only-20261030) 分支。
+## 下载
 
-该分支只含运行源码、安装/启动脚本、运行模板与[中文使用说明](https://github.com/FrostingMaple/Biomodeling/blob/codex/runtime-only-20261030/README.md)，没有测试、测试报告、演示项目、参考答案或历史结果。解压后在 Python 3.12 的 Linux / WSL2 中执行 `bash setup.sh`、`bash start.sh`。
+推荐下载仓库的 `codex/runtime-only-20261030` 分支：
 
-主分支的同一运行版位于 [biomodel-agent-standalone/](biomodel-agent-standalone/)。**主分支其余目录仍是原整合工程，其中包含原有测试和测试报告；下载整个主分支 ZIP 会包含它们。** 下文介绍原整合工程，与纯运行版入口不同。
+[下载纯运行版 ZIP](https://github.com/FrostingMaple/Biomodeling/archive/refs/heads/codex/runtime-only-20261030.zip)
 
-本目录将两个原有项目整合为一个统一工程，同时保留原项目目录不变：
+解压后进入包含本说明和 `setup.sh` 的目录。该分支根目录就是运行程序；主分支另有同学原先的整合工程和测试文件。主分支的 `biomodel-agent-standalone/` 目录与本运行版相同。
 
-- A：`bio_variable_extractor`，负责文献准备、证据化变量/参数提取、校验和变量交叉表。
-- B：`biomodel-agent`，负责 Model IR、ODE/PDE 数值求解、LLM Agent 和建模报告。
+## 环境与安装
 
-## 项目来源与分支定位
+需要 **64 位 Python 3.12、Linux 或 WSL2**，无需 GPU。Windows 用户请在 WSL2 终端操作；完整工作流依赖 Unix 文件锁，不能直接在 PowerShell 中运行。建议将程序放在 WSL 的 Linux 文件系统中。
 
-- B（`biomodel-agent`）的来源仓库为 [FrostingMaple/Biomodeling](https://github.com/FrostingMaple/Biomodeling)。
-- 统合后的本项目记为 B 的整合分支：`integration/parameter-extraction`。
-- 该分支在 B 的建模能力基础上，整合 A 的文献参数提取、变量交叉表与统一建模链路。
-- 该分支不替代 B 的上游仓库，也不得覆盖或改写 B 的既有历史；接入 Git 时应使用上述正式分支名，不直接在主分支开发。
+Ubuntu / WSL 如果缺少环境，请先安装系统提供的 `python3.12` 和 `python3.12-venv`。确认 `python3.12 --version` 后，在本目录运行：
 
-统一后的主链路为：
-
-```text
-文献 / DOI
-  -> A: source.json + chunks.jsonl
-  -> A: extraction.json（证据化变量与关系）
-  -> 统一契约: extraction -> Model IR
-  -> B: Model IR 校验
-  -> B: ODE/PDE 仿真 JSON + PNG
-  -> Markdown 联合报告
+```bash
+bash setup.sh
+bash start.sh
 ```
 
-## 目录结构
+首次安装需要联网下载依赖。打开终端显示的地址（一般为 <http://127.0.0.1:8765>）；研究项目页为 <http://127.0.0.1:8765/projects>。终端保持运行，按 `Ctrl+C` 退出。以后只需 `bash start.sh`。
 
-```text
-Biomodeling-合并尝试/
-├─ pyproject.toml
-├─ run.ps1
-├─ bootstrap.ps1
-├─ src/
-│  └─ biomodeling/
-│     ├─ literature/          # 项目 A
-│     │  ├─ cli.py
-│     │  ├─ extraction.py
-│     │  ├─ validation.py
-│     │  ├─ doi.py
-│     │  ├─ rendering.py
-│     │  ├─ lexicons/
-│     │  ├─ prompts/
-│     │  └─ templates/
-│     ├─ modeling/            # 项目 B 的模型与求解层
-│     │  ├─ model_ir.py
-│     │  ├─ simulate.py
-│     │  └─ pdf_utils.py
-│     ├─ agent/               # 项目 B 的 Agent 层
-│     │  ├─ agent.py
-│     │  ├─ main.py
-│     │  ├─ prompts.py
-│     │  └─ tools.py
-│     ├─ contracts/           # 两项目统一契约
-│     │  ├─ extraction.schema.json
-│     │  ├─ model_ir.schema.json
-│     │  └─ extraction_to_model_ir.py
-│     └─ cli.py
-├─ examples/
-│  ├─ literature/             # A 的原始样例
-│  ├─ modeling_test.pdf       # B 的原始样例文献
-│  └─ model_ready_extraction.json
-├─ tests/
-├─ docs/
-└─ runs/                      # 统一运行产物
+不使用脚本时，等效操作为：
+
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install .
+.venv/bin/python -m biomodel_agent workbench --store runs/workbench --port 8765
 ```
 
-> [!IMPORTANT]
-> **测试文献不提交到 Git。** `examples/modeling_test.pdf`、`examples/literature/sample_paper.md` 和 `examples/literature/sample_pdf.pdf` 仅用于本地验证，已在 `.gitignore` 中排除。克隆仓库后如需运行依赖这些文件的测试，请从团队共享位置获取并放回原路径；禁止使用 `git add -f` 强制提交。
+## 配置模型服务
 
-## 环境与快速开始
+默认不调用大模型，可以打开界面、导入资料并检查输入。让 Agent 规划研究前，需要在启动终端设置自己的 OpenAI 兼容服务：
 
-推荐 Python 3.12：
-
-```powershell
-.\bootstrap.ps1
-.\run.ps1 --help
+```bash
+export BIOMODEL_API_KEY='替换为自己的密钥'
+export BIOMODEL_BASE_URL='https://YOUR_PROVIDER/v1'
+export BIOMODEL_MODEL='YOUR_MODEL'
+bash start.sh --allow-provider
 ```
 
-如果不希望安装项目，也可以直接设置 `PYTHONPATH`：
+服务应支持 `/chat/completions` 和工具调用。程序不自动读取 `.env`。在线操作会调用你的模型服务并使用相应额度，界面展示实际资料范围和冻结预算。密钥仅通过本机环境变量提供。
 
-```powershell
-$env:PYTHONPATH = "src"
-py -m biomodeling --help
+## 使用自己的资料
+
+1. 在首页 `/` 导入 UTF-8 TXT / Markdown 或原生模型 JSON；单文件不超过 1 MB。没有预置文献或计算结果。
+2. 打开 `/projects`，填写研究目标、选择已导入的资料或模型，核对规划、迭代和计算额度；启用服务后再推进研究。
+3. 查看建模对象、证据、假设和实验方案。需要讨论时回答具体问题，再继续原项目。
+4. 查看实验、实际检查和结论，通过界面导出报告或 ZIP 研究包。
+
+支持有限 ODE、稳态 FBA、随机反应、1D 线性 PDE、布尔网络和格点个体模型；不是任意论文自动复现工具。计算成功不代表生物学结论已被证实。资料不足或类型不支持时，查看具体状态和缺口。
+
+## 本机数据与常用命令
+
+运行后数据保存在 `runs/workbench/`，退出后保留；升级前备份整个存储。下载内容中不预置 `runs/`。同一任务沿用原存储和恢复入口，不通过复制目录来假定此前请求未发生。
+
+```bash
+# 查看命令与依赖状态（不发送模型请求）
+.venv/bin/python -m biomodel_agent --help
+.venv/bin/python -m biomodel_agent workspace-doctor
+
+# 更换端口
+bash start.sh --port 8766
+
+# 可选 PDF 布局提取和图像功能
+.venv/bin/python -m pip install '.[pdf,figures]'
 ```
 
-如果本机已有可用环境，也可以直接运行测试：
+浏览器上传目前支持上述文本和 JSON；PDF 使用 `source-ingest` CLI。`workspace-init --output 新目录` 为外部 Agent 创建空白工作区，不预载合成资料或演示运行。
 
-```powershell
-$env:PYTHONPATH = "src"
-py -m unittest discover -s tests -v
-```
+`src/biomodel_agent/workspace_assets/templates/` 内的 6 份 JSON 是程序运行时给 Agent 说明输入结构的模板。它们不包含测试结果或参考答案；其中示意数值不能作为用户任务的证据。ODE 模板的数值与选择保持未解决，执行前必须按实际资料填写。
 
-## 统一命令
+`requirements.lock` / `requirements-pdf.lock` 供需要固定版本的环境使用，已排除测试依赖。普通安装按上面的 `setup.sh` 即可。安装失败时先确认 Python 版本、Linux / WSL2 和 pip 网络连接。
 
-### 1. 文献准备（A）
-
-```powershell
-.\run.ps1 literature prepare examples\literature\sample_paper.md `
-  --out runs\demo\source.json `
-  --chunks-out runs\demo\chunks.jsonl
-```
-
-也可以处理 DOI：
-
-```powershell
-.\run.ps1 literature prepare 10.1371/journal.pcbi.1007486 `
-  --out runs\demo\doi_source.json `
-  --chunks-out runs\demo\doi_chunks.jsonl
-```
-
-### 2. 校验与渲染 A 的结果
-
-```powershell
-.\run.ps1 literature validate runs\demo\extraction.json --source runs\demo\source.json
-.\run.ps1 literature render runs\demo\extraction.json `
-  --source runs\demo\source.json `
-  --out runs\demo\variable_crosswalk.md `
-  --final
-```
-
-### 3. A 输出转换为 B 输入
-
-```powershell
-.\run.ps1 to-model-ir runs\demo\extraction.json `
-  --out runs\demo\model_ir.json `
-  --mode reproduce
-```
-
-严格模式：
-
-```powershell
-.\run.ps1 to-model-ir runs\demo\extraction.json `
-  --out runs\demo\model_ir.json `
-  --strict
-```
-
-`--strict` 仅在模型具备以下条件时成功：
-
-- 有可求解的 ODE/PDE 方程；
-- 所有状态变量都有方程；
-- 参数有单一数值；
-- 初值有单一数值；
-- 时间域可确定。
-
-否则会明确失败，不会伪造缺失数据。
-
-### 4. 校验与仿真 Model IR
-
-```powershell
-.\run.ps1 validate-model runs\demo\model_ir.json --simulation
-.\run.ps1 simulate runs\demo\model_ir.json --output-dir runs\demo\simulation
-```
-
-### 5. 无 API 演示与 LLM Agent
-
-```powershell
-.\run.ps1 demo
-.\run.ps1 agent --data examples\modeling_test.pdf
-```
-
-LLM Agent 需要设置对应环境变量，详见 `.env.example` 和 `docs/modeling_README.md`。
-
-## A 输出与 B 输入的统一方式
-
-统一格式仍是 A 的 evidence extraction JSON，但新增两个可选顶层字段：
-
-```json
-{
-  "model_ir": {},
-  "model_ir_seed": {}
-}
-```
-
-- `model_ir`：完整的 B Model IR。存在时直接作为转换目标，适合“模型已经明确”的情况。
-- `model_ir_seed`：只覆盖部分 Model IR 字段，适合 Agent 已知方程、时间域或初值，但仍有部分信息缺失的情况。
-
-如果两者都不存在，适配器会保守地自动映射：
-
-| A 字段 | B 字段 | 行为 |
-|---|---|---|
-| `document` / `study_profile` | `model_name` / `model_type` | 生成名称并归一化模型类型 |
-| `variables[role=dependent]` | `variables` | 映射为状态变量候选 |
-| `variables[role=parameter]` | `parameters` | 尝试解析单一数值 |
-| `value_or_range` | `initial_conditions` | 仅单一数值可作为初值 |
-| `relationships[type=equation]` | `equations` | 只有带明确导数符号的关系才自动映射 |
-| `unresolved` | `missing_information` | 汇总未解决问题 |
-| `evidence` | `evidence` | 保留 `block_id`、页码、章节和原文引用 |
-
-适配器还会写入：
-
-```json
-{
-  "conversion": {
-    "model_ready": false,
-    "warnings": [],
-    "algebraic_relationships": [],
-    "validation_for_simulation": {}
-  }
-}
-```
-
-`model_ready=false` 表示该 Model IR 可以继续由 Agent 或人工补全，但不能直接仿真。
-
-## 端到端验证样例
-
-`examples/model_ready_extraction.json` 同时包含：
-
-- A 格式的变量、参数、关系、证据和 review metadata；
-- 一个完整的 B 格式 `model_ir`。
-
-可直接验证：
-
-```powershell
-.\run.ps1 to-model-ir examples\model_ready_extraction.json `
-  --out runs\integration_demo\model_ir.json `
-  --strict
-
-.\run.ps1 validate-model runs\integration_demo\model_ir.json --simulation
-.\run.ps1 simulate runs\integration_demo\model_ir.json `
-  --output-dir runs\integration_demo\simulation `
-  --tag integration
-```
-
-预期产物：
-
-```text
-runs/integration_demo/
-├─ model_ir.json
-└─ simulation/
-   ├─ simulation_unified_lotka_volterra_demonstration__integration.json
-   └─ simulation_unified_lotka_volterra_demonstration__integration.png
-```
-
-## Agent 新增工具
-
-B 的 Agent 工具面新增：
-
-- `prepare_literature(source, out_dir)`：调用 A 的文献准备层，支持本地文件和 DOI。
-- `convert_extraction_to_model_ir(extraction_path, output_path, strict)`：调用统一契约层。
-
-原有工具仍然保留：
-
-- `read_text`
-- `save_model_ir`
-- `simulate_model`
-- `save_report`
-
-## 测试
-
-```powershell
-$env:PYTHONPATH = "src"
-py -m unittest discover -s tests -v
-```
-
-当前测试共 80 项，包括：
-
-- A 的 46 项原有文献处理测试；
-- B 的 Model IR、ODE 求解和工具测试；
-- 新增的 extraction → Model IR → simulation 集成测试；
-- B 的无 API 端到端 smoke test。
-
-## 重要限制
-
-1. **A 的变量提取不自动等于 B 的微分方程模型。** 适配器不会把普通代数关系伪造成 ODE。
-2. 自动转换只在能确定数值时填写参数和初值；范围、多个候选值和缺失值都会进入 `missing_information`。
-3. 时间域未知时使用 `[0, 1]` 作为草稿占位，并标记 `model_ready=false`；不得将该占位当作科学结论。
-4. 原 A、B 项目目录未修改；本目录是独立整合尝试。
-5. A 的部分 PDF 能力依赖 `pdfplumber`/`pypdf`，可通过 `pip install -e ".[pdf]"` 安装。
-6. LLM 模式需要联网和 API Key；无 API 的 `demo` 与数值仿真不需要 LLM。
-
+历史 `case-*` 命令依赖另行提供的案例库，本运行版不附带历史案例材料或参考结果；新任务请从自己的资料开始。
