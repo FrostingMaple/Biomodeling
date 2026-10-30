@@ -1,5 +1,18 @@
 # Biomodeling 整合版
 
+## 可直接使用的独立 BioModel Agent（2026-10-30）
+
+新增 [biomodel-agent-standalone/](biomodel-agent-standalone/)：独立安装的研究工作台与小型模型示例。**使用方法见[中文说明](biomodel-agent-standalone/README.md)**。下载 ZIP 解压后进入该目录，在 Python 3.12 的 Linux / WSL2 环境执行：
+
+```bash
+bash setup.sh
+.venv/bin/python demo.py
+bash start.sh
+```
+
+该目录仅包含运行必需文件、依赖配置和使用示例，没有附带测试、评测脚本、历史结果或密钥。它使用 `python -m biomodel_agent` 入口；下面的整合工程使用 `python -m biomodeling`，请按各自目录的说明安装。
+
+
 本目录将两个原有项目整合为一个统一工程，同时保留原项目目录不变：
 
 - A：`bio_variable_extractor`，负责文献准备、证据化变量/参数提取、校验和变量交叉表。
