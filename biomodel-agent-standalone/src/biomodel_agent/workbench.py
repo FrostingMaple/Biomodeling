@@ -110,12 +110,10 @@ class Workbench:
         self._worker.start()
 
     def _acquire(self):
-        import fcntl
+        from . import local_ownership
         path=self.store.root/'.workbench-owner.lock'
-        fd=os.open(path,os.O_RDWR|os.O_CREAT|os.O_CLOEXEC|os.O_NOFOLLOW,0o600)
-        try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BaseException:
-            os.close(fd);raise ValueError('此 store 已有运行中的工作台')
+        try:fd=local_ownership.acquire(path)
+        except local_ownership.OwnerBusy as exc:raise ValueError('此 store 已有运行中的工作台') from exc
         self._owner_fd=fd
 
     def close(self,timeout=5.):

@@ -51,7 +51,7 @@ async function advance(){
   field("允许 Agent 在这些上限内阅读资料、提出假设和迭代；需要对齐时暂停。",consent),send);
 }
 async function createEditor(){
- if(!overview)await refresh();
+ if(!overview)overview=await api("/api/overview");
  const scenario=node("textarea",{rows:5,required:true,placeholder:"描述应用场景、关注的问题以及你已经知道的限制。研究对象和粒度可以由 Agent 提出。"});
  const mode=node("select",{},node("option",{value:"application"},"应用场景建模"),node("option",{value:"reproduction"},"论文复现"));
  const calls=node("input",{type:"number",min:0,max:50,value:20,required:true});

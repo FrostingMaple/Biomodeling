@@ -1,4 +1,4 @@
-# Exact accepted Python 3.12 environment; install the local package separately with --no-deps.
+# Python 3.12 runtime dependencies. Development/test packages are excluded.
 anyio==4.15.1
 certifi==2026.7.22
 h11==0.16.0

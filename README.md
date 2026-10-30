@@ -2,9 +2,9 @@
 
 ## BioModel Agent 纯运行版
 
-**仅下载运行程序，请使用 [纯运行版 ZIP](https://github.com/FrostingMaple/Biomodeling/archive/refs/heads/codex/runtime-only-20261030.zip)**，或切换到 [`codex/runtime-only-20261030`](https://github.com/FrostingMaple/Biomodeling/tree/codex/runtime-only-20261030) 分支。
+**仅下载运行程序，请使用 [纯运行版 ZIP](https://github.com/FrostingMaple/Biomodeling/archive/refs/heads/codex/runtime-windows-20261031.zip)**，或切换到 [`codex/runtime-windows-20261031`](https://github.com/FrostingMaple/Biomodeling/tree/codex/runtime-windows-20261031) 分支。
 
-该分支只含运行源码、安装/启动脚本、运行模板与[中文使用说明](https://github.com/FrostingMaple/Biomodeling/blob/codex/runtime-only-20261030/README.md)，没有测试、测试报告、演示项目、参考答案或历史结果。解压后在 Python 3.12 的 Linux / WSL2 中执行 `bash setup.sh`、`bash start.sh`。
+该分支只含运行源码、安装/启动脚本、运行模板与[中文使用说明](https://github.com/FrostingMaple/Biomodeling/blob/codex/runtime-windows-20261031/README.md)，没有测试、测试报告、演示项目、参考答案或历史结果。需要 64 位 Python 3.12。Windows 可原生双击 `setup.cmd`、`start.cmd`；Linux / WSL2 执行 `bash setup.sh`、`bash start.sh`。模型服务默认关闭，从用户资料和空白存储开始。
 
 主分支的同一运行版位于 [biomodel-agent-standalone/](biomodel-agent-standalone/)。**主分支其余目录仍是原整合工程，其中包含原有测试和测试报告；下载整个主分支 ZIP 会包含它们。** 下文介绍原整合工程，与纯运行版入口不同。
 
