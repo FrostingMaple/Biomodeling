@@ -6,7 +6,9 @@ if command -v python3.12 >/dev/null 2>&1; then
 else
   interpreter=python3
 fi
-"$interpreter" -c 'import sys; assert sys.version_info[:2] == (3, 12), "Please install Python 3.12 first"'
-"$interpreter" -m venv .venv
-.venv/bin/python -m pip install .
-printf '\nInstalled. Run: bash start.sh\n'
+"$interpreter" -c 'import struct,sys; assert sys.version_info[:2] == (3,12) and struct.calcsize("P") == 8, "64-bit Python 3.12 is required"'
+if [[ ! -x .venv/bin/python ]]; then "$interpreter" -m venv .venv; fi
+.venv/bin/python -m pip install -r requirements.lock
+.venv/bin/python -m pip install --no-deps --no-build-isolation .
+.venv/bin/python -m biomodel_agent workspace-doctor
+printf '\nReady. Run: bash start.sh\n'

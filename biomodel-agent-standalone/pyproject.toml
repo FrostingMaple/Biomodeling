@@ -25,3 +25,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 biomodel_agent = ["workspace_assets/*.md", "workspace_assets/*.lock", "workspace_assets/templates/*", "workspace_assets/references/*.md", "workspace_assets/skills/*/SKILL.md", "workbench_assets/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

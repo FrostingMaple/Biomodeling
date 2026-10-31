@@ -9,7 +9,7 @@ import json
 from uuid import uuid4
 
 from . import model_contracts as c, recovery, research_tasks as tasks
-from .storage import canonical_bytes
+from .storage import canonical_bytes,REF_RE
 
 PROJECT='research_project'
 FRAME='research_frame'
@@ -148,11 +148,20 @@ def history(store,project_ref):
     load(store,project_ref)
     attempts=rows(store,STEP,project_ref);attempts.sort(key=lambda r:r[1]['sequence'])
     if [p['sequence'] for _,p in attempts]!=list(range(len(attempts))):raise ValueError('ambiguous research operation sequence')
+    # Scan linked returns once. Repeating a full store scan for every operation
+    # made a second project much slower, despite unchanged scientific work.
+    related={RETURN:{},RECOVERY:{}};attempt_ids={r for r,_ in attempts}
+    for path in sorted(store.objects_dir.glob('*.json')):
+        if not REF_RE.fullmatch(path.stem):continue
+        record=store._read_envelope(path.stem);payload=record['payload'];kind=record['kind']
+        if kind in related and isinstance(payload,dict) and payload.get('attempt_ref') in attempt_ids:
+            store.get(path.stem)
+            related[kind].setdefault(payload['attempt_ref'],[]).append((path.stem,payload))
     results={};pending=[]
     for ref,p in attempts:
         expected={project_ref,*([p['response_ref']] if p.get('response_ref') else [])}
         if p['operation'] not in OPERATIONS or set(store.get(ref)['refs'])!=expected:raise ValueError('invalid project operation')
-        found=tasks._records(store,RETURN,attempt_ref=ref)
+        found=related[RETURN].get(ref,[])
         if len(found)>1:raise ValueError('conflicting project returns')
         if found:
             rr,rp=found[0]
@@ -160,7 +169,7 @@ def history(store,project_ref):
                 raise ValueError('project return binding mismatch')
             if rp['state'] not in ('returned','rejected','unknown'):raise ValueError('invalid project return state')
             results[ref]=(rr,rp)
-        recovered=tasks._records(store,RECOVERY,attempt_ref=ref)
+        recovered=related[RECOVERY].get(ref,[])
         if len(recovered)>1:raise ValueError('conflicting recoveries')
         if recovered:
             rr,rp=recovered[0]
